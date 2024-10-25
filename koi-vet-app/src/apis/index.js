@@ -527,3 +527,20 @@ export const createFAQAPI = async (data) => {
     const response = await api.post('/faqs', data);
     return response.data;
 }
+
+
+//Contact API
+export const fetchContactAPI = async () => {
+    const response = await api.get('/contacts');
+    return response.data;
+}
+
+export const createContactAPI = async (data) => {
+    const response = await api.post('/contacts', data);
+    return response.data;
+}
+
+export const fetchContactDetailAPI = async (contactId) => {
+    const response = await api.get(`/contacts/${contactId}`);
+    return response.data;
+}
