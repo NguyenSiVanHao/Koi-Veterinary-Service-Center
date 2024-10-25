@@ -12,12 +12,11 @@ function HomePage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [serviceList, setServiceList] = useState([]);
-    const [pickedService, setPickedService] = useState(null);
-    const [currentIndex, setCurrentIndex] = useState(1); // Khởi đầu từ slide thứ hai
+    const [currentIndex, setCurrentIndex] = useState(0); // Khởi đầu từ slide thứ hai
 
     const getServiceList = async () => {
         const response = await fecthAllServicesAPI();
-        setServiceList(response.data);
+        setServiceList(response.data.slice(0, 6));
     }
 
     const handleBooking = (type) => {
@@ -149,7 +148,84 @@ function HomePage() {
                     </div>
                 </div>
             </div>
+            <div className="container my-4">
+                <div className="row">
+                    <h6 className="text-center-custom text-center text-uppercase text-primary mb-2">Better information, Better health</h6>
+                    <h2 className="text-center-custom text-center mb-5 text-nav" >News</h2>
 
+                    <div className="col-md-6 mb-4">
+                        <div className="card news-card" onclick="console.log('Clicked on article: Popular koi varieties and their characteristics')">
+                            <img src="https://images.pexels.com/photos/27155971/pexels-photo-27155971/free-photo-of-d-ng-v-t-ca-d-i-n-c-trang-tri.jpeg?auto=compress&cs=tinysrgb&w=600" className="card-img-top" alt="Popular koi varieties and their characteristics" />
+                            <div className="card-body">
+                                <h5 className="card-title">Popular koi varieties and their characteristics</h5>
+                                <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
+                                <div className="d-flex align-items-center">
+                                    <span className="mr-2">
+                                        <i className="fas fa-eye text-primary"></i> 68
+                                    </span>
+                                    <span>
+                                        <i className="fas fa-heart text-danger"></i> 86
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-6 mb-4">
+                        <div className="card news-card" onclick="console.log('Clicked on article: Koi health care and disease management.')">
+                            <img src="https://canhquansanvuonxanh.com/wp-content/uploads/2023/02/ca-koi-dat-nhat-the-gioi-1.jpg" className="card-img-top" alt="Koi health care and disease management." />
+                            <div className="card-body">
+                                <h5 className="card-title">Koi health care and disease management.</h5>
+                                <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
+                                <div className="d-flex align-items-center">
+                                    <span className="mr-2">
+                                        <i className="fas fa-eye text-primary"></i> 68
+                                    </span>
+                                    <span>
+                                        <i className="fas fa-heart text-danger"></i> 86
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-6 mb-4">
+                        <div className="card news-card" onclick="console.log('Clicked on article: Koi breeding and genetics.')">
+                            <img src="https://image-us.eva.vn/upload/3-2022/images/2022-08-26/image16-1661495517-88-width2048height1365.jpg" className="card-img-top" alt="Koi breeding and genetics." />
+                            <div className="card-body">
+                                <h5 className="card-title">Koi breeding and genetics.</h5>
+                                <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
+                                <div className="d-flex align-items-center">
+                                    <span className="mr-2">
+                                        <i className="fas fa-eye text-primary"></i> 68
+                                    </span>
+                                    <span>
+                                        <i className="fas fa-heart text-danger"></i> 86
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-6 mb-4">
+                        <div className="card news-card" onclick="console.log('Clicked on article: Koi Fish Care')">
+                            <img src="https://toigingiuvedep.vn/wp-content/uploads/2021/01/hinh-anh-ca-koi-dep-nhat.jpg" className="card-img-top" alt="Koi Fish Care" />
+                            <div className="card-body">
+                                <h5 className="card-title">Koi Fish Care</h5>
+                                <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
+                                <div className="d-flex align-items-center">
+                                    <span className="mr-2">
+                                        <i className="fas fa-eye text-primary"></i> 68
+                                    </span>
+                                    <span>
+                                        <i className="fas fa-heart text-danger"></i> 86
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
             <section className="py-5 bg-light">
