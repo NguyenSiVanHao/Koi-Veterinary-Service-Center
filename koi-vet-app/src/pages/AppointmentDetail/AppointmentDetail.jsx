@@ -179,6 +179,8 @@ function AppointmentDetail() {
           updateAppointment({ ...appointment, status: APPOINTMENT_STATUS.READY_FOR_PAYMENT }, appointmentId);
         }
       });
+    } else if (appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) {
+      navigate(`/admin/checkout/${appointmentId}`);
     }
     setIsEditing(false);
   }
@@ -269,14 +271,15 @@ function AppointmentDetail() {
                 value={statusDisplayMap[appointment.status] || appointment.status}
                 disabled={true}
               />
-              {role !== ROLE.CUSTOMER && (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS) ?
+              {role !== ROLE.CUSTOMER && (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS || appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) ?
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={() => handleStartFinish()}
                 >
                   {appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE ? "Start" : null}
-                  {appointment.status === APPOINTMENT_STATUS.PROCESS ? "Checkout" : null}
+                  {appointment.status === APPOINTMENT_STATUS.PROCESS ? "Finish" : null}
+                  {appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT ? "Checkout" : null}
 
                 </button>
                 : null}
@@ -469,36 +472,36 @@ function AppointmentDetail() {
 
         <div className="d-flex justify-content-between align-items-center mb-3">
           {/* {role === ROLE.CUSTOMER && appointment.status !== APPOINTMENT_STATUS.FINISH && ( */}
-            <>
-              <div className="col-md-6">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => setIsEditing(!isEditing)}
-                >
-                  {isEditing ? "Cancel" : "Edit"}
-                </button>
-                {appointment.status === "FINISH" && (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => navigate(`/rating-feedback/${appointmentId}`)}
-                  >
-                    Rating & Feedback
-                  </button>
-                )}
-              </div>
-
-
+          <>
+            <div className="col-md-6">
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => setIsInvoiceModalOpen(true)}
+                onClick={() => setIsEditing(!isEditing)}
               >
-                Invoices
+                {isEditing ? "Cancel" : "Edit"}
               </button>
-            </>
-          
+              {appointment.status === "FINISH" && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => navigate(`/rating-feedback/${appointmentId}`)}
+                >
+                  Rating & Feedback
+                </button>
+              )}
+            </div>
+
+
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setIsInvoiceModalOpen(true)}
+            >
+              Invoices
+            </button>
+          </>
+
           {isEditing && (
             <button type="submit" className="btn btn-primary">
               Save Changes
@@ -527,12 +530,12 @@ function AppointmentDetail() {
       </div>
 
 
-    <Modal
-      open={isInvoiceModalOpen}
-      onCancel={() => setIsInvoiceModalOpen(false)}
-    >
-     <InvoiceList appointment={appointment}/>
-    </Modal>
+      <Modal
+        open={isInvoiceModalOpen}
+        onCancel={() => setIsInvoiceModalOpen(false)}
+      >
+        <InvoiceList appointment={appointment} />
+      </Modal>
     </>
 
   );
