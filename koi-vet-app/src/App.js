@@ -55,6 +55,7 @@ import CreateMedicinePage from './pages/CreateMedicinePage/CreateMedicinePage';
 import AboutUsPage from './pages/AboutUsPage/AboutUsPage';
 import Contact from './pages/Contact/Contact';
 import InvoiceDetail from './pages/PaymentCheckout/InvoiceDetail';
+import ContactManagement from './pages/ContactManagement/ContactManagement';
 
 function App() {
   const isAuthorized = useSelector(state => state?.user?.isAuthorized)
@@ -181,6 +182,7 @@ function App() {
                   <Route path="/homevisitprice" element={<HomeVisitPricePage />} />
                   <Route path="/faqmanagement" element={<FAQManagement />} />
                   <Route path="/medicinelist" element={<CreateMedicinePage />} />
+                  <Route path="/contactmanagement" element={<ContactManagement />} />
                 </Route>
 
                 {/* <Route path="/koiinformation" element={<KoiInformation />} /> */}
