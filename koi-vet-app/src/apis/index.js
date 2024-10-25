@@ -37,14 +37,14 @@ export const fetchMyInfoAPI = async () => {
 }
 
 export const updateUserAPI = async (userData) => {
-    const response = await api.put('/users/update', userData); 
+    const response = await api.put('/users/update', userData);
     return response.data;
 }
 
 export const deleteUserAPI = async (userId) => {
     const response = await api.delete(`/users?userId=${userId}`);
     return response.data;
-  };
+};
 
 //* Vet API */
 export const fetchVetsAPI = async () => {
@@ -364,8 +364,14 @@ export const fetchPrescriptionByAppointmentIdAPI = async (appointmentId) => {
 }
 
 //Payment API
-export const fetchRedirectPaymentAPI = async (amount, bankCode, appointmentData) => {
-    const response = await api.post(`payment/vn-pay?amount=${amount}&bankCode=${bankCode}`, appointmentData)
+export const fetchRedirectPaymentAPI = async (amount, bankCode, appointmentData, paymentOption) => {
+    let response;
+    console.log(paymentOption)
+    if (paymentOption === "vnpay") {
+        response = await api.post(`payment/vn-pay?amount=${amount}&bankCode=${bankCode}`, appointmentData)
+    } else {
+        response = await api.post(`payment/momo-pay?amount=${amount}`, appointmentData)
+    }
     return response.data;
 }
 
@@ -426,7 +432,7 @@ export const fetchInvoiceByAppointmentIdAndTypeAPI = async (appointmentId, type)
     const response = await api.get(`/invoices/appointmentId?appointmentId=${appointmentId}&type=${type}`);
     return response.data;
 }
-export const fetchInvoiceByInvoiceId = async (invoiceId) =>{
+export const fetchInvoiceByInvoiceId = async (invoiceId) => {
     const response = await api.get(`/invoices/${invoiceId}`);
     return response.data;
 }
