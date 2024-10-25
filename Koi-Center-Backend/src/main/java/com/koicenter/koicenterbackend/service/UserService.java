@@ -10,6 +10,7 @@ import com.koicenter.koicenterbackend.model.entity.Veterinarian;
 import com.koicenter.koicenterbackend.model.enums.Role;
 import com.koicenter.koicenterbackend.model.enums.VeterinarianStatus;
 import com.koicenter.koicenterbackend.model.request.authentication.RegisterRequest;
+import com.koicenter.koicenterbackend.model.request.authentication.UpdateForgotPasswordRequest;
 import com.koicenter.koicenterbackend.model.request.authentication.UpdatePasswordRequest;
 import com.koicenter.koicenterbackend.model.request.user.UpdateUserRequest;
 import com.koicenter.koicenterbackend.model.response.staff.StaffDTO;
@@ -314,6 +315,17 @@ public class UserService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Transactional
+    public boolean updateForgotPassword(UpdateForgotPasswordRequest updateForgotPasswordRequest) {
+        User user = userRepository.findByEmail(updateForgotPasswordRequest.getEmail());
+        if (user != null) {
+            String encodedPassword = encoder.encode(updateForgotPasswordRequest.getNewPassword());
+            userRepository.updatePassword(encodedPassword, user.getUserId());
+            return true;
+        }
+        return false;
     }
 }
 

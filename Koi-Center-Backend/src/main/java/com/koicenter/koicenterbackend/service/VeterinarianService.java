@@ -6,6 +6,8 @@ import com.koicenter.koicenterbackend.model.entity.User;
 import com.koicenter.koicenterbackend.model.entity.Veterinarian;
 import com.koicenter.koicenterbackend.model.enums.Role;
 import com.koicenter.koicenterbackend.model.enums.VeterinarianStatus;
+import com.koicenter.koicenterbackend.model.request.user.UserRequest;
+import com.koicenter.koicenterbackend.model.request.veterinarian.VerinarianUpdateRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VeterinarianRequest;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VeterinarianResponse;
 import com.koicenter.koicenterbackend.model.response.user.UserResponse;
@@ -126,6 +128,10 @@ public class VeterinarianService {
                 if (serviceId != null) {
                     services.add(serviceId);
                     serviceId.getVeterinarians().add(veterinarian);
+                }else {
+                    throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
+                            ErrorCode.SERVICE_NOT_EXITS.getMessage(),
+                            HttpStatus.NOT_FOUND);
                 }
             }
         }
@@ -171,6 +177,62 @@ public class VeterinarianService {
         }
         return responseList;
     }
+
+    public VeterinarianResponse updateVeterinarian(String vetId, VerinarianUpdateRequest request) {
+
+        Veterinarian veterinarian = veterinarianRepository.findById(vetId).orElseThrow(() -> new AppException(
+                ErrorCode.VETERINARIAN_ID_NOT_EXITS.getCode(),
+                ErrorCode.VETERINARIAN_ID_NOT_EXITS.getMessage(),
+                HttpStatus.NOT_FOUND));
+
+        veterinarian.setStatus(request.getStatus());
+        veterinarian.setDescription(request.getDescription());
+        veterinarian.setGoogleMeet(request.getGoogle_meet());
+        veterinarian.setPhone(request.getPhone());
+        veterinarian.setImage(request.getImage());
+
+        List<com.koicenter.koicenterbackend.model.entity.Service> services = new ArrayList<>();
+        if (request.getService() != null && !request.getService().isEmpty()) {
+            for (String service : request.getService()) {
+                com.koicenter.koicenterbackend.model.entity.Service serviceEntity = servicesRepository.findByServiceId(service);
+                if (serviceEntity != null) {
+                    services.add(serviceEntity);
+                    serviceEntity.getVeterinarians().add(veterinarian);
+                }else {
+                    throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
+                            ErrorCode.SERVICE_NOT_EXITS.getMessage(),
+                            HttpStatus.NOT_FOUND);
+                }
+            }
+        }
+
+        veterinarianRepository.save(veterinarian);
+
+        VeterinarianResponse response = new VeterinarianResponse();
+        response.setVetId(veterinarian.getVetId());
+        response.setVetStatus(veterinarian.getStatus());
+        response.setDescription(veterinarian.getDescription());
+        response.setGoogleMeet(veterinarian.getGoogleMeet());
+        response.setPhone(veterinarian.getPhone());
+        response.setImageVeterinarian(veterinarian.getImage());
+        List<String> serviceNames = new ArrayList<>();
+        for (com.koicenter.koicenterbackend.model.entity.Service service : veterinarian.getServices()) {
+            serviceNames.add(service.getServiceName());
+        }
+        response.setServiceNames(serviceNames);
+
+        UserResponse userResponse = new UserResponse();
+        userResponse.setUser_id(veterinarian.getUser().getUserId());
+        userResponse.setUsername(veterinarian.getUser().getUsername());
+        userResponse.setEmail(veterinarian.getUser().getEmail());
+        userResponse.setFullName(veterinarian.getUser().getFullName());
+        userResponse.setImage(veterinarian.getUser().getImage());
+        userResponse.setStatus(veterinarian.getUser().isStatus());
+        response.setUser(userResponse);
+
+        return response;
+    }
+
 }
 
 

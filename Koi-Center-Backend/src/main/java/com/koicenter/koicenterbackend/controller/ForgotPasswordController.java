@@ -1,16 +1,15 @@
 package com.koicenter.koicenterbackend.controller;
 
 import com.koicenter.koicenterbackend.exception.AppException;
+import com.koicenter.koicenterbackend.model.request.authentication.UpdateForgotPasswordRequest;
 import com.koicenter.koicenterbackend.model.response.ResponseObject;
 import com.koicenter.koicenterbackend.service.OtpService;
+import com.koicenter.koicenterbackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/forgotPassword")
@@ -19,6 +18,9 @@ public class ForgotPasswordController {
 
     @Autowired
     private OtpService otpService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/sendMail")
     public ResponseEntity<ResponseObject> forgotPassword(@RequestParam String email) {
@@ -40,6 +42,16 @@ public class ForgotPasswordController {
             return ResponseObject.APIRepsonse(200, "OTP match. Reset your password.", HttpStatus.OK, "");
         } else {
             return ResponseObject.APIRepsonse(404, "OTP invalid or expired", HttpStatus.NOT_FOUND, null);
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ResponseObject> resetPassword(@RequestBody UpdateForgotPasswordRequest updateForgotPasswordRequest) {
+        boolean isPasswordReset = userService.updateForgotPassword(updateForgotPasswordRequest);
+        if (isPasswordReset) {
+            return ResponseObject.APIRepsonse(200, "Password reset successful.", HttpStatus.OK, "");
+        } else {
+            return ResponseObject.APIRepsonse(500, "Password reset failed.", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
 }
