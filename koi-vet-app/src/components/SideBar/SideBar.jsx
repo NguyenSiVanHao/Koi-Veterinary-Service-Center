@@ -91,6 +91,11 @@ function SideBar() {
                 <i className="fas fa-envelope"></i> Contact Management
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/admin/newsmanagement" className={`nav-link ${location.pathname === '/admin/newsmanagement' ? 'active' : ''}`}>
+                <i className="fas fa-newspaper"></i> News Management
+              </Link>
+            </li>
           </>
         )}
 
