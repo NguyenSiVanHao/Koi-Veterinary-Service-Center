@@ -53,6 +53,11 @@ public class VeterinarianService {
         veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
         veterinarianResponse.setPhone(veterinarian.getPhone());
         veterinarianResponse.setImageVeterinarian(veterinarian.getImage());
+        List<String> serviceNames = new ArrayList<>();
+        for (com.koicenter.koicenterbackend.model.entity.Service service : veterinarian.getServices()) {
+            serviceNames.add(service.getServiceName());
+        }
+        veterinarianResponse.setServiceNames(serviceNames);
         veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
 
         User user = userRepository.findById(veterinarian.getUser().getUserId()).orElseThrow(() -> new AppException(
