@@ -32,7 +32,7 @@ function VetProfile() {
         <div className="col-md-6">
           <div className="vet-profile-left">
             <img src={vet} alt="Veterinarian" />
-            <h2>{vets.user?.username}</h2>
+            <h2>{vets.user?.fullName}</h2>
           </div>
           <button
             className="vet-profile-previous mt-5"

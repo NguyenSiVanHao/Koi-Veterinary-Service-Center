@@ -1,9 +1,43 @@
-import React from 'react'
+import React, {  useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import "./Contact.css"
 import { Card } from 'antd'
+import { createContactAPI } from '../../apis';
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createContactAPI(formData);
+      // Reset form after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+      alert("Message sent successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Failed to send message. Please try again.");
+    }
+  };
+
   return (
     <>
     <Container fluid className="service-detail">
@@ -22,30 +56,61 @@ function Contact() {
         <Col md={6} className="p-0">
             <h5 style={{color: "var(--color-secondary)"}}><strong>GET IN TOUCH</strong></h5>
             <h1 style={{color: "#1F2B6C"}}><strong>Contact</strong></h1>
-            <form className="contact-form" style={{paddingBottom: "10px"}}>
+            <form className="contact-form" style={{marginBottom: "20px"}} onSubmit={handleSubmit}>
               <div className="contact-form-row">
                 <div className="contact-form-col">
                   <div className="contact-form-group">
                     <label className="contact-form-label" htmlFor="name">Name</label>
-                    <input className="contact-form-input" type="text" id="name" name="name" required />
+                    <input
+                      className="contact-form-input"
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
                 </div>
                 <div className="contact-form-col">
                   <div className="contact-form-group">
                     <label className="contact-form-label" htmlFor="email">Email</label>
-                    <input className="contact-form-input" type="email" id="email" name="email" required />
+                    <input
+                      className="contact-form-input"
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
                 </div>
               </div>
               
               <div className="contact-form-group">
                 <label className="contact-form-label" htmlFor="subject">Subject</label>
-                <input className="contact-form-input" type="text" id="subject" name="subject" required />
+                <input
+                  className="contact-form-input"
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               
               <div className="contact-form-group">
                 <label className="contact-form-label" htmlFor="message">Message</label>
-                <textarea className="contact-form-textarea" id="message" name="message" required></textarea>
+                <textarea
+                  className="contact-form-textarea"
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                ></textarea>
               </div>
               
               <button className="contact-form-button" type="submit">SUBMIT</button>
