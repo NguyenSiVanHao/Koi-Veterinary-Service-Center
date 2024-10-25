@@ -178,7 +178,7 @@ public class PaymentController {
                 .appointment(appointmentRepository.findAppointmentById(appointmentId))
                 .type(InvoiceType.First)
                 .quantity(1)
-                .code(invoiceService.getCode())
+                .code(invoiceService.getCode()+1)
                 .deliveryPrice(0)
                 .distance(0)
                 .unitPrice(ammout)

@@ -91,6 +91,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "api/v1/appointments").permitAll()
                             .requestMatchers(HttpMethod.PUT, "api/v1/appointments/update").permitAll()
                             .requestMatchers(HttpMethod.PUT, "api/v1/appointments/cancel/{appointmentId}").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "api/v1/appointments/refund/{appointmentId}").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/appointments/userName/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/appointments/by-vetId/{vetId}").permitAll()
 
