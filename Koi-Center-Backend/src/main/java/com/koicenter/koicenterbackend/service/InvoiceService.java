@@ -195,7 +195,7 @@ public class InvoiceService {
     }
 
     public InvoiceResponse getAppointmentIdAndType(String appointmentId, InvoiceType type) {
-        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndAndType(appointmentId, type);
+        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, type);
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoice);
         return invoiceResponse;
     }
@@ -235,7 +235,7 @@ public class InvoiceService {
                 .deliveryPrice(deliveryPrice)
                 .build();
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoices);
-        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndAndType(appointmentId, InvoiceType.First);
+        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, InvoiceType.First);
         CheckOutResponse checkOutResponse = CheckOutResponse.builder()
                 .depositeMoney(invoice.getTotalPrice())
                 .invoice(invoiceResponse)

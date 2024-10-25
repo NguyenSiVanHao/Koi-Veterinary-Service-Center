@@ -7,5 +7,6 @@ public enum AppointmentStatus {
     PROCESS,
     READY_FOR_PAYMENT,
     FINISH,//~~  COMPLETED
-    CANCEL // DAT ROI MA KHONG DI
+    CANCEL, // DAT ROI MA KHONG DI
+   REFUND
 }

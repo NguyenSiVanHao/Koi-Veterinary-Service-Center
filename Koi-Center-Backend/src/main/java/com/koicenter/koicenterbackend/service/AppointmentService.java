@@ -400,6 +400,7 @@ public class AppointmentService {
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
                 HttpStatus.NOT_FOUND)));
         appointment.setStatus(AppointmentStatus.CANCEL);
+        appointmentRepository.save(appointment);
         Veterinarian veterinarian = veterinarianRepository.findById(appointment.getVeterinarian().getVetId()).orElseThrow((() -> new AppException(
                 ErrorCode.VETSCHEDULE_NOT_FOUND.getCode(),
                 ErrorCode.VETSCHEDULE_NOT_FOUND.getMessage(),
@@ -415,13 +416,23 @@ public class AppointmentService {
                     .build();
             vetScheduleService.slotDateTime(vetScheduleRequest1,"less");
         }
-        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndAndType(appointmentId, InvoiceType.First);
+        AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
+        return appointmentResponse ;
+    }
+
+    public AppointmentResponse updateAppointmentBecomeRefund ( String appointmentId){
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
+                HttpStatus.NOT_FOUND)));
+        appointment.setStatus(AppointmentStatus.REFUND);
+        appointmentRepository.save(appointment);
+        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, InvoiceType.First);
         invoice.setStatus(PaymentStatus.Refund);
         invoiceRepository.save(invoice);
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
         return appointmentResponse ;
     }
-
 }
 
 
