@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createInvoiceV2API, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchCheckoutAPI, fetchInvoiceByInvoiceId, updateAppointmentAPI, updateInvoiceAPI } from '../../apis';
+import { createInvoiceV2API, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchCheckoutAPI, fetchInvoiceByInvoiceId, refundAppointmentAPI, updateAppointmentAPI, updateInvoiceAPI } from '../../apis';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './InvoiceDetail.css';
 import { toast } from 'react-toastify';
@@ -7,7 +7,8 @@ import HomeVisitPriceTable from '../../components/HomeVisitPriceTable/HomeVisitP
 import paid from '../../assets/img/paid_icon.png'
 import refund from '../../assets/img/refund.jpg'
 import { Modal } from 'antd';
-import { APPOINTMENT_STATUS } from '../../utils/constants';
+import { APPOINTMENT_STATUS, ROLE } from '../../utils/constants';
+import { useSelector } from 'react-redux';
 const InvoiceDetail = ({ isCheckout }) => {
   const [appointmentDetail, setAppointmentDetail] = useState(null);
   const location = useLocation();
@@ -27,11 +28,26 @@ const InvoiceDetail = ({ isCheckout }) => {
   const queryParams = new URLSearchParams(location.search);
   const invoiceId = queryParams.get("invoiceId");
   const navigate = useNavigate();
-
+  const { role } = useSelector(state => state?.user?.role);
   const fetchInvoiceDetail = async () => {
     const response = await fetchInvoiceByInvoiceId(invoiceId);
     console.log(response.data)
     setInvoiceDetail(response.data);
+  }
+  const handleRefund = async () => {
+    Modal.confirm({
+      title: "Confirm Refund",
+      content: "Are you sure to confirm refund money?",
+      onOk: async () => {
+        const response = await refundAppointmentAPI(appointmentId);
+        if (response.status === 200) {
+          toast.success("Refund success");
+          navigate(-1)
+        } else {
+          toast.error(response.data.message)
+        }
+      }
+    })
   }
   const fetchCheckout = async () => {
     const response = await fetchCheckoutAPI(appointmentId);
@@ -190,6 +206,8 @@ const InvoiceDetail = ({ isCheckout }) => {
                       :
                       <p><strong>Total Paid:</strong> {invoiceDetail?.totalPrice?.toLocaleString()} VND</p>
                     }
+
+
                   </div>
 
                 </div>
@@ -197,6 +215,11 @@ const InvoiceDetail = ({ isCheckout }) => {
                   invoiceDetail?.status === "Completed" &&
                   <div className="text-end d-flex justify-content-end">
                     <img src={paid} alt="paid" width={100} height={100} style={{ transform: "rotate(20deg)" }} />
+                  </div>
+                }
+                {role !== ROLE.CUSTOMER && appointmentDetail?.status === APPOINTMENT_STATUS.CANCEL &&
+                  <div className="text-end d-flex justify-content-end">
+                    <button className='btn btn-primary' onClick={() => handleRefund()}>Confirm Refund <i className="fas fa-undo-alt"></i></button>
                   </div>
                 }
                 {

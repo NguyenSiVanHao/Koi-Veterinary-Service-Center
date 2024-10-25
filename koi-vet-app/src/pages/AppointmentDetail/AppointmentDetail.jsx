@@ -480,7 +480,7 @@ function AppointmentDetail() {
           {/* {role === ROLE.CUSTOMER && appointment.status !== APPOINTMENT_STATUS.FINISH && ( */}
           <>
             <div className="d-flex gap-2">
-              {role !== ROLE.CUSTOMER && (
+              {role !== ROLE.CUSTOMER && !["REFUND", "CANCEL", "FINISH"].includes(appointment.status) && (
                 <button
                   type="button"
                   className="btn btn-primary mr-3"

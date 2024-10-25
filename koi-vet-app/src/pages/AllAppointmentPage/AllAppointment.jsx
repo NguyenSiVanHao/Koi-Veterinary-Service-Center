@@ -12,6 +12,7 @@ import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import Loading from "../../components/Loading/Loading";
 import { Pagination } from "@mui/material";
 import PreLoader from "../../components/Preloader/Preloader";
+import refund from "../../assets/img/refund logo.svg"
 
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
@@ -132,8 +133,8 @@ function AllAppointment() {
             <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CANCEL)}>
               <i className="fas fa-ban me-2 text-danger"></i>Cancel
             </button>
-            <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.REFUNDED)}>
-              <i className="fas fa-undo-alt me-2 text-info"></i>Refund
+            <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.REFUND)}>
+              <img className="me-2 text-warning" style={{ width: '20px', height: '20px' }} src={refund} alt="Refund Icon" /> Refund
             </button>
           </div>
         </nav>
@@ -188,8 +189,8 @@ function AllAppointment() {
                             return <button className="btn btn-sm btn-success"> <i className="fas fa-flag-checkered me-2"></i>Finish</button>;
                           case APPOINTMENT_STATUS.CANCEL:
                             return <button className="btn btn-sm btn-danger"> <i className="fas fa-ban me-2"></i>Cancel</button>;
-                          case APPOINTMENT_STATUS.REFUNDED:
-                            return <button className="btn btn-sm btn-info"> <i className="fas fa-undo-alt me-2"></i>Refunded</button>;
+                          case APPOINTMENT_STATUS.REFUND:
+                            return <button className="btn btn-sm btn-info">Refunded</button>;
                           default:
                             return <button className="btn btn-sm btn-secondary">Unknown Status</button>;
                         }

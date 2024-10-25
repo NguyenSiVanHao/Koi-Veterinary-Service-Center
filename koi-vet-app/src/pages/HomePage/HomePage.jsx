@@ -1,14 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import "../HomePage/HomePage.css"
 import banner_home from "../../assets/img/banner_home.jpg";
 import { useDispatch } from 'react-redux';
 import { nextStep, resetBoking, setBookingData } from '../../store/bookingSlice';
 import { BOOKING_TYPE } from '../../utils/constants';
+import { fecthAllServicesAPI } from '../../apis';
+import { Carousel } from 'react-bootstrap';
 
 function HomePage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [serviceList, setServiceList] = useState([]);
+    const [pickedService, setPickedService] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(1); // Khởi đầu từ slide thứ hai
+
+    const getServiceList = async () => {
+        const response = await fecthAllServicesAPI();
+        setServiceList(response.data);
+    }
+
     const handleBooking = (type) => {
         dispatch(setBookingData({ type: type }))
         dispatch(nextStep())
@@ -17,15 +28,17 @@ function HomePage() {
     //reset booking data
     useEffect(() => {
         dispatch(resetBoking())
+        getServiceList();
         //eslint-disable-next-line
     }, [])
+
 
     return (
         <>
             <section className="position-relative banner-section " >
                 <div className="img-container">
-                <img src={banner_home}
-                    alt="Hero" className="banner w-100 banner-i img-crop max-vh-30" />
+                    <img src={banner_home}
+                        alt="Hero" className="banner w-100 banner-i img-crop max-vh-30" />
                 </div>
                 <div className="container h-30">
                     <div className="position-absolute top-0 start-0 w-100 h-100 bg-light bg-opacity-75 d-flex align-items-center justify-content-start">
@@ -87,136 +100,55 @@ function HomePage() {
 
 
 
-            <div className="container">
-
-                <div className="container py-5">
-                    <h6 className="text-center-custom text-center text-uppercase text-primary mb-2">Care you can believe in</h6>
-                    <h2 className="text-center-custom text-center mb-5">Our Services</h2>
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="list-group">
-                                <Link href="#" className="list-group-item list-group-item-action service-item active py-3">
-                                    <i className="fas fa-tint service-icon me-3"></i>
-                                    Free Checkup
-                                </Link>
-                                <Link href="#" className="list-group-item list-group-item-action service-item py-3">
-                                    <i className="fas fa-heartbeat service-icon me-3"></i>
-                                    Aquatic Telehealth Consult
-                                </Link>
-                                <Link href="#" className="list-group-item list-group-item-action service-item py-3">
-                                    <i className="fas fa-fish service-icon me-3"></i>
-                                    Fish Surgery
-                                </Link>
-                                <Link href="#" className="list-group-item list-group-item-action service-item py-3">
-                                    <i className="fas fa-tint service-icon me-3"></i>
-                                    Blood Bank
-                                </Link>
-                            </div>
-                            <div className="mt-4">
-                                <Link to="/services">
-                                    <button className="btn btn-primary w-100">View All</button>
-                                </Link>
-
-                            </div>
+            <div className="container py-5">
+                <h6 className="text-center text-uppercase text-primary mb-2">Care you can believe in</h6>
+                <h2 className="text-center mb-5">Our Services</h2>
+                <div className="row">
+                    <div className="col-md-4">
+                        <div className="list-group">
+                            {serviceList.map((service, index) => {
+                                let isActive = currentIndex === index;
+                                return (
+                                    <Link key={service.id} onClick={() => setCurrentIndex(index)} className={`list-group-item list-group-item-action service-item ${isActive ? 'active' : ''} py-3`}>
+                                        {service.serviceFor === "FISH" && <i className="fas fa-fish service-icon me-3"></i>}
+                                        {service.serviceFor === "POND" && <i className="fas fa-tint service-icon me-3"></i>}
+                                        {service.serviceFor === "ONLINE" && <i className="fas fa-heartbeat service-icon me-3"></i>}
+                                        {service.serviceName}
+                                    </Link>
+                                )
+                            })}
                         </div>
-                        <div className="col-md-8">
-                            <h4>Test quality water</h4>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque placerat scelerisque tortor ornare
-                                ornare. Quisque placerat scelerisque tortor ornare ornare Convallis felis vitae tortor augue. Velit
-                                nascetur proin massa in. Consequat faucibus porttitor enim et.</p>
-                            <img src="https://images.pexels.com/photos/3104694/pexels-photo-3104694.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Water quality test" className="img-fluid rounded mt-3" />
+                        <div className="mt-4">
+                            <Link to="/services">
+                                <button className="btn btn-primary w-100">View All</button>
+                            </Link>
+
                         </div>
                     </div>
-                </div>
+                    <div className="col-md-8">
+                        <Carousel activeIndex={currentIndex} onSelect={(index) => setCurrentIndex(index)}>
+                            {serviceList.map((service) => (
+                                <Carousel.Item key={service.serviceId}>
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            <div className="col-md-12">
+                                                <h4>{service.serviceName}</h4>
+                                                <div dangerouslySetInnerHTML={{ __html: service.description }} />
+                                            </div>
+                                            <img
+                                                src={service.image}
+                                                alt={service.serviceName}
+                                                className="img-fluid rounded service-home-img"
+                                            />
+                                        </div>
 
-
-                <div className="container my-4">
-                    <div className="row">
-                        <h6 className="text-center-custom text-center text-uppercase text-primary mb-2">Better information, Better health</h6>
-                        <h2 className="text-center-custom text-center mb-5 text-nav" >News</h2>
-
-                        <div className="col-md-6 mb-4">
-                            <div className="card news-card" onclick="console.log('Clicked on article: Popular koi varieties and their characteristics')">
-                                <img src="https://images.pexels.com/photos/27155971/pexels-photo-27155971/free-photo-of-d-ng-v-t-ca-d-i-n-c-trang-tri.jpeg?auto=compress&cs=tinysrgb&w=600" className="card-img-top" alt="Popular koi varieties and their characteristics" />
-                                <div className="card-body">
-                                    <h5 className="card-title">Popular koi varieties and their characteristics</h5>
-                                    <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
-                                    <div className="d-flex align-items-center">
-                                        <span className="mr-2">
-                                            <i className="fas fa-eye text-primary"></i> 68
-                                        </span>
-                                        <span>
-                                            <i className="fas fa-heart text-danger"></i> 86
-                                        </span>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-md-6 mb-4">
-                            <div className="card news-card" onclick="console.log('Clicked on article: Koi health care and disease management.')">
-                                <img src="https://canhquansanvuonxanh.com/wp-content/uploads/2023/02/ca-koi-dat-nhat-the-gioi-1.jpg" className="card-img-top" alt="Koi health care and disease management." />
-                                <div className="card-body">
-                                    <h5 className="card-title">Koi health care and disease management.</h5>
-                                    <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
-                                    <div className="d-flex align-items-center">
-                                        <span className="mr-2">
-                                            <i className="fas fa-eye text-primary"></i> 68
-                                        </span>
-                                        <span>
-                                            <i className="fas fa-heart text-danger"></i> 86
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-md-6 mb-4">
-                            <div className="card news-card" onclick="console.log('Clicked on article: Koi breeding and genetics.')">
-                                <img src="https://image-us.eva.vn/upload/3-2022/images/2022-08-26/image16-1661495517-88-width2048height1365.jpg" className="card-img-top" alt="Koi breeding and genetics." />
-                                <div className="card-body">
-                                    <h5 className="card-title">Koi breeding and genetics.</h5>
-                                    <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
-                                    <div className="d-flex align-items-center">
-                                        <span className="mr-2">
-                                            <i className="fas fa-eye text-primary"></i> 68
-                                        </span>
-                                        <span>
-                                            <i className="fas fa-heart text-danger"></i> 86
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-md-6 mb-4">
-                            <div className="card news-card" onclick="console.log('Clicked on article: Koi Fish Care')">
-                                <img src="https://toigingiuvedep.vn/wp-content/uploads/2021/01/hinh-anh-ca-koi-dep-nhat.jpg" className="card-img-top" alt="Koi Fish Care" />
-                                <div className="card-body">
-                                    <h5 className="card-title">Koi Fish Care</h5>
-                                    <p className="card-text text-muted">Monday 05, September 2021 | By Author</p>
-                                    <div className="d-flex align-items-center">
-                                        <span className="mr-2">
-                                            <i className="fas fa-eye text-primary"></i> 68
-                                        </span>
-                                        <span>
-                                            <i className="fas fa-heart text-danger"></i> 86
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                </Carousel.Item>
+                            ))}
+                        </Carousel>
                     </div>
-                </div>
-
-
-                <div className="d-flex justify-content-center mt-4">
-                    <div className="dot bg-primary mr-2"></div>
-                    <div className="dot bg-light mr-2"></div>
-                    <div className="dot bg-light"></div>
                 </div>
             </div>
-
 
 
 
