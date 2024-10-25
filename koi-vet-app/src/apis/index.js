@@ -76,6 +76,14 @@ export const createVetAPI = async (data, image) => {
     return response.data;
 }
 
+export const updateVetAPI = async (vetId, data, image) => {
+    let imageURL = data.image;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.put(`/veterinarians/${vetId}`, { ...data, image: imageURL });
+    return response.data;
+}
 
 
 
@@ -485,8 +493,8 @@ export const createHomeVisitPriceAPI = async (data) => {
 
 
 //dashboard API
-export const fetchDashboardAPI = async (time) => {
-    const response = await api.get(`/invoices/dashboard/${time}`);
+export const fetchDashboardAPI = async (starTime, endTime, time) => {
+    const response = await api.get(`/invoices/dashboard?starTime=${starTime}&endTime=${endTime}&time=${time}`);
     return response.data;
 }
 
