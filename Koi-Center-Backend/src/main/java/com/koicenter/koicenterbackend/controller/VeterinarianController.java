@@ -1,9 +1,11 @@
 package com.koicenter.koicenterbackend.controller;
 import com.koicenter.koicenterbackend.exception.AppException;
+import com.koicenter.koicenterbackend.model.request.veterinarian.UpdateVetDescriptionRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VerinarianUpdateRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VeterinarianRequest;
 import com.koicenter.koicenterbackend.model.response.ResponseObject;
 import com.koicenter.koicenterbackend.model.response.appointment.AppointmentResponse;
+import com.koicenter.koicenterbackend.model.response.veterinarian.VetDescriptionResponse;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VeterinarianResponse;
 import com.koicenter.koicenterbackend.service.AppointmentService;
 import com.koicenter.koicenterbackend.service.VeterinarianService;
@@ -97,6 +99,21 @@ public class VeterinarianController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject(404, "Not Found Appoitment By  " + customerName, null));
+    @PutMapping("/description/{vetId}")
+    public ResponseEntity<ResponseObject> updateVeterinarianDescription(@PathVariable String vetId,@RequestBody UpdateVetDescriptionRequest request) {
+
+        if (request != null) {
+            try {
+                VetDescriptionResponse response = veterinarianService.updateVetDescription(vetId, request);
+                return ResponseObject.APIRepsonse(200, "Update Vet Description Successfully", HttpStatus.OK, response);
+            } catch (AppException e) {
+                return ResponseObject.APIRepsonse(404, "Veterinarian not found: " + e.getMessage(), HttpStatus.NOT_FOUND, "");
+            } catch (Exception e) {
+                return ResponseObject.APIRepsonse(500, "An error occurred while updating veterinarian", HttpStatus.INTERNAL_SERVER_ERROR, "");
+            }
+        } else {
+            return ResponseObject.APIRepsonse(400, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, "");
         }
+
     }
 }
