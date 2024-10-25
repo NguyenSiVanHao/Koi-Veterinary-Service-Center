@@ -3,6 +3,7 @@ import { fecthAllServicesAPI } from '../../apis';
 import { Card, Col, Container, Row } from 'react-bootstrap';
 import KoiVet from '../../assets/img/KoiVet.jpg';
 import './AboutUsPage.css';
+import BannerTop from '../../components/BannerTop/BannerTop';
 
 function AboutUsPage() {
     const [services, setServices] = useState([]);
@@ -18,6 +19,8 @@ function AboutUsPage() {
 
 
   return (
+    <>
+   <BannerTop title="About Us" subTitle="Home / About Us" />
     <Container fluid className="service-detail">
       <Row className="align-items-center service-row">
         <Col md={6} className="p-0">
@@ -67,6 +70,7 @@ function AboutUsPage() {
         </Col>
       </Row>
     </Container>
+    </>
   )
 }
 

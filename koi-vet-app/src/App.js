@@ -97,7 +97,7 @@ function App() {
           <Route path="/*" element={
             <UserLayout>
               <Routes>
-                <Route path="/aboutus" element={<AboutUsPage />} />
+                <Route path="/about-us" element={<AboutUsPage />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/services/:serviceId" element={<ServicePageDetail />} />
                 <Route path="/faq" element={<FAQ />} /> {/* Trang chủ User */}
