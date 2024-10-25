@@ -187,7 +187,7 @@ public class PaymentController {
     }
 
 
-    @GetMapping("/momo-pay")
+    @PostMapping("/momo-pay")
     public ResponseEntity<ResponseObject> payWithMoMo(HttpServletRequest request, @RequestBody TreamentRequest treamentRequest) {
         try {
             String amount = request.getParameter("amount");
@@ -214,7 +214,7 @@ public class PaymentController {
                     true);
 
             if (response != null) {
-                return ResponseObject.APIRepsonse(200, "Redirecting to MoMo payment", HttpStatus.OK, response);
+                return ResponseObject.APIRepsonse(200, "Redirecting to MoMo", HttpStatus.OK, response.getPayUrl());
             }
 
             return ResponseObject.APIRepsonse(400, "Error creating MoMo order.", HttpStatus.BAD_REQUEST, null);

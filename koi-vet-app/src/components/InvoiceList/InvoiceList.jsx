@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { fetchInvoicesByAppointmentIdAPI } from "../../apis";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const InvoiceList = ({appointment}) => {
     const [invoices,setInvoices] = useState(null)
-
+    const role = useSelector(state => state.user.role);
     const fetchInvoicesAppointmentId = async () => {
         const response = await fetchInvoicesByAppointmentIdAPI(appointment?.appointmentId);
         setInvoices(response.data);
     }
     const navigate = useNavigate();
     const handleViewDetail = (appointmentId,invoiceId) => {
-        navigate(`/admin/invoice-detail/${appointmentId}?invoiceId=${invoiceId}`);
+        if (role === "CUSTOMER") {
+            navigate(`/profile/invoice-detail/${appointmentId}?invoiceId=${invoiceId}`);
+        } else {
+            navigate(`/admin/invoice-detail/${appointmentId}?invoiceId=${invoiceId}`);
+        }
     }
     useEffect(() => {
         fetchInvoicesAppointmentId();

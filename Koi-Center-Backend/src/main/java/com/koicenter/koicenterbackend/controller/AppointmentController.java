@@ -14,7 +14,6 @@ import com.koicenter.koicenterbackend.service.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -109,7 +108,7 @@ public class AppointmentController {
         }
     }
     @PutMapping("/cancel/{appointmentId}")
-    public ResponseEntity<ResponseObject> updateAppointmentBecomeCannel(@PathVariable String appointmentId) {
+    public ResponseEntity<ResponseObject> updateAppointmentBecomeCancel(@PathVariable String appointmentId) {
         AppointmentResponse appointmentResponse = appointmentService.updateAppointmentBecomeCannel(appointmentId);
         if (appointmentResponse != null) {
             return ResponseObject.APIRepsonse(200, "UPDATE APPOINTMENT SUCCESSFULLY", HttpStatus.OK, appointmentResponse);

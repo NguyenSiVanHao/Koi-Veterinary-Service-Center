@@ -10,6 +10,7 @@ import com.koicenter.koicenterbackend.model.entity.Veterinarian;
 import com.koicenter.koicenterbackend.model.enums.Role;
 import com.koicenter.koicenterbackend.model.enums.VeterinarianStatus;
 import com.koicenter.koicenterbackend.model.request.authentication.RegisterRequest;
+import com.koicenter.koicenterbackend.model.request.authentication.UpdateForgotPasswordRequest;
 import com.koicenter.koicenterbackend.model.request.authentication.UpdatePasswordRequest;
 import com.koicenter.koicenterbackend.model.request.user.UpdateUserRequest;
 import com.koicenter.koicenterbackend.model.response.staff.StaffDTO;
@@ -69,7 +70,7 @@ public class UserService {
         return true;
     }
 
-    public void createUser(RegisterRequest newUser) {
+    public void createCustomer(RegisterRequest newUser) {
         User user = new User();
         user.setUsername(newUser.getUsername());
         user.setPassword(encoder.encode(newUser.getPassword()));
@@ -314,6 +315,28 @@ public class UserService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Transactional
+    public boolean updateForgotPassword(UpdateForgotPasswordRequest updateForgotPasswordRequest) {
+        User user = userRepository.findByEmail(updateForgotPasswordRequest.getEmail());
+        if (user != null) {
+            String encodedPassword = encoder.encode(updateForgotPasswordRequest.getNewPassword());
+            userRepository.updatePassword(encodedPassword, user.getUserId());
+            return true;
+        }
+        return false;
+    }
+    public boolean createStaff(RegisterRequest newUser) {
+        User user = new User();
+        user.setUsername(newUser.getUsername());
+        user.setPassword(encoder.encode(newUser.getPassword()));
+        user.setFullName(newUser.getFullname());
+        user.setEmail(newUser.getEmail());
+        user.setStatus(true);
+        user.setRole(Role.STAFF);
+        userRepository.save(user);
+        return true;
     }
 }
 

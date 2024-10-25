@@ -15,7 +15,7 @@ const HomeVisitPriceTable = () => {
   }, []);
   return (
     <div className="delivery-pricing-table">
-      <h3 className="delivery-pricing-title">Home Visit Pricing Table</h3>
+      <h3 className="delivery-pricing-title booking-title fw-bold">Home Visit Pricing Table</h3>
       <table className="delivery-pricing-table-content">
         <thead>
           <tr>
