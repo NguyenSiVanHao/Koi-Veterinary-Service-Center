@@ -7,8 +7,10 @@ import com.koicenter.koicenterbackend.model.entity.Veterinarian;
 import com.koicenter.koicenterbackend.model.enums.Role;
 import com.koicenter.koicenterbackend.model.enums.VeterinarianStatus;
 import com.koicenter.koicenterbackend.model.request.user.UserRequest;
+import com.koicenter.koicenterbackend.model.request.veterinarian.UpdateVetDescriptionRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VerinarianUpdateRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VeterinarianRequest;
+import com.koicenter.koicenterbackend.model.response.veterinarian.VetDescriptionResponse;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VeterinarianResponse;
 import com.koicenter.koicenterbackend.model.response.user.UserResponse;
 import com.koicenter.koicenterbackend.repository.ServicesRepository;
@@ -212,6 +214,13 @@ public class VeterinarianService {
             }
         }
 
+        User user = veterinarian.getUser();
+            user.setUsername(request.getUser().getUsername());
+            user.setEmail(request.getUser().getEmail());
+            user.setFullName(request.getUser().getFullname());
+            user.setImage(request.getUser().getImage());
+            user.setStatus(request.getUser().isStatus());
+
         veterinarianRepository.save(veterinarian);
 
         VeterinarianResponse response = new VeterinarianResponse();
@@ -239,6 +248,21 @@ public class VeterinarianService {
         return response;
     }
 
+    public VetDescriptionResponse updateVetDescription(String vetId, UpdateVetDescriptionRequest request) {
+
+        Veterinarian veterinarian = veterinarianRepository.findById(vetId)
+                .orElseThrow(() -> new AppException(
+                        ErrorCode.VETERINARIAN_ID_NOT_EXITS.getCode(),
+                        ErrorCode.VETERINARIAN_ID_NOT_EXITS.getMessage(),
+                        HttpStatus.NOT_FOUND));
+
+        veterinarian.setDescription(request.getDescription());
+        veterinarianRepository.save(veterinarian);
+        VetDescriptionResponse response = new VetDescriptionResponse();
+        response.setVetId(veterinarian.getVetId());
+        response.setDescription(veterinarian.getDescription());
+        return response;
+    }
 }
 
 
