@@ -14,6 +14,7 @@ import { Col, Row } from "react-bootstrap";
 import ImgCrop from "antd-img-crop";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Add this import
+import { toast } from "react-toastify";
 
 function UserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -26,6 +27,7 @@ function UserManagementPage() {
   const [editingUser, setEditingUser] = useState({});
   const [editingUserId, setEditingUserId] = useState(null);
   const [description, setDescription] = useState("");
+  const [selectedServices, setSelectedServices] = useState([]);
 
   const handleUploadImage = (file) => {
     setImage(file);
@@ -44,11 +46,15 @@ function UserManagementPage() {
       form.submit(); 
   };
 
+  const handleChange = (value) => {
+    setSelectedServices(value);
+  }
+
   async function handleSubmit(values) {
     try {
       const requestData = {
         ...values,
-        service: [values.service],
+        service: selectedServices, // Use the selectedServices array
         userRequest: {
           email: values.email,
           password: values.password,
@@ -58,10 +64,10 @@ function UserManagementPage() {
           phone: values.phone,
           status: values.status === "true", 
           image: values.image, 
-          description: description, // Add this line
+          description: description,
         },  
       };
-      const response = await createVetAPI(requestData,image);
+      const response = await createVetAPI(requestData, image);
       message.success("User created successfully!");
       setDataSource([...dataSource, response]);
       handleCloseModal();
@@ -91,9 +97,17 @@ function UserManagementPage() {
 
 
   const handleDeleteUser = async (userId) => {
-    await deleteUserAPI(userId);
-    message.success("User deleted successfully!");
-    setUsers(users.filter((user) => user.user_id !== userId));
+    Modal.confirm({
+      title: "Are you sure you want to delete this user?",
+      onOk: async () => {
+        const response = await deleteUserAPI(userId);
+        if (response.status === 200) {
+          toast.success("User deleted successfully")
+          setUsers(users.filter((user) => user.user_id !== userId));
+      }
+  }
+
+})
   }
 
   const handleSave = async (userId) => {
@@ -464,7 +478,12 @@ function UserManagementPage() {
                 },
               ]}
             >
-              <Select>
+              <Select
+                mode="multiple"
+                placeholder="Please select"
+                onChange={handleChange}
+                style={{ width: '100%' }}
+              >
                 {services.map((service) => (
                   <Select.Option
                     key={service.serviceId}
@@ -508,7 +527,7 @@ function UserManagementPage() {
             >
               <ReactQuill
                 theme="snow"
-                value={description}
+                value={description} 
                 onChange={setDescription}
               />
             </Form.Item>

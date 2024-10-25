@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import "./VetProfile.css";
-import vet from "../../assets/img/veterinarian.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchVetByVetIdAPI } from "../../apis";
 import Loading from "../../components/Loading/Loading";
 import { ROLE } from "../../utils/constants";
 import Modal from "antd/es/modal/Modal";
-import { Form, Input } from "antd";
+import { Form } from "antd";
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
 
 function VetProfile() {
   const { vetId } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-
+  const [description, setDescription] = useState("");
   const [vets, setVets] = useState(null);
 
   const fectchVetProfile = async () => {
@@ -64,7 +65,10 @@ function VetProfile() {
         <div className="col-md-6">
           <div className="vet-profile-right">
             <h5>User name: {vets.user?.username}</h5>
-            <span>{vets.description}</span>
+            <div 
+              className="service-description" 
+              dangerouslySetInnerHTML={{ __html: vets.description }}
+            />
           </div>
         </div>
       </div>
@@ -73,9 +77,22 @@ function VetProfile() {
     <Modal open={open} onCancel={() => setOpen(false)}>
       <p>Information Veterinarian</p>
       <Form form={form} onFinish={handleSubmit}>
-        <Form.Item>
-          <Input/>
-        </Form.Item>
+      <Form.Item
+              label="Description"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter a description",
+                },
+              ]}
+            >
+              <ReactQuill
+                theme="snow"
+                value={description} 
+                onChange={setDescription}
+              />
+            </Form.Item>
       </Form>
     </Modal>
     </>
