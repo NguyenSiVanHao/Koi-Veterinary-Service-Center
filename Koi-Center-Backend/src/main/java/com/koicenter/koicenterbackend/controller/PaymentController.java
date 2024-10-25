@@ -179,6 +179,8 @@ public class PaymentController {
                 .type(InvoiceType.First)
                 .quantity(1)
                 .code(invoiceService.getCode())
+                .deliveryPrice(0)
+                .distance(0)
                 .unitPrice(ammout)
                 .build();
         invoiceRepository.save(newInvoice);

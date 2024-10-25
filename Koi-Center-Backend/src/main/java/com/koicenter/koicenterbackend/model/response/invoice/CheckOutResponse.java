@@ -7,21 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class InvoiceResponse {
-     double totalPrice;
-     PaymentStatus status;
-    LocalDateTime createAt;
-    float unitPrice;
-    String invoiceId;
-    InvoiceType type ;
-    int quantity ;
-    int code ;
-    float distance ;
-    float deliveryPrice ;
+public class CheckOutResponse {
+   InvoiceResponse invoice ;
+   float depositeMoney ;
+
 }

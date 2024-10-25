@@ -32,7 +32,8 @@ public class Invoice {
     @Column(name = "unit_price")
     float unitPrice;
     int quantity ;
-
+    float distance ;
+    float deliveryPrice ;
     int code ;
     @ManyToOne
     @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id")

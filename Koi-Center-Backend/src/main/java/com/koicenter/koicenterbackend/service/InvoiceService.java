@@ -3,19 +3,14 @@ package com.koicenter.koicenterbackend.service;
 import com.koicenter.koicenterbackend.exception.AppException;
 import com.koicenter.koicenterbackend.exception.ErrorCode;
 import com.koicenter.koicenterbackend.mapper.invoice.InvoiceMapper;
-import com.koicenter.koicenterbackend.model.entity.Appointment;
-import com.koicenter.koicenterbackend.model.entity.Invoice;
-import com.koicenter.koicenterbackend.model.entity.KoiTreatment;
-import com.koicenter.koicenterbackend.model.entity.PondTreatment;
+import com.koicenter.koicenterbackend.model.entity.*;
 import com.koicenter.koicenterbackend.model.enums.InvoiceType;
 import com.koicenter.koicenterbackend.model.enums.PaymentStatus;
 import com.koicenter.koicenterbackend.model.request.invoice.InvoiceRequest;
+import com.koicenter.koicenterbackend.model.response.invoice.CheckOutResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.DashboardResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.InvoiceResponse;
-import com.koicenter.koicenterbackend.repository.AppointmentRepository;
-import com.koicenter.koicenterbackend.repository.InvoiceRepository;
-import com.koicenter.koicenterbackend.repository.KoiTreatmentRepository;
-import com.koicenter.koicenterbackend.repository.PondTreatmentRepository;
+import com.koicenter.koicenterbackend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +42,7 @@ public class InvoiceService {
     PondTreatmentRepository pondTreatmentRepository;
     private final CreateOrderMoMo createOrderMoMo;
     private final InvoiceMapper invoiceMapper;
-
+    DeliveryRepository deliveryRepository ;
 
     public List<InvoiceResponse> getInvoiceByAppointmentId(String appointmentId) {
         List<Invoice> invoices = invoiceRepository.findByAppointment_AppointmentId(appointmentId);
@@ -191,6 +186,8 @@ public class InvoiceService {
                 .status(PaymentStatus.Completed)
                 .totalPrice(invoiceRequest.getTotalPrice())
                 .code(getCode() + 1)
+                .distance(invoiceRequest.getDistance())
+                .deliveryPrice(invoiceRequest.getDeliveryPrice())
                 .build();
         invoiceRepository.save(invoice);
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoice);
@@ -215,5 +212,34 @@ public class InvoiceService {
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoice);
         return invoiceResponse;
     }
-
+    public CheckOutResponse checkOutAppointment(String appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppException(
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
+                HttpStatus.NOT_FOUND));
+        int quantityKoi = koiTreatmentRepository.countKoiTreatmentByAppointment_AppointmentId(appointment.getAppointmentId());
+        int quantityPond = pondTreatmentRepository.countPondTreatmentByAppointment_AppointmentId(appointment.getAppointmentId());
+        List<Delivery> deliveries = deliveryRepository.findAll();
+        float deliveryPrice = 0 ;
+        for (Delivery delivery : deliveries) {
+            if (appointment.getDistance() >= delivery.getFromPlace() && appointment.getDistance() <= delivery.getToPlace() ) {
+                deliveryPrice = delivery.getPrice();
+            }
+        }
+        Invoice invoices = Invoice.builder()
+                .appointment(appointment)
+                .type(InvoiceType.Second)
+                .quantity(quantityKoi+quantityPond)
+                .code(getCode() + 1)
+                .distance(appointment.getDistance())
+                .deliveryPrice(deliveryPrice)
+                .build();
+        InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoices);
+        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndAndType(appointmentId, InvoiceType.First);
+        CheckOutResponse checkOutResponse = CheckOutResponse.builder()
+                .depositeMoney(invoice.getTotalPrice())
+                .invoice(invoiceResponse)
+                .build();
+        return checkOutResponse;
+    }
 }

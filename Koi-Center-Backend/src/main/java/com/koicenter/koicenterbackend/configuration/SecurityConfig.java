@@ -101,6 +101,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "api/v1/invoices/dashboard/day").permitAll()
                             .requestMatchers(HttpMethod.GET, "api/v1/invoices").permitAll()
                             .requestMatchers(HttpMethod.GET, "api/v1/invoices/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "api/v1/invoices/checkout/**").permitAll()
 
 
                             .requestMatchers(HttpMethod.GET, "/api/v1/ponds").permitAll()

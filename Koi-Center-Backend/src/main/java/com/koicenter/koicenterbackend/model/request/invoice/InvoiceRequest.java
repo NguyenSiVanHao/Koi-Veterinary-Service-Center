@@ -20,4 +20,6 @@ public class InvoiceRequest {
     int quantity ;
     PaymentStatus status;
     InvoiceType type ;
+    float distance ;
+    float deliveryPrice ;
 }

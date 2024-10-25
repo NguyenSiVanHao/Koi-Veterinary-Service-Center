@@ -139,6 +139,7 @@ function App() {
                         <Route path="/pond-treatment/:appointmentId" element={<PondTreatmentPage />} />
                         <Route path="/koidetail/:appointmentId" element={<KoiDetail isUpdate={false} isCreate={false} isAppointment={true} />} />
                         <Route path="/ponddetail/:appointmentId" element={<PondDetail isUpdate={false} isVeterinarian={false} isCreate={false} isAppointment={true} />} />
+                        <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail isCheckout={false} />} />
                       </Routes>
                     </ProfileLayout>
 
@@ -175,7 +176,8 @@ function App() {
                   <Route path="/invoice" element={<InvoiceListPage />} />
                   <Route path="/medicine" element={<Medicine />} />
                   <Route path="/medpage" element={< MedicineListPage />} />
-                  <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail />} />
+                  <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail isCheckout={false} />} />
+                  <Route path="/checkout/:appointmentId" element={<InvoiceDetail isCheckout={true} />} />
                   <Route path="/usermanagement" element={<UserManagementPage />} />
                   <Route path="/schedual" element={<Schedual />} />
                   <Route path="/servicemanagement" element={<ServiceManagementPage />} />

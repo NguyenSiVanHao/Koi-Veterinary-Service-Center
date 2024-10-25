@@ -3,6 +3,7 @@ package com.koicenter.koicenterbackend.controller;
 import com.koicenter.koicenterbackend.model.enums.InvoiceType;
 import com.koicenter.koicenterbackend.model.request.invoice.InvoiceRequest;
 import com.koicenter.koicenterbackend.model.response.ResponseObject;
+import com.koicenter.koicenterbackend.model.response.invoice.CheckOutResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.DashboardResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.InvoiceResponse;
 import com.koicenter.koicenterbackend.service.InvoiceService;
@@ -70,5 +71,13 @@ public class InvoiceController {
             return ResponseObject.APIRepsonse(200, "Invoice retrieved successfully", HttpStatus.OK, invoiceResponse);
         }else
             return ResponseObject.APIRepsonse(404, "Invoice not found By Invoice ID: " , HttpStatus.NOT_FOUND, null);
+    }
+    @GetMapping("/checkout")
+    public ResponseEntity<ResponseObject> checkOutAppointment(@RequestParam String appointmentId ) {
+        CheckOutResponse checkOutResponse = invoiceService.checkOutAppointment(appointmentId);
+        if (checkOutResponse != null) {
+            return ResponseObject.APIRepsonse(200, "Check-Out successfully", HttpStatus.OK, checkOutResponse);
+        }else
+            return ResponseObject.APIRepsonse(404, "Check-Out not found By Appointment ID: " , HttpStatus.NOT_FOUND, null);
     }
 }
