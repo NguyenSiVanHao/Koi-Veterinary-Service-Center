@@ -187,7 +187,7 @@ public class PaymentController {
     }
 
 
-    @GetMapping("/momo-pay")
+    @PostMapping("/momo-pay")
     public ResponseEntity<ResponseObject> payWithMoMo(HttpServletRequest request, @RequestBody TreamentRequest treamentRequest) {
         try {
             String amount = request.getParameter("amount");
