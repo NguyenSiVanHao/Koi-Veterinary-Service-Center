@@ -27,6 +27,21 @@ function BookingPage() {
   const serviceFor = useSelector(state => state.booking.bookingData.serviceFor)
   const selected = useSelector(state => state.booking.bookingData.selected)
 
+  // Chặn hành động back trên trình duyệt và cảnh báo người dùng
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const confirmationMessage = 'Are you sure you want to leave? You will lose your booking progress.';
+      event.returnValue = confirmationMessage; // Hiển thị thông báo xác nhận
+      return confirmationMessage; // Một số trình duyệt yêu cầu trả về giá trị
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   const handleNextStepButton = () => {
     switch (step) {
       case 1: {
@@ -189,7 +204,7 @@ function BookingPage() {
   return (
     <div className="container booking-container">
       <h2 className="text-center booking-title mb-3">Appoinment Booking</h2>
-      <Stepper activeStep={step -1} alternativeLabel>
+      <Stepper activeStep={step - 1} alternativeLabel>
         {type === "ONLINE" ? stepsOnline.map((label, index) => (
           <Step key={index} > {/* Màu nền và màu chữ tùy chỉnh */}
             <StepLabel >{label}</StepLabel> {/* Màu chữ tùy chỉnh */}
