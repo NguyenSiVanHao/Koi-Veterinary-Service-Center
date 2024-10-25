@@ -125,5 +125,4 @@ public class AppointmentController {
             return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, "");
         }
     }
-
 }

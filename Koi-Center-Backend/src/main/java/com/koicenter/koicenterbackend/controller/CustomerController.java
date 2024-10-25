@@ -75,5 +75,16 @@ public class CustomerController {
             return ResponseObject.APIRepsonse(404, "User does not exist!", HttpStatus.NOT_FOUND, null);
         }
     }
+    @GetMapping("/{customerId}/appointments/searchServicesName")
+    public ResponseEntity<ResponseObject> findAppointmentsByServiceName(@PathVariable("customerId") String customerId, @RequestParam String status,@RequestParam String serviceName) {
+        List<AppointmentResponse> listAppointment = appointmentService.findAppointmentsByServiceName(customerId, status,serviceName);
+
+        if (listAppointment != null && !listAppointment.isEmpty()) {
+            return ResponseEntity.ok(new ResponseObject(200, "Find Appointments By "+ serviceName + "Success", listAppointment));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject(404, "Not Found Appoitment By  " + serviceName, null));
+        }
+    }
     
 }
