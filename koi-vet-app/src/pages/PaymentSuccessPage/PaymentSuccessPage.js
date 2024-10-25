@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './PaymentSuccessPage.css';
 import { resetBoking } from '../../store/bookingSlice';
 import { useDispatch } from 'react-redux';
+import Purchase_Success from '../../assets/img/Purchase_Success.png'
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -12,16 +13,17 @@ const PaymentSuccessPage = () => {
     dispatch(resetBoking())
   },[dispatch])
   const handleBackToHome = () => {
-    navigate('/'); // Điều hướng về trang chủ
+    navigate('/profile/appointment');
   };
 
   return (
     <div className="custom-payment-success-container">
-      <div className="custom-success-message">
-        <h1>Payment Successful!</h1>
-        <p>Thank you for your purchase. Your transaction has been completed successfully.</p>
+      <div className="text-center">
+        <img src={Purchase_Success} alt="Payment Successful" />
+        <h1 className="fw-bold booking-title">Purchase Successful!</h1>
+        <p>Your appointment has been booked successfully.</p>
         <button onClick={handleBackToHome} className="btn btn-primary">
-          Back to Home
+          View my appointment
         </button>
       </div>
     </div>

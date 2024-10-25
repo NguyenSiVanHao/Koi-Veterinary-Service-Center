@@ -173,6 +173,10 @@ export const addPondToAppointmentAPI = async (appointmentId, pondData, image) =>
     const response = await api.post(`/treatments/ponds`, { pondId: savePond.data.pondId, appointmentId: appointmentId });
     return response.data;
 }
+export const cancelAppointmentAPI = async (appointmentId) => {
+    const response = await api.put(`/appointments/cancel/${appointmentId}`);
+    return response.data;
+}
 //API Schedule
 export const fetchScheduleByAppimentTypeAPI = async (type, vetId) => {
     const response = await api.get(`vetSchedules?type=${type}&vetId=${vetId}`);
