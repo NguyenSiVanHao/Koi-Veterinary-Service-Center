@@ -3,7 +3,7 @@ import './BookingPage.css'
 import { useSelector, useDispatch } from 'react-redux'
 import Loading from '../../components/Loading/Loading'
 import { ServiceStep } from '../BookingStep/ServiceStep/ServiceStep'
-import {  resetBoking, setBookingData, setStep } from '../../store/bookingSlice'
+import { resetBoking, setBookingData, setStep } from '../../store/bookingSlice'
 import { useNavigate } from 'react-router-dom'
 import VeterinarianStep from '../BookingStep/VeterinarianStep/VeterinarianStep'
 import DatePickStep from '../BookingStep/DataPickStep/DatePickStep'
@@ -26,6 +26,28 @@ function BookingPage() {
   const type = useSelector(state => state.booking.bookingData.type)
   const serviceFor = useSelector(state => state.booking.bookingData.serviceFor)
   const selected = useSelector(state => state.booking.bookingData.selected)
+  // ... existing code ...
+  useEffect(() => {
+    // Handle browser back button
+    const handlePopState = (event) => {
+      const confirmation = window.confirm("Your booking process is not complete. Are you sure you want to leave?");
+      if (!confirmation) {
+        event.preventDefault(); // Cancel the back action
+        window.history.pushState(null, null); // Reset the history to stay on the page
+      } else {
+        // If confirmed, allow the back action
+        window.history.back(); // Go back in history
+      }
+    };
+
+    window.history.pushState(null, null); // Add a dummy state to intercept back
+    window.addEventListener('popstate', handlePopState);
+
+    // Clean up the event listener on unmount
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   const handleNextStepButton = () => {
     switch (step) {
@@ -176,7 +198,7 @@ function BookingPage() {
     serviceFor === SERVICE_FOR.KOI ? 'Enter Koi information' : serviceFor === SERVICE_FOR.POND ? 'Enter Pond information' : 'Enter Koi/Pond information',
     'Payment'
   ];
-  
+
   const stepsOnline = [
     'Select service',
     'Select veterinarian',
@@ -184,12 +206,12 @@ function BookingPage() {
     'Payment'
   ]
 
-  // Các bước
+
 
   return (
     <div className="container booking-container">
       <h2 className="text-center booking-title mb-3">Appoinment Booking</h2>
-      <Stepper activeStep={step -1} alternativeLabel>
+      <Stepper activeStep={step - 1} alternativeLabel>
         {type === "ONLINE" ? stepsOnline.map((label, index) => (
           <Step key={index} > {/* Màu nền và màu chữ tùy chỉnh */}
             <StepLabel >{label}</StepLabel> {/* Màu chữ tùy chỉnh */}

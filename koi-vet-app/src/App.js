@@ -53,7 +53,9 @@ import { persistor } from './store/store';
 import FAQManagement from './pages/FAQManagement/FAQManagement';
 import CreateMedicinePage from './pages/CreateMedicinePage/CreateMedicinePage';
 import AboutUsPage from './pages/AboutUsPage/AboutUsPage';
+import Contact from './pages/Contact/Contact';
 import InvoiceDetail from './pages/PaymentCheckout/InvoiceDetail';
+import ContactManagement from './pages/ContactManagement/ContactManagement';
 
 function App() {
   const isAuthorized = useSelector(state => state?.user?.isAuthorized)
@@ -95,7 +97,8 @@ function App() {
           <Route path="/*" element={
             <UserLayout>
               <Routes>
-                <Route path="/aboutus" element={<AboutUsPage />} />
+                <Route path="/about-us" element={<AboutUsPage />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/services/:serviceId" element={<ServicePageDetail />} />
                 <Route path="/faq" element={<FAQ />} /> {/* Trang chủ User */}
                 <Route path="/" element={<HomePage />} />
@@ -136,6 +139,7 @@ function App() {
                         <Route path="/pond-treatment/:appointmentId" element={<PondTreatmentPage />} />
                         <Route path="/koidetail/:appointmentId" element={<KoiDetail isUpdate={false} isCreate={false} isAppointment={true} />} />
                         <Route path="/ponddetail/:appointmentId" element={<PondDetail isUpdate={false} isVeterinarian={false} isCreate={false} isAppointment={true} />} />
+                        <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail isCheckout={false} />} />
                       </Routes>
                     </ProfileLayout>
 
@@ -172,13 +176,15 @@ function App() {
                   <Route path="/invoice" element={<InvoiceListPage />} />
                   <Route path="/medicine" element={<Medicine />} />
                   <Route path="/medpage" element={< MedicineListPage />} />
-                  <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail />} />
+                  <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail isCheckout={false} />} />
+                  <Route path="/checkout/:appointmentId" element={<InvoiceDetail isCheckout={true} />} />
                   <Route path="/usermanagement" element={<UserManagementPage />} />
                   <Route path="/schedual" element={<Schedual />} />
                   <Route path="/servicemanagement" element={<ServiceManagementPage />} />
                   <Route path="/homevisitprice" element={<HomeVisitPricePage />} />
                   <Route path="/faqmanagement" element={<FAQManagement />} />
                   <Route path="/medicinelist" element={<CreateMedicinePage />} />
+                  <Route path="/contactmanagement" element={<ContactManagement />} />
                 </Route>
 
                 {/* <Route path="/koiinformation" element={<KoiInformation />} /> */}

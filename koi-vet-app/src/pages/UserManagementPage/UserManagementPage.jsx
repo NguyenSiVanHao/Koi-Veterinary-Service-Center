@@ -9,9 +9,11 @@ import {
   updateUserAPI,
 } from "../../apis";
 import { ROLE } from "../../utils/constants";
-import { Form, Input, message, Modal, Select, Table } from "antd";
-import TextArea from "antd/es/input/TextArea";
+import { Form, Image, Input, message, Modal, Select, Table, Upload } from "antd";
 import { Col, Row } from "react-bootstrap";
+import ImgCrop from "antd-img-crop";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Add this import
 
 function UserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -23,9 +25,9 @@ function UserManagementPage() {
   const [image, setImage] = useState(null);
   const [editingUser, setEditingUser] = useState({});
   const [editingUserId, setEditingUserId] = useState(null);
+  const [description, setDescription] = useState("");
 
-  const handleUploadImage = (event) => {
-    const file = event.target.files[0];
+  const handleUploadImage = (file) => {
     setImage(file);
   };
 
@@ -55,10 +57,11 @@ function UserManagementPage() {
           address: values.address,
           phone: values.phone,
           status: values.status === "true", 
-          image: values.image,
-        },
+          image: values.image, 
+          description: description, // Add this line
+        },  
       };
-      const response = await createVetAPI(requestData);
+      const response = await createVetAPI(requestData,image);
       message.success("User created successfully!");
       setDataSource([...dataSource, response]);
       handleCloseModal();
@@ -80,7 +83,8 @@ function UserManagementPage() {
       const response = await fetchAllUsersAPI(role);
       console.log(role)
       console.log("response", response)
-      setUsers(response.data || []);
+      // Ensure the data is an array before setting it to state
+      setUsers(Array.isArray(response.data) ? response.data : []);
     };
     fetchAllUsersByRole();
   }, [role]);
@@ -141,7 +145,7 @@ function UserManagementPage() {
     const address =
       userToEdit.role === ROLE.CUSTOMER
         ? userToEdit.customer?.address
-        : userToEdit.staff?.address || "";
+        : "";
   
     setEditingUserId(userId);
     setEditingUser({
@@ -222,7 +226,7 @@ function UserManagementPage() {
       ),
     },
     // Conditionally render the Address column
-  ...(role !== ROLE.VETERINARIAN
+  ...(role === ROLE.CUSTOMER
     ? [{
         title: "Address",
         dataIndex: "address",
@@ -236,8 +240,8 @@ function UserManagementPage() {
             />
           ) : user.role === ROLE.CUSTOMER
             ? user.customer?.address
-            : user.staff?.address || '-'
-        ),
+            : '-'
+        )
       }]
     : []), // If the role is VETERINARIAN, do not include this column
     {
@@ -324,7 +328,11 @@ function UserManagementPage() {
       <div className="table-responsive">
        
 
-        <Table dataSource={users} columns={columns} />
+        <Table 
+          dataSource={users} 
+          columns={columns} 
+          rowKey={(record) => record.user_id} // Add this line
+        />
 
 
         <Modal open={visible} onOk={handleOk} onCancel={handleCloseModal} width={1000}>
@@ -494,11 +502,15 @@ function UserManagementPage() {
               rules={[
                 {
                   required: true,
-                  message: "pls enter",
+                  message: "Please enter a description",
                 },
               ]}
             >
-              <TextArea />
+              <ReactQuill
+                theme="snow"
+                value={description}
+                onChange={setDescription}
+              />
             </Form.Item>
 
             <Form.Item
@@ -512,10 +524,21 @@ function UserManagementPage() {
               ]}
             >
               <div className="form-group mt-3 text-center">
-                <label className="custom-file-upload">
-                  <input type="file" onChange={handleUploadImage} />
-                  Upload Image <i className="fa-solid fa-image"></i>
-                </label>
+              <Image width={250} className="w-100 koi-profile-image rounded-3" src={(image ? URL.createObjectURL(image) : image)} alt="Koi" />
+                <button className="custom-file-upload" type="button">
+                  <ImgCrop rotationSlider>
+                    <Upload
+                      listType="picture" // Giữ nguyên để chỉ tải lên một bức ảnh
+                      beforeUpload={(file) => {
+                        handleUploadImage(file); // Gọi handleImageChange với tệp
+                        return false; // Ngăn không cho gửi yêu cầu tải lên
+                      }}
+                      showUploadList={false} // Ẩn danh sách tải lên
+                    >
+                      <div className="custom-file-upload p-0"> <i className="fa-solid fa-upload"></i> Upload</div>
+                    </Upload>
+                  </ImgCrop>
+                </button>
               </div>
             </Form.Item>
           </Form>

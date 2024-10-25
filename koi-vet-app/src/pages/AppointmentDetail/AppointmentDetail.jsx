@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, updateAppointmentAPI } from "../../apis";
+import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, updateAppointmentAPI } from "../../apis";
 import "./AppointmentDetail.css";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import { APPOINTMENT_STATUS, BOOKING_TYPE, ROLE, SERVICE_FOR } from "../../utils/constants";
@@ -46,20 +46,20 @@ function AppointmentDetail() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const role = useSelector((state) => state.user.role);
-  useEffect(() => {
-    const fetchAppointmentDetail = async (appointmentId) => {
-      try {
-        const response = await fetchAppointmentByIdAPI(appointmentId);
-        setAppointment({ ...appointment, ...response.data });
-        if (response.status === 200) {
-          setIsLoading(false);
-        }
-        // Chỉ gọi fetchVetForAssignAPI sau khi có dữ liệu từ fetchAppointmentByIdAPI
-      } catch (error) {
-        console.error("Error fetching appointment details:", error);
-        // Xử lý lỗi ở đây (ví dụ: hiển thị thông báo lỗi)
+  const fetchAppointmentDetail = async (appointmentId) => {
+    try {
+      const response = await fetchAppointmentByIdAPI(appointmentId);
+      setAppointment({ ...appointment, ...response.data });
+      if (response.status === 200) {
+        setIsLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching appointment details:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchAppointmentDetail(appointmentId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appointmentId]);
@@ -179,10 +179,27 @@ function AppointmentDetail() {
           updateAppointment({ ...appointment, status: APPOINTMENT_STATUS.READY_FOR_PAYMENT }, appointmentId);
         }
       });
+    } else if (appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) {
+      navigate(`/admin/checkout/${appointmentId}`);
     }
     setIsEditing(false);
   }
-
+  const handleCancelAppointment = () => {
+    Modal.confirm({
+      title: 'Cancel Appointment',
+      content: (
+        <div>
+          <p>Are you sure to cancel? This action cannot be undone.</p>
+        </div>
+      ),
+      onOk: async () => {
+        const response = await cancelAppointmentAPI(appointmentId);
+        if (response.status === 200) {
+          fetchAppointmentDetail(appointmentId);
+        }
+      }
+    })
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -205,6 +222,15 @@ function AppointmentDetail() {
     [APPOINTMENT_STATUS.FINISH]: "Completed",
     [APPOINTMENT_STATUS.CANCEL]: "Cancelled"
   };
+
+  const currentDate = new Date();
+  const appointmentDate = new Date(appointment.appointmentDate);
+
+  // Set the time of the current date to the start of the day (00:00:00)
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Check if the appointment is more than one day away
+  const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
   if (isLoading) return <PreLoader />
 
@@ -269,14 +295,15 @@ function AppointmentDetail() {
                 value={statusDisplayMap[appointment.status] || appointment.status}
                 disabled={true}
               />
-              {role !== ROLE.CUSTOMER && (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS) ?
+              {role !== ROLE.CUSTOMER && (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS || appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) ?
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={() => handleStartFinish()}
                 >
                   {appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE ? "Start" : null}
-                  {appointment.status === APPOINTMENT_STATUS.PROCESS ? "Checkout" : null}
+                  {appointment.status === APPOINTMENT_STATUS.PROCESS ? "Finish" : null}
+                  {appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT ? "Checkout" : null}
 
                 </button>
                 : null}
@@ -291,32 +318,26 @@ function AppointmentDetail() {
               Veterinarian <i className="fa-solid fa-user-doctor" ></i>
             </label>
 
-            {appointment.status === APPOINTMENT_STATUS.CREATED ?
-              <select
-                className="form-select"
-                id="vetId"
-                name="vetId"
-                value={appointment.vetId}
-                onChange={(e) => handleAssignVet(e)}
-                disabled={role === ROLE.VETERINARIAN || !isEditing || (appointment.status !== APPOINTMENT_STATUS.CREATED && appointment.status !== APPOINTMENT_STATUS.BOOKING_COMPLETE)}
-              >
-                <option value={"SKIP"}>Not assigned</option>
-                {vetList.map((vet) => (
-                  <option key={vet.vetId} value={vet.vetId}>
-                    {vet.user.fullName}
-                  </option>
-                ))}
-              </select>
-              :
-              <input
-                type="text"
-                className="form-control"
-                id="vetId"
-                name="vetId"
-                value={appointment.vetName}
-                disabled
-              />
-            }
+
+            <select
+              className="form-select"
+              id="vetId"
+              name="vetId"
+              value={appointment.vetId}
+              onChange={(e) => handleAssignVet(e)}
+              disabled={role === ROLE.VETERINARIAN || !isEditing || (appointment.status !== APPOINTMENT_STATUS.CREATED && appointment.status !== APPOINTMENT_STATUS.BOOKING_COMPLETE)}
+            >
+              <option value={"SKIP"}>Not assigned</option>
+              {appointment.vetId && <option value={appointment.vetId}>
+                {appointment.vetName}
+              </option>}
+              {vetList.map((vet) => (
+                <option key={vet.vetId} value={vet.vetId}>
+                  {vet.user.fullName}
+                </option>
+              ))}
+            </select>
+
           </div>
           <div className="col-md-6">
             <label htmlFor="serviceId" className="form-label">
@@ -335,7 +356,7 @@ function AppointmentDetail() {
         </div>
 
         <div className="row mb-3">
-          <div className="col-md-4">
+          <div className="col-md-6">
             <label htmlFor="type" className="form-label">
               Appointment Type
             </label>
@@ -352,7 +373,7 @@ function AppointmentDetail() {
               <option value={BOOKING_TYPE.ONLINE}>Online</option>
             </select>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-6">
             <label htmlFor="serviceType" className="form-label">
               Service Type
             </label>
@@ -365,19 +386,7 @@ function AppointmentDetail() {
               disabled
             />
           </div>
-          <div className="col-md-4">
-            <label htmlFor="depositedMoney" className="form-label">
-              Deposited Money (VND) <i className="fa-solid fa-money-bill" ></i>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="depositedMoney"
-              name="depositedMoney"
-              value={appointment.depositedMoney.toLocaleString()}
-              disabled
-            />
-          </div>
+
 
         </div>
 
@@ -469,36 +478,52 @@ function AppointmentDetail() {
 
         <div className="d-flex justify-content-between align-items-center mb-3">
           {/* {role === ROLE.CUSTOMER && appointment.status !== APPOINTMENT_STATUS.FINISH && ( */}
-            <>
-              <div className="col-md-6">
+          <>
+            <div className="d-flex gap-2">
+              {role !== ROLE.CUSTOMER && (
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-primary mr-3"
                   onClick={() => setIsEditing(!isEditing)}
                 >
                   {isEditing ? "Cancel" : "Edit"}
                 </button>
-                {appointment.status === "FINISH" && (
+
+              )}
+              {role === ROLE.CUSTOMER && appointment.status === APPOINTMENT_STATUS.FINISH && (
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => navigate(`/rating-feedback/${appointmentId}`)}
+                >
+                  Rating & Feedback
+                </button>
+
+              )}
+              {
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && !isEditing && (
                   <button
                     type="button"
-                    className="btn btn-primary"
-                    onClick={() => navigate(`/rating-feedback/${appointmentId}`)}
+                    className="btn btn-danger"
+                    onClick={() => handleCancelAppointment()}
                   >
-                    Rating & Feedback
+                    Cancel Appointment
                   </button>
-                )}
-              </div>
+                )
+              }
+            </div>
 
 
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => setIsInvoiceModalOpen(true)}
-              >
-                Invoices
-              </button>
-            </>
-          
+            {!isEditing && <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setIsInvoiceModalOpen(true)}
+            >
+              Invoices
+            </button>}
+          </>
+
           {isEditing && (
             <button type="submit" className="btn btn-primary">
               Save Changes
@@ -527,12 +552,12 @@ function AppointmentDetail() {
       </div>
 
 
-    <Modal
-      open={isInvoiceModalOpen}
-      onCancel={() => setIsInvoiceModalOpen(false)}
-    >
-     <InvoiceList appointment={appointment}/>
-    </Modal>
+      <Modal
+        open={isInvoiceModalOpen}
+        onCancel={() => setIsInvoiceModalOpen(false)}
+      >
+        <InvoiceList appointment={appointment} />
+      </Modal>
     </>
 
   );

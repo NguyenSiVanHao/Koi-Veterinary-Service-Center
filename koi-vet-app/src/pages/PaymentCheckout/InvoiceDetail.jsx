@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from 'react'
-import { fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchInvoiceByAppointmentIdAndTypeAPI, fetchInvoiceByInvoiceId, updateAppointmentAPI, updateInvoiceAPI } from '../../apis';
+import { createInvoiceV2API, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchCheckoutAPI, fetchInvoiceByInvoiceId, updateAppointmentAPI, updateInvoiceAPI } from '../../apis';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './InvoiceDetail.css';
 import { toast } from 'react-toastify';
 import HomeVisitPriceTable from '../../components/HomeVisitPriceTable/HomeVisitPriceTable';
+import paid from '../../assets/img/paid_icon.png'
+import refund from '../../assets/img/refund.jpg'
+import { Modal } from 'antd';
 import { APPOINTMENT_STATUS } from '../../utils/constants';
-const InvoiceDetail = () => {
+const InvoiceDetail = ({ isCheckout }) => {
   const [appointmentDetail, setAppointmentDetail] = useState(null);
   const location = useLocation();
   const [serviceDetail, setServiceDetail] = useState(null);
   const [invoiceDetail, setInvoiceDetail] = useState(null);
+  const [depositeMoney, setDepositeMoney] = useState(null);
+  const [checkOutData, setCheckOutData] = useState({
+    "unitPrice": 0,
+    "totalUnitPrice": 0,
+    "quantity": 0,
+    "distance": 0,
+    "deliveryPrice": 0,
+    "totalDeliveryPrice": 0,
+    "totalPrice": 0
+  });
   const { appointmentId } = useParams();
   const queryParams = new URLSearchParams(location.search);
   const invoiceId = queryParams.get("invoiceId");
@@ -20,29 +33,70 @@ const InvoiceDetail = () => {
     console.log(response.data)
     setInvoiceDetail(response.data);
   }
+  const fetchCheckout = async () => {
+    const response = await fetchCheckoutAPI(appointmentId);
+    setInvoiceDetail(response.data.invoice);
+    setDepositeMoney(response.data.depositeMoney);
+  }
   useEffect(() => {
-    fetchInvoiceDetail();
-  }, [invoiceId]);
-  const handleCheckout = async () => {
-    const confirmAction = window.confirm("Are you sure to confirm checkout?");
-    if (!confirmAction) {
-      return;
+    if (isCheckout) {
+      fetchCheckout();
     } else {
-      const invoiceResponse = await updateInvoiceAPI(appointmentDetail.invoiceId, appointmentDetail)
-      if (invoiceResponse.status === 200) {
-        const res = await updateAppointmentAPI(
-          {
-            ...appointmentDetail,
-            status: APPOINTMENT_STATUS.FINISH
-          }, appointmentId)
-        if (res.status === 200) {
-          toast.success("Checkout success");
-          navigate(-1)
-        }
-      } else {
-        toast.error("Checkout failed");
-      }
+      fetchInvoiceDetail();
     }
+  }, [invoiceId, appointmentDetail]);
+  useEffect(() => {
+    if (invoiceDetail && serviceDetail) {
+      setCheckOutData(prev => ({
+        ...prev,
+        "unitPrice": serviceDetail?.serviceFor === "FISH" ? serviceDetail?.koiPrice : serviceDetail?.pondPrice,
+        "totalUnitPrice": serviceDetail?.serviceFor === "FISH" ? serviceDetail?.koiPrice * invoiceDetail?.quantity : serviceDetail?.pondPrice * invoiceDetail?.quantity,
+        "quantity": invoiceDetail?.quantity,
+        "distance": invoiceDetail?.distance,
+        "deliveryPrice": invoiceDetail?.deliveryPrice,
+        "totalDeliveryPrice": invoiceDetail?.distance * invoiceDetail?.deliveryPrice,
+      }))
+    }
+  }, [invoiceDetail, serviceDetail])
+  useEffect(() => {
+    if (checkOutData) {
+      setCheckOutData(prev => ({
+        ...prev,
+        "totalPrice": (prev.totalDeliveryPrice + prev.totalUnitPrice)
+      }))
+    }
+  }, [checkOutData.totalDeliveryPrice, checkOutData.totalUnitPrice])
+  const handleCheckout = async () => {
+    Modal.confirm({
+      title: "Confirm Checkout",
+      content: "Are you sure to confirm checkout?",
+      onOk: async () => {
+        const invoiceResponse = await createInvoiceV2API({
+          "unitPrice": checkOutData.unitPrice,
+          "totalPrice": checkOutData.totalPrice,
+          "createAt": new Date(),
+          "appointmentId": appointmentId,
+          "quantity": checkOutData.quantity,
+          "status": "Completed",
+          "type": "Second",
+          "distance": checkOutData.distance,
+          "deliveryPrice": checkOutData.deliveryPrice
+        })
+        if (invoiceResponse.status === 201) {
+          const res = await updateAppointmentAPI(
+            {
+              ...appointmentDetail,
+              "status": APPOINTMENT_STATUS.FINISH,
+            }, appointmentId)
+          if (res.status === 200) {
+            toast.success("Checkout success");
+            navigate(-1)
+          }
+        } else {
+          toast.error("Checkout failed");
+        }
+      }
+    })
   }
 
   useEffect(() => {
@@ -57,30 +111,32 @@ const InvoiceDetail = () => {
       const response = await fecthServiceByServiceIdAPI(appointmentDetail.serviceId);
       setServiceDetail(response.data);
     }
-    
+
     fetchServiceDetail();
   }, [appointmentDetail]);
 
   return (
     <div className="row justify-content-center">
 
-      {appointmentDetail?.type === "HOME" && <div className="bill-details col-md-4">
-        <HomeVisitPriceTable />
-      </div>}
+      {appointmentDetail?.type === "HOME" && isCheckout &&
+        <div className="bill-details col-md-4">
+          <HomeVisitPriceTable />
+        </div>}
       <div className="bill-details col-md-8">
         {
           appointmentDetail && serviceDetail && (
             <>
               <div className="payment-bill">
 
-                <h1>Invoice</h1>
-                <p><strong>Appointment Code:</strong> {appointmentDetail.code}</p>
-                <p><strong>Appointment Date:</strong> {appointmentDetail.appointmentDate}</p>
-                <p><strong>Customer Name:</strong> {appointmentDetail.customerName}</p>
-                <p><strong>Service:</strong> {appointmentDetail.serviceName}</p>
-                <p><strong>Location:</strong> {appointmentDetail.location}</p>
-                <p><strong>Start Time:</strong> {appointmentDetail.startTime}</p>
-                <p><strong>End Time:</strong> {appointmentDetail.endTime}</p>
+                <h2 className='booking-title text-center fw-bold'>{isCheckout ? "PROVISIONAL INVOICE" : "INVOICE"}</h2>
+                <p><strong>Appointment Code:</strong> #{appointmentDetail?.code}</p>
+                <p><strong>Invoice Code:</strong> #{invoiceDetail?.code}</p>
+                <p><strong>Appointment Date:</strong> {appointmentDetail?.appointmentDate}</p>
+                <p><strong>Customer Name:</strong> {appointmentDetail?.customerName}</p>
+                <p><strong>Service:</strong> {appointmentDetail?.serviceName}</p>
+                <p><strong>Location:</strong> {appointmentDetail?.location}</p>
+                <p><strong>Start Time:</strong> {appointmentDetail?.startTime}</p>
+                <p><strong>End Time:</strong> {appointmentDetail?.endTime}</p>
 
                 <table className="bill-table">
                   <thead>
@@ -94,42 +150,61 @@ const InvoiceDetail = () => {
                   </thead>
                   <tbody>
                     {
-                      invoiceDetail.type === "First" ?
+                      invoiceDetail?.type === "First" ?
                         <tr >
                           <td>Initial Service Fee</td>
                           <td>1</td>
                           <td>Service</td>
-                          <td>{invoiceDetail.unitPrice.toLocaleString()} VND</td>
-                          <td>{invoiceDetail.totalPrice.toLocaleString()} VND</td>
+                          <td>{invoiceDetail?.unitPrice?.toLocaleString()} VND</td>
+                          <td>{invoiceDetail?.totalPrice?.toLocaleString()} VND</td>
                         </tr>
                         :
                         <>
                           <tr >
-                            <td>{serviceDetail.serviceName}</td>
-                            <td>{appointmentDetail.quantity}</td>
-                            <td>{serviceDetail.serviceFor === "FISH" ? "Koi" : "Pond"}</td>
-                            <td>{serviceDetail.serviceFor === "FISH" ? serviceDetail.koiPrice.toLocaleString() : serviceDetail.pondPrice.toLocaleString()} VND</td>
-                            <td>{appointmentDetail.totalKoiPondFee.toLocaleString()} VND</td>
+                            <td>{serviceDetail?.serviceFor === "FISH" ? "Koi" : "Pond"} Fee</td>
+                            <td>{checkOutData?.quantity}</td>
+                            <td>{serviceDetail?.serviceFor === "FISH" ? "Koi" : "Pond"}</td>
+                            <td> {checkOutData?.unitPrice?.toLocaleString()} VND</td>
+                            <td>{checkOutData?.totalUnitPrice?.toLocaleString()} VND</td>
                           </tr>
-                          <tr>
+                          {appointmentDetail.type === "HOME" && <tr>
                             <td>Home visit fee</td>
-                            <td>{appointmentDetail.distance}</td>
+                            <td>{invoiceDetail?.distance}</td>
                             <td>Km</td>
-                            <td>{appointmentDetail.homeVisitPrice.toLocaleString()} VND/Km</td>
-                            <td>{appointmentDetail.totalHomeVisitFee.toLocaleString()} VND</td>
-                          </tr>
+                            <td>{checkOutData?.deliveryPrice?.toLocaleString()} VND/Km</td>
+                            <td>{checkOutData?.totalDeliveryPrice?.toLocaleString()} VND</td>
+                          </tr>}
                         </>
                     }
 
                   </tbody>
                 </table>
 
-                <div className="summary text-end d-flex justify-content-between">
-                  <div className="text-start">
-                    <p><strong>Deposited Money:</strong> {appointmentDetail.depositedMoney.toLocaleString()} VND</p>
-                    <p><strong>Balance Due:</strong> {appointmentDetail.balanceDue.toLocaleString()} VND</p>
+                <div className="summary text-end d-flex justify-content-end">
+
+
+                  <div className="text-start ">
+                    {isCheckout && <p><strong>Deposited :</strong> {depositeMoney?.toLocaleString()} VND</p>}
+                    {isCheckout ?
+                      <p><strong>Balance Due:</strong> {checkOutData?.totalPrice?.toLocaleString()} VND</p>
+                      :
+                      <p><strong>Total Paid:</strong> {invoiceDetail?.totalPrice?.toLocaleString()} VND</p>
+                    }
                   </div>
+
                 </div>
+                {
+                  invoiceDetail?.status === "Completed" &&
+                  <div className="text-end d-flex justify-content-end">
+                    <img src={paid} alt="paid" width={100} height={100} style={{ transform: "rotate(20deg)" }} />
+                  </div>
+                }
+                {
+                  invoiceDetail?.status === "Refund" &&
+                  <div className="text-end d-flex justify-content-end">
+                    <img src={refund} alt="refund" width={100} height={100} style={{ transform: "rotate(0deg)" }} />
+                  </div>
+                }
               </div>
             </>
           )
@@ -138,7 +213,12 @@ const InvoiceDetail = () => {
       </div>
       <div className='button-container d-flex justify-content-between mt-3'>
         <button className='btn btn-primary' onClick={() => navigate(-1)}>Back</button>
-        <button className='btn btn-primary' onClick={() => handleCheckout()}>Confirm Checkout</button>
+        {
+          isCheckout ?
+            <button className='btn btn-primary' onClick={() => handleCheckout()}>Confirm Checkout</button>
+            :
+            null
+        }
       </div>
     </div>
 

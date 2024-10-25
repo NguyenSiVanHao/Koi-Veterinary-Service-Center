@@ -67,11 +67,23 @@ export const fetchVetForAssignAPI = async (appointmentData) => {
     return response.data;
 }
 
-export const createVetAPI = async (data) => {
-    const response = await api.post('/veterinarians', data);
+export const createVetAPI = async (data, image) => {
+    let imageURL = null;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.post('/veterinarians', { ...data, image: imageURL });
     return response.data;
 }
 
+export const updateVetAPI = async (vetId, data, image) => {
+    let imageURL = data.image;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.put(`/veterinarians/${vetId}`, { ...data, image: imageURL });
+    return response.data;
+}
 
 
 
@@ -159,6 +171,10 @@ export const addPondToAppointmentAPI = async (appointmentId, pondData, image) =>
     const savePond = await createPondAPI(pondData, image)
 
     const response = await api.post(`/treatments/ponds`, { pondId: savePond.data.pondId, appointmentId: appointmentId });
+    return response.data;
+}
+export const cancelAppointmentAPI = async (appointmentId) => {
+    const response = await api.put(`/appointments/cancel/${appointmentId}`);
     return response.data;
 }
 //API Schedule
@@ -419,6 +435,10 @@ export const createInvoiceV2API = async (data) => {
     const response = await api.post(`/invoices`, data);
     return response.data;
 }
+export const fetchCheckoutAPI = async (appointmentId) => {
+    const response = await api.get(`/invoices/checkout?appointmentId=${appointmentId}`);
+    return response.data;
+}
 
 //Rating
 export const fetchAllRatingByServiceIdAPI = async (serviceId) => {
@@ -477,8 +497,8 @@ export const createHomeVisitPriceAPI = async (data) => {
 
 
 //dashboard API
-export const fetchDashboardAPI = async (time) => {
-    const response = await api.get(`/invoices/dashboard/${time}`);
+export const fetchDashboardAPI = async (starTime, endTime, time) => {
+    const response = await api.get(`/invoices/dashboard?starTime=${starTime}&endTime=${endTime}&time=${time}`);
     return response.data;
 }
 
@@ -517,5 +537,22 @@ export const deleteFAQAPI = async (faqId) => {
 }
 export const createFAQAPI = async (data) => {
     const response = await api.post('/faqs', data);
+    return response.data;
+}
+
+
+//Contact API
+export const fetchContactAPI = async () => {
+    const response = await api.get('/contacts');
+    return response.data;
+}
+
+export const createContactAPI = async (data) => {
+    const response = await api.post('/contacts', data);
+    return response.data;
+}
+
+export const fetchContactDetailAPI = async (contactId) => {
+    const response = await api.get(`/contacts/${contactId}`);
     return response.data;
 }
