@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./FAQ.css";
 import { fetchAllFAQAPI } from "../../apis";
+import BannerTop from "../../components/BannerTop/BannerTop";
 
 function FAQ() {
   const [faqs, setFaqs] = useState([])
@@ -19,10 +20,12 @@ function FAQ() {
     }
     fetchAllFAQ()
   }, [])
+  
   return (
     <div>
-      <div className="container my-5">
-        <h1 className="text-center mb-2">Câu hỏi thường gặp</h1>
+      <BannerTop title="Frequently Asked Questions" subTitle="Home / FAQ" />
+      <div className=" mb-5">
+        
 
         <div className="row justify-content-center phancach">
           <div className="col-md-8">
@@ -41,6 +44,7 @@ function FAQ() {
             <div className="accordion" id="faqAccordion">
               <div className="accordion" id="faqAccordion">
                 {faqs?.map((faq)=>{
+                  
                   return (
                     <div className="accordion-item">
                     <h2 className="accordion-header" id={`heading${faq.faqId}`}>
@@ -65,7 +69,9 @@ function FAQ() {
                       data-bs-parent="#faqAccordion"
                     >
                       <div className="accordion-body">
-                        {faq.answer}
+                        <div dangerouslySetInnerHTML={{ __html: faq.answer }}>
+                        
+                        </div>
                       </div>
                     </div>
                   </div>
