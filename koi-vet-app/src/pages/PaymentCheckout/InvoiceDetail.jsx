@@ -185,7 +185,11 @@ const InvoiceDetail = ({ isCheckout }) => {
 
                   <div className="text-start ">
                     {isCheckout && <p><strong>Deposited :</strong> {depositeMoney?.toLocaleString()} VND</p>}
-                    <p><strong>{isCheckout ? "Balance Due:" : "Total Paid:"}</strong> {checkOutData?.totalPrice?.toLocaleString()} VND</p>
+                    {isCheckout ?
+                      <p><strong>Balance Due:</strong> {checkOutData?.totalPrice?.toLocaleString()} VND</p>
+                      :
+                      <p><strong>Total Paid:</strong> {invoiceDetail?.totalPrice?.toLocaleString()} VND</p>
+                    }
                   </div>
 
                 </div>

@@ -32,7 +32,7 @@ public class UserController {
             if (userService.getUserByUsername(newUser.getUsername()) || userService.getUserByEmail(newUser.getEmail())) {
                 return ResponseObject.APIRepsonse(409, "Username or email already exists", HttpStatus.CONFLICT, "");
             }
-            userService.createUser(newUser);
+            userService.createCustomer(newUser);
             return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
         } catch (Exception e) {
             return ResponseObject.APIRepsonse(500, "An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "");

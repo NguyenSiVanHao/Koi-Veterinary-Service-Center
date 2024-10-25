@@ -124,13 +124,16 @@ function AllAppointment() {
               <i className="fas fa-spinner me-2"></i>Process
             </button>
             <button className="nav-link custom-text-color" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.READY_FOR_PAYMENT)}>
-              <i className="fas fa-dollar-sign me-2 text-warning"></i>Ready For Payment
+              <i className="fas fa-dollar-sign me-2 text-warning"></i>Payment
             </button>
             <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.FINISH)}>
-              <i className="fas fa-flag-checkered me-2 text-success"></i>Completed
+              <i className="fas fa-flag-checkered me-2 text-success"></i>Finish
             </button>
             <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CANCEL)}>
               <i className="fas fa-ban me-2 text-danger"></i>Cancel
+            </button>
+            <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.REFUNDED)}>
+              <i className="fas fa-undo-alt me-2 text-info"></i>Refund
             </button>
           </div>
         </nav>
@@ -180,11 +183,13 @@ function AllAppointment() {
                           case APPOINTMENT_STATUS.PROCESS:
                             return <button className="btn btn-sm btn-primary"> <i className="fas fa-spinner me-2"></i>Process</button>;
                           case APPOINTMENT_STATUS.READY_FOR_PAYMENT:
-                            return <button className="btn btn-sm btn-warning"> <i className="fas fa-dollar-sign me-2"></i>Ready For Payment</button>;
+                            return <button className="btn btn-sm btn-warning"> <i className="fas fa-dollar-sign me-2"></i>Payment</button>;
                           case APPOINTMENT_STATUS.FINISH:
-                            return <button className="btn btn-sm btn-success"> <i className="fas fa-flag-checkered me-2"></i>Completed</button>;
+                            return <button className="btn btn-sm btn-success"> <i className="fas fa-flag-checkered me-2"></i>Finish</button>;
                           case APPOINTMENT_STATUS.CANCEL:
                             return <button className="btn btn-sm btn-danger"> <i className="fas fa-ban me-2"></i>Cancel</button>;
+                          case APPOINTMENT_STATUS.REFUNDED:
+                            return <button className="btn btn-sm btn-info"> <i className="fas fa-undo-alt me-2"></i>Refunded</button>;
                           default:
                             return <button className="btn btn-sm btn-secondary">Unknown Status</button>;
                         }

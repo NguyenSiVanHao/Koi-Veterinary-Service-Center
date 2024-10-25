@@ -33,7 +33,7 @@ function HomePage() {
 
                             <h1 className="display-4 fw-bold mb-4 text-start text-nav" >Dedicated Care for Koi Fish</h1>
                             <h1 className="display-4 fw-bold mb-4 text-start text-nav" >Ensuring Their Peak Health</h1>
-                            <button className="btn btn-primary">Our Services</button>
+                            <button className="btn btn-primary" onClick={() => navigate('/services')}>Our Services</button>
                         </div>
                     </div>
                 </div>
