@@ -214,7 +214,7 @@ public class PaymentController {
                     true);
 
             if (response != null) {
-                return ResponseObject.APIRepsonse(200, "Redirecting to MoMo payment", HttpStatus.OK, response.getPayUrl());
+                return ResponseObject.APIRepsonse(200, "Redirecting to MoMo", HttpStatus.OK, response.getPayUrl());
             }
 
             return ResponseObject.APIRepsonse(400, "Error creating MoMo order.", HttpStatus.BAD_REQUEST, null);
