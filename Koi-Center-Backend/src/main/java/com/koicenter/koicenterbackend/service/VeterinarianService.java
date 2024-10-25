@@ -52,6 +52,7 @@ public class VeterinarianService {
         veterinarianResponse.setDescription(veterinarian.getDescription());
         veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
         veterinarianResponse.setPhone(veterinarian.getPhone());
+        veterinarianResponse.setImageVeterinarian(veterinarian.getImage());
         veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
 
         User user = userRepository.findById(veterinarian.getUser().getUserId()).orElseThrow(() -> new AppException(
