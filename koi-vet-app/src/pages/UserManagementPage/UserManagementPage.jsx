@@ -26,12 +26,9 @@ function UserManagementPage() {
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const [image, setImage] = useState(null);
-  const [editingUser, setEditingUser] = useState({});
-  const [editingUserId, setEditingUserId] = useState(null);
-  const [description, setDescription] = useState("");
   const [selectedServices, setSelectedServices] = useState([]);
   const [visible2, setVisible2] = useState(false);
-
+  const [description, setDescription] = useState("");
   const handleUploadImage = (file) => {
     setImage(file);
   };
@@ -48,6 +45,7 @@ function UserManagementPage() {
   const handleOk2 = () => {
     form.submit(); 
   };
+
 
   async function handleSubmit2(values) {
     try {
@@ -130,7 +128,7 @@ function UserManagementPage() {
       try {
         const response = await fetchAllUsersAPI(role);
         console.log(role);
-        console.log("response", response);
+        console.log("response", response.data);
         // Ensure the data is an array before setting it to state
         setUsers(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
@@ -150,62 +148,8 @@ function UserManagementPage() {
         if (response.status === 200) {
           toast.success("User deleted successfully")
           setUsers(users.filter((user) => user.user_id !== userId));
+        }
       }
-  }
-
-})
-  }
-
-  const handleSave = async (userId) => {
-    console.log("Saving user data:", { userId, ...editingUser });
-    try {
-      // Prepare the data in the format expected by the API
-      const userData = {
-        userId: userId,
-        fullName: editingUser.fullName,
-        email: editingUser.email,
-        phoneNumber: editingUser.phone, // Note the change from 'phone' to 'phoneNumber'
-        address: editingUser.address,
-        image: editingUser.image
-      };
-
-      await updateUserAPI(userData);
-      message.success("User updated successfully!");
-      
-      // Update the local state to reflect the changes
-      setUsers(users.map(user => 
-        user.user_id === userId ? { ...user, ...userData } : user
-      ));
-      
-      setEditingUserId(null);
-    } catch (error) {
-      console.error("Error updating user:", error);
-      message.error("Failed to update user. Please try again.");
-    }
-  };
-  
-
-  const handleEditUser = (userId) => {
-    const userToEdit = users.find(user => user.user_id === userId);
-    
-    // Extract role-based phone and address
-    const phone =
-      userToEdit.role === ROLE.CUSTOMER
-        ? userToEdit.customer?.phone
-        : userToEdit.role === ROLE.VETERINARIAN
-        ? userToEdit.veterinarian?.phone
-        : userToEdit.staff?.phone || "";
-  
-    const address =
-      userToEdit.role === ROLE.CUSTOMER
-        ? userToEdit.customer?.address
-        : "";
-  
-    setEditingUserId(userId);
-    setEditingUser({
-      ...userToEdit,
-      phone,
-      address,
     });
   };
 
@@ -224,42 +168,18 @@ function UserManagementPage() {
       dataIndex: "username",
       key: "username",
       width: 100,
-      render: (text, user) => (
-        editingUserId === user.user_id ? (
-          <Input 
-            defaultValue={text} 
-            onChange={(e) => setEditingUser({ ...editingUser, username: e.target.value })} 
-          />
-        ) : text
-      ),
     },
     {
       title: "Full Name",
       dataIndex: "fullName",
       key: "fullName",
       width: 100,
-      render: (text, user) => (
-        editingUserId === user.user_id ? (
-          <Input 
-            defaultValue={text} 
-            onChange={(e) => setEditingUser({ ...editingUser, fullName: e.target.value })} 
-          />
-        ) : text
-      ),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
       width: 100,
-      render: (text, user) => (
-        editingUserId === user.user_id ? (
-          <Input 
-            defaultValue={text} 
-            onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} 
-          />
-        ) : text
-      ),
     },
     {
       title: "Phone",
@@ -267,19 +187,15 @@ function UserManagementPage() {
       key: "phone",
       width: 100,
       render: (text, user) => (
-        editingUserId === user.user_id ? (
-          <Input
-            value={editingUser.phone}
-            onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
-          />
-        ) : user.role === ROLE.CUSTOMER
+          user.role === ROLE.CUSTOMER
           ? user.customer?.phone
           : user.role === ROLE.VETERINARIAN
           ? user.veterinarian?.phone
           : user.staff?.phone || '-'
       ),
     },
-    // Conditionally render the Address column
+   
+
   ...(role === ROLE.CUSTOMER
     ? [{
         title: "Address",
@@ -287,17 +203,14 @@ function UserManagementPage() {
         key: "address",
         width: 100,
         render: (text, user) => (
-          editingUserId === user.user_id ? (
-            <Input
-              value={editingUser.address}
-              onChange={(e) => setEditingUser({ ...editingUser, address: e.target.value })}
-            />
-          ) : user.role === ROLE.CUSTOMER
+       
+           user.role === ROLE.CUSTOMER
             ? user.customer?.address
             : '-'
         )
       }]
-    : []), // If the role is VETERINARIAN, do not include this column
+    : []), 
+
     {
       title: "Action",
       dataIndex: "action",
@@ -305,14 +218,8 @@ function UserManagementPage() {
       width: 100,
       render: (text, user) => (
         <>
-          {editingUserId === user.user_id ? (
-            <>
-              <button className="btn btn-sm btn-outline-success" onClick={() => handleSave(user.user_id)}>Save</button>
-              <button className="btn btn-sm btn-outline-secondary" onClick={() => setEditingUserId(null)}>Cancel</button>
-            </>
-          ) : (
-            <button className="btn btn-sm btn-outline-secondary" onClick={() => handleEditUser(user.user_id)}>Edit</button>
-          )}
+          
+          <button className="btn btn-sm btn-outline-secondary">Edit</button>
           <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteUser(user.user_id)}>Delete</button>
         </>
       ),

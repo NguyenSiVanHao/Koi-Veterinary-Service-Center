@@ -84,7 +84,7 @@ function SideBar() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/admin/medicine" className={`nav-link ${location.pathname === '/admin/medicine' ? 'active' : ''}`}>
+              <Link to="/admin/medicine-management" className={`nav-link ${location.pathname === '/admin/medicine-management' ? 'active' : ''}`}>
                 <i className="fas fa-pills"></i> Medicine List
               </Link>
             </li>
