@@ -174,7 +174,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/v1/vetSchedules/vetschedules").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/vetSchedules").permitAll()
 
-                            .requestMatchers(HttpMethod.GET, "api/v1/payment/momo-pay").permitAll()
+                            .requestMatchers(HttpMethod.POST, "api/v1/payment/momo-pay").permitAll()
                             .requestMatchers(HttpMethod.POST, "api/v1/payment/momo-pay-callback").permitAll()
 
 
