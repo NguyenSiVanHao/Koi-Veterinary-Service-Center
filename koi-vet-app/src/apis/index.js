@@ -566,3 +566,12 @@ export const fetchContactDetailAPI = async (contactId) => {
     const response = await api.get(`/contacts/${contactId}`);
     return response.data;
 }
+
+
+
+
+//Staff API
+export const createStaffAPI = async (data) => {
+    const response = await api.post('/staffs/create', data);
+    return response.data;
+}

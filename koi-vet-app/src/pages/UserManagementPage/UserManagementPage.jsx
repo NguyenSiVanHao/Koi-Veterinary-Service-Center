@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./UserManagementPage.css";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import {
+  createStaffAPI,
   createVetAPI,
   deleteUserAPI,
   fecthAllServicesAPI,
@@ -19,6 +20,7 @@ import { toast } from "react-toastify";
 function UserManagementPage() {
   const [users, setUsers] = useState([]);
   const [dataSource, setDataSource] = useState([]);
+  const [dataSource2, setDataSource2] = useState([]);
   const [role, setRole] = useState(ROLE.STAFF);
   const [services, setServices] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -28,10 +30,48 @@ function UserManagementPage() {
   const [editingUserId, setEditingUserId] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedServices, setSelectedServices] = useState([]);
+  const [visible2, setVisible2] = useState(false);
 
   const handleUploadImage = (file) => {
     setImage(file);
   };
+
+  const handleOpenModal2 = () => {
+    setVisible2(true);
+  }
+
+  const handleCloseModal2 = () => {
+    setVisible2(false);
+    form.resetFields();
+  };
+
+  const handleOk2 = () => {
+    form.submit(); 
+  };
+
+  async function handleSubmit2(values) {
+    try {
+      const requestData = {
+        ...values,
+        userRequest: {
+          email: values.email,
+          password: values.password,
+          username: values.userName,
+          fullname: values.fullname,
+          address: values.address,
+          phone: values.phone,
+        },  
+      };
+      const response = await createStaffAPI(requestData);
+      message.success("User created successfully!");
+      setDataSource2([...dataSource2, response]);
+      handleCloseModal2();
+    } catch (error) {
+      console.error("Error creating staff:", error);
+      message.error("Failed to create staff. Please try again.");
+    }
+  }
+
 
   const handleOpenModal = () => {
     setVisible(true);
@@ -138,12 +178,6 @@ function UserManagementPage() {
     }
   };
   
-
-  // const handleEditUser = (userId) => {
-  //   const userToEdit = users.find(user => user.user_id === userId);
-  //   setEditingUserId(userId);
-  //   setEditingUser({ ...userToEdit }); // Set initial editing state
-  // };
 
   const handleEditUser = (userId) => {
     const userToEdit = users.find(user => user.user_id === userId);
@@ -286,13 +320,23 @@ function UserManagementPage() {
         <div className="col-md-8">
           <div className="input-group">
             <input type="text" className="form-control" placeholder="Search" />
+            {role === ROLE.VETERINARIAN ? (
             <button
               className="btn btn-primary"
               type="button"
               onClick={handleOpenModal}
             >
-              Add Vet +
+              Add Vet
             </button>
+            ) : role === ROLE.STAFF ? (
+              <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleOpenModal2}
+            >
+              Add Staff
+            </button>
+            ) : null}
           </div>
         </div>
       </div>
@@ -349,6 +393,9 @@ function UserManagementPage() {
         />
 
 
+
+
+        {/* CREATE VET MODAL */}
         <Modal open={visible} onOk={handleOk} onCancel={handleCloseModal} width={1000}>
           <Form labelCol={{ span: 24 }} form={form} onFinish={handleSubmit} layout="vertical">
             <Row>
@@ -559,6 +606,61 @@ function UserManagementPage() {
                   </ImgCrop>
                 </button>
               </div>
+            </Form.Item>
+          </Form>
+        </Modal>
+
+
+
+        {/* CREATE STAFF MODAL */}
+        <Modal open={visible2} onOk={handleOk2} onCancel={handleCloseModal2} width={1000}>
+          <Form labelCol={{ span: 24 }} form={form} onFinish={handleSubmit2} layout="vertical">
+            <Form.Item
+              label="Full Name"
+              name="fullname"
+              rules={[{ required: true, message: "Please enter full name" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please enter email" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Username"
+              name="username" // Changed from userName to username
+              rules={[{ required: true, message: "Please enter username" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Phone"
+              name="phone"
+              rules={[{ required: true, message: "Please enter phone number" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[{ required: true, message: "Please enter password" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[{ required: true, message: "Please enter address" }]}
+            >
+              <Input />
             </Form.Item>
           </Form>
         </Modal>
