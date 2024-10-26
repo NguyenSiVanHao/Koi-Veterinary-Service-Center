@@ -20,6 +20,7 @@ function AllAppointment() {
   const [pageSize] = useState(10);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
+  const [search, setSearch] = useState("")
   const vetId = useSelector((state) => state?.user?.veterinarian?.vetId);
   const role = useSelector((state) => state.user.role);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,10 +31,10 @@ function AllAppointment() {
   };
   useEffect(() => {
     setIsLoading(true);
-    const fetchAppointmentForVet = async (vetId, status) => {
+    const fetchAppointmentForVet = async (vetId, status, search) => {
       try {
-        const response = await fetchAllAppointmentByVetIdAPI(vetId, status);
-        setAppointments(response?.data);
+        const response = await fetchAllAppointmentByVetIdAPI(vetId, status, search);
+        setAppointments(response?.data?.content);
         setIsLoading(false);
         console.log(response?.data)
       } catch (error) {
@@ -43,16 +44,22 @@ function AllAppointment() {
       }
     };
 
-    const fetchAppointmentForStaff = async () => {
-      const response = await fetchAllAppointmentAPI(status, page - 1, pageSize);
-      setAppointments(response?.data);
-      setIsLoading(false);
+    const fetchAppointmentForStaff = async (search) => {
+      try {
+        const response = await fetchAllAppointmentAPI(status, page - 1, pageSize, search);
+        setAppointments(response?.data?.content);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    const fetchAppointmentForCustomer = async (customerId) => {
+    const fetchAppointmentForCustomer = async (customerId, status, search) => {
       try {
-        const response = await fetchAppointmentByCustomerIdAPI(customerId, status);
-        setAppointments(response?.data);
+        const response = await fetchAppointmentByCustomerIdAPI(customerId, status, search);
+        setAppointments(response?.data?.content);
         setIsLoading(false);
         setTitle("My Appointments");
       } catch (error) {
@@ -62,7 +69,7 @@ function AllAppointment() {
       }
     };
     if (role === ROLE.VETERINARIAN) {
-      fetchAppointmentForVet(vetId, status);
+      fetchAppointmentForVet(vetId, status, search);
       setTitle("All My Appointments");
     } else if (role === ROLE.STAFF) {
       fetchAppointmentForStaff();
@@ -103,7 +110,7 @@ function AllAppointment() {
         <div className="col-md-8">
           <div className="input-group">
             <input type="text" className="form-control" placeholder="Search" />
-            <button className="btn btn-primary" type="button">
+            <button className="btn btn-primary" type="button" onClick={() => setSearch(search)}>
               Search <i className="fas fa-search"></i>
             </button>
           </div>
@@ -160,12 +167,12 @@ function AllAppointment() {
 
               : */}
             {
-              appointments.length === 0 ?
+              appointments?.length === 0 ?
                 <tr>
                   <td colSpan="9" className="text-center">No appointments found</td>
                 </tr>
                 :
-                appointments.map((appointmentDetail, index) => (
+                appointments?.map((appointmentDetail, index) => (
                   <tr key={index}>
                     <td>{appointmentDetail.code}</td>
                     <td>{appointmentDetail.customerName}</td>

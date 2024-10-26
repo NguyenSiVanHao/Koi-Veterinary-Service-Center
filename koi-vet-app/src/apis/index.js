@@ -135,12 +135,12 @@ export const createAppointmentAPI = async (appointmentCreateRequest) => {
     return response.data;
 }
 
-export const fetchAllAppointmentAPI = async (status, offSet, pageSize) => {
-    const response = await api.get(`appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}`);
+export const fetchAllAppointmentAPI = async (status, offSet, pageSize,search) => {
+    const response = await api.get(`appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}&search=${search}`);
     return response.data;
 }
-export const fetchAppointmentByCustomerIdAPI = async (customerId, status) => {
-    const response = await api.get(`/customers/${customerId}/appointments?status=${status}`);
+export const fetchAppointmentByCustomerIdAPI = async (customerId, status,search) => {
+    const response = await api.get(`/customers/${customerId}/appointments?status=${status}&search=${search}`);
     return response.data;
 }
 
@@ -153,8 +153,8 @@ export const updateAppointmentAPI = async (appointmentData, appointmentId) => {
     const response = await api.put(`/appointments/update`, { ...appointmentData, appointmentId });
     return response.data;
 }
-export const fetchAllAppointmentByVetIdAPI = async (vetId, status) => {
-    const response = await api.get(`/veterinarians/${vetId}/appointments?status=${status}`);
+export const fetchAllAppointmentByVetIdAPI = async (vetId, status,search) => {
+    const response = await api.get(`/veterinarians/${vetId}/appointments?status=${status}&search=${search}`);
     return response.data;
 }
 export const fetchAppointmentByVetIdAndDateAPI = async (vetId, date) => {

@@ -144,8 +144,8 @@ const Koi = ({ isAppointment, isBooking, title, onUpdateTreatment, updateTrigger
                                         <td>{treatment?.koi?.breed}</td>
                                         {isAppointment ?
                                             <>
-                                                <td>{treatment?.koi?.healthIssue}</td>
-                                                <td>{treatment?.koi?.treatment}</td>
+                                                <td>{treatment?.healthIssue}</td>
+                                                <td>{treatment?.treatment}</td>
                                                 <td >
                                                     <select
                                                         className="form-select w-120"

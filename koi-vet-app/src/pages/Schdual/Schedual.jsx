@@ -17,7 +17,7 @@ const Schedual = () => {
     const [pickedDay, setPickedDay] = useState(null)
     const [isEditMode, setIsEditMode] = useState(false)
     const role = useSelector(state => state.user.role)
-    const vetId = useSelector(state => state.user.veterinarian.vetId)
+    const vetId = useSelector(state => state?.user?.veterinarian?.vetId)
     const [selectedDate, setSelectedDate] = useState([])
     const [currentDate, setCurrentDate] = useState(new Date())
     const navigate = useNavigate()
