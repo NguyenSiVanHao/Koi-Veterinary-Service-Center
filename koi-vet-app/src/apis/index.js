@@ -479,8 +479,17 @@ export const createNewsAPI = async (data) => {
     return response.data;
 }
 
-export const updateNewsAPI = async (newId, data) => {
-    const response = await api.put(`/news/update?newId=${newId}`, data);
+export const updateNewsAPI = async (newId, data, image) => {
+    let imageURL = data.img;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.put(`/news?newId=${newId}`, { ...data, img: imageURL });
+    return response.data;
+}
+
+export const deleteNewsAPI = async (newsId) => {
+    const response = await api.delete(`/news/${newsId}`);
     return response.data;
 }
 
@@ -568,10 +577,11 @@ export const fetchContactDetailAPI = async (contactId) => {
 }
 
 
-
-
 //Staff API
 export const createStaffAPI = async (data) => {
     const response = await api.post('/staffs/create', data);
     return response.data;
 }
+
+
+

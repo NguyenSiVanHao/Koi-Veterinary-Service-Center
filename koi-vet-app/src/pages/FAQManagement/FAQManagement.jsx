@@ -113,7 +113,7 @@ function FAQManagement() {
                 </div>
             </Modal>
             {/* Add FAQ Modal */}
-            fa<Modal open={isModalOpenAdd} onCancel={() => setIsModalOpenAdd(false)} onOk={() => handleCreateFAQ()}>
+            <Modal open={isModalOpenAdd} onCancel={() => setIsModalOpenAdd(false)} onOk={() => handleCreateFAQ()}>
                 <div className='mb-3'>
                     <label htmlFor='question'>Question</label>
                     <ReactQuill
