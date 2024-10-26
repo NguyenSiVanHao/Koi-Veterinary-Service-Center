@@ -76,7 +76,9 @@ export const createVetAPI = async (data, image) => {
     return response.data;
 }
 
-export const updateVetAPI = async (vetId, data, image) => {
+
+
+export const updateVetByIdAPI = async (vetId, data, image) => {
     let imageURL = data.image;
     if (image) {
         imageURL = await fetchUpLoadImageAPI(image);

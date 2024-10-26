@@ -8,6 +8,7 @@ import {
   fecthAllServicesAPI,
   fetchAllUsersAPI,
   updateUserAPI,
+ // updateVetByIdAPI,
 } from "../../apis";
 import { ROLE } from "../../utils/constants";
 import { Form, Image, Input, message, Modal, Select, Table, Upload } from "antd";
@@ -20,7 +21,6 @@ import { toast } from "react-toastify";
 function UserManagementPage() {
   const [users, setUsers] = useState([]);
   const [dataSource, setDataSource] = useState([]);
-  const [dataSource2, setDataSource2] = useState([]);
   const [role, setRole] = useState(ROLE.STAFF);
   const [services, setServices] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -63,8 +63,9 @@ function UserManagementPage() {
         },  
       };
       const response = await createStaffAPI(requestData);
-      message.success("User created successfully!");
-      setDataSource2([...dataSource2, response]);
+      message.success("Staff created successfully!");
+      
+      setDataSource([...dataSource, response]);
       handleCloseModal2();
     } catch (error) {
       console.error("Error creating staff:", error);
@@ -126,11 +127,16 @@ function UserManagementPage() {
 
   useEffect(() => {
     const fetchAllUsersByRole = async () => {
-      const response = await fetchAllUsersAPI(role);
-      console.log(role)
-      console.log("response", response)
-      // Ensure the data is an array before setting it to state
-      setUsers(Array.isArray(response.data) ? response.data : []);
+      try {
+        const response = await fetchAllUsersAPI(role);
+        console.log(role);
+        console.log("response", response);
+        // Ensure the data is an array before setting it to state
+        setUsers(Array.isArray(response.data) ? response.data : []);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        message.error("Failed to fetch users. Please try again.");
+      }
     };
     fetchAllUsersByRole();
   }, [role]);
@@ -387,9 +393,10 @@ function UserManagementPage() {
        
 
         <Table 
+          key={users.length} // Thêm dòng này
           dataSource={users} 
           columns={columns} 
-          rowKey={(record) => record.user_id} // Add this line
+          rowKey={(record) => record.user_id}
         />
 
 
