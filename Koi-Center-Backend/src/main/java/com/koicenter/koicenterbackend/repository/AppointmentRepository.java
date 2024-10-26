@@ -30,7 +30,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
 
     List<Appointment> findByCustomer_CustomerIdOrderByCreatedAtDesc(String customerId);
     List<Appointment> findByVeterinarian_VetIdOrderByCreatedAtDesc(String vetId);
-    Page<Appointment> findByStatusOrderByCreatedAtDesc(AppointmentStatus status, Pageable pageable);
+    List<Appointment> findByStatusOrderByCreatedAtDesc(AppointmentStatus status);
 
     List<Appointment> findAllByService_ServiceId(String serviceId);
     List<Appointment> findAllByOrderByCreatedAtDesc();

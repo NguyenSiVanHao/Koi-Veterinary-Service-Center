@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -233,27 +234,27 @@ public class AppointmentService {
         }
     }
 
-    public PageResponse<AppointmentResponse> getAllAppointments(String status, int offset, int pageSize) {
-        Page<Appointment> appointments;
-        ZonedDateTime createdAt;
-        Pageable pageable = PageRequest.of(offset-1, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
+    public PageResponse<AppointmentResponse> getAllAppointments(String status, int offset, int pageSize,String search) {
+        List<Appointment> appointments = new ArrayList<>();
+        List<AppointmentResponse>appointmentResponses = new ArrayList<>();
         if (status.equalsIgnoreCase("ALL")) {
-            appointments = appointmentRepository.findAll(pageable);
+            appointments = appointmentRepository.findAll();
         } else {//PageRequest.of()
-            appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status), pageable);
+            appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status));
         }
-        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
-            AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
-            log.info(appointment.getCustomer().getCustomerId());
-            if (appointment.getVeterinarian() != null) {
-                response.setVetId(appointment.getVeterinarian().getVetId());
-                response.setVetName(appointment.getVeterinarian().getUser().getFullName());
+        for (Appointment appointment : appointments) {
+            if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
+                AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
+                if (appointment.getVeterinarian() != null) {
+                    response.setVetId(appointment.getVeterinarian().getVetId());
+                    response.setVetName(appointment.getVeterinarian().getUser().getFullName());
+                }
+                appointmentResponses.add(response);
             }
-            return response;
-        });
-        return new PageResponse<>(appointmentResponses.getContent(),(int)((appointmentResponses.getTotalElements()+pageSize-1)/pageSize),offset,appointmentResponses.getTotalElements(),pageSize);
+        }
+        appointmentResponses = filterBySearch(appointmentResponses,search,AppointmentResponse::getCustomerName);
+        return paginateAppointments(appointmentResponses,offset,pageSize);
     }
-
     private String getCode(AppointmentType appointmentType) {
         List<Appointment> appointments = appointmentRepository.findAll();
         int count = 1;
@@ -360,7 +361,7 @@ public class AppointmentService {
             for ( AppointmentResponse appointmentResponse : appointments ) {
                 if(appointmentResponse.getCode().toUpperCase().equals(search.toUpperCase())){
                     return List.of(appointmentResponse);
-                } else if (getNameFunction.apply(appointmentResponse).toLowerCase().contains(search.toLowerCase())) {
+                } else if ( StringUtils.stripAccents(getNameFunction.apply(appointmentResponse).toLowerCase()).contains(StringUtils.stripAccents(search.toLowerCase()))) {
                     appointmentResponses.add(appointmentResponse);
                 }
             }
