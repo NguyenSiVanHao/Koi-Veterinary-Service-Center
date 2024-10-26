@@ -37,14 +37,14 @@ export const fetchMyInfoAPI = async () => {
 }
 
 export const updateUserAPI = async (userData) => {
-    const response = await api.put('/users/update', userData); 
+    const response = await api.put('/users/update', userData);
     return response.data;
 }
 
 export const deleteUserAPI = async (userId) => {
     const response = await api.delete(`/users?userId=${userId}`);
     return response.data;
-  };
+};
 
 //* Vet API */
 export const fetchVetsAPI = async () => {
@@ -135,12 +135,12 @@ export const createAppointmentAPI = async (appointmentCreateRequest) => {
     return response.data;
 }
 
-export const fetchAllAppointmentAPI = async (status, offSet, pageSize) => {
-    const response = await api.get(`appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}`);
+export const fetchAllAppointmentAPI = async (status, offSet, pageSize,search) => {
+    const response = await api.get(`appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}&search=${search}`);
     return response.data;
 }
-export const fetchAppointmentByCustomerIdAPI = async (customerId, status) => {
-    const response = await api.get(`/customers/${customerId}/appointments?status=${status}`);
+export const fetchAppointmentByCustomerIdAPI = async (customerId, status,search) => {
+    const response = await api.get(`/customers/${customerId}/appointments?status=${status}&search=${search}`);
     return response.data;
 }
 
@@ -153,8 +153,8 @@ export const updateAppointmentAPI = async (appointmentData, appointmentId) => {
     const response = await api.put(`/appointments/update`, { ...appointmentData, appointmentId });
     return response.data;
 }
-export const fetchAllAppointmentByVetIdAPI = async (vetId, status) => {
-    const response = await api.get(`/veterinarians/${vetId}/appointments?status=${status}`);
+export const fetchAllAppointmentByVetIdAPI = async (vetId, status,search) => {
+    const response = await api.get(`/veterinarians/${vetId}/appointments?status=${status}&search=${search}`);
     return response.data;
 }
 export const fetchAppointmentByVetIdAndDateAPI = async (vetId, date) => {
@@ -175,6 +175,10 @@ export const addPondToAppointmentAPI = async (appointmentId, pondData, image) =>
 }
 export const cancelAppointmentAPI = async (appointmentId) => {
     const response = await api.put(`/appointments/cancel/${appointmentId}`);
+    return response.data;
+}
+export const refundAppointmentAPI = async (appointmentId) => {
+    const response = await api.put(`/appointments/refund/${appointmentId}`);
     return response.data;
 }
 //API Schedule
@@ -364,8 +368,14 @@ export const fetchPrescriptionByAppointmentIdAPI = async (appointmentId) => {
 }
 
 //Payment API
-export const fetchRedirectPaymentAPI = async (amount, bankCode, appointmentData) => {
-    const response = await api.post(`payment/vn-pay?amount=${amount}&bankCode=${bankCode}`, appointmentData)
+export const fetchRedirectPaymentAPI = async (amount, bankCode, appointmentData, paymentOption) => {
+    let response;
+    console.log(paymentOption)
+    if (paymentOption === "vnpay") {
+        response = await api.post(`payment/vn-pay?amount=${amount}&bankCode=${bankCode}`, appointmentData)
+    } else {
+        response = await api.post(`payment/momo-pay?amount=${amount}`, appointmentData)
+    }
     return response.data;
 }
 
@@ -426,7 +436,7 @@ export const fetchInvoiceByAppointmentIdAndTypeAPI = async (appointmentId, type)
     const response = await api.get(`/invoices/appointmentId?appointmentId=${appointmentId}&type=${type}`);
     return response.data;
 }
-export const fetchInvoiceByInvoiceId = async (invoiceId) =>{
+export const fetchInvoiceByInvoiceId = async (invoiceId) => {
     const response = await api.get(`/invoices/${invoiceId}`);
     return response.data;
 }

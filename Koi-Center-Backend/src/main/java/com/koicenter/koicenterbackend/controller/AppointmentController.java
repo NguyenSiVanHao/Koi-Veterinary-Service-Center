@@ -116,4 +116,13 @@ public class AppointmentController {
             return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, "");
         }
     }
+    @PutMapping("/refund/{appointmentId}")
+    public ResponseEntity<ResponseObject> updateAppointmentBecomeRefund(@PathVariable String appointmentId) {
+        AppointmentResponse appointmentResponse = appointmentService.updateAppointmentBecomeRefund(appointmentId);
+        if (appointmentResponse != null) {
+            return ResponseObject.APIRepsonse(200, "REFUND APPOINTMENT SUCCESSFULLY", HttpStatus.OK, appointmentResponse);
+        } else {
+            return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, "");
+        }
+    }
 }

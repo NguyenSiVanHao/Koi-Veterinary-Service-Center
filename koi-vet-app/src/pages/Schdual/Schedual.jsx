@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { useNavigate } from 'react-router-dom'
 import PreLoader from '../../components/Preloader/Preloader'
 import Loading from '../../components/Loading/Loading'
+import { useSelector } from 'react-redux'
 const Schedual = () => {
     const [selectedVetId, setSelectedVetId] = useState(null)
     const [veterinarians, setVeterinarians] = useState([])
@@ -15,6 +16,8 @@ const Schedual = () => {
     const [appointments, setAppointments] = useState([])
     const [pickedDay, setPickedDay] = useState(null)
     const [isEditMode, setIsEditMode] = useState(false)
+    const role = useSelector(state => state.user.role)
+    const vetId = useSelector(state => state?.user?.veterinarian?.vetId)
     const [selectedDate, setSelectedDate] = useState([])
     const [currentDate, setCurrentDate] = useState(new Date())
     const navigate = useNavigate()
@@ -88,7 +91,14 @@ const Schedual = () => {
         toast(response.message)
     }
     useEffect(() => {
-        getVeterinarian()
+        if (role !== "VETERINARIAN") {
+            getVeterinarian()
+        } else if (role === "VETERINARIAN") {
+            setSelectedVetId(vetId)
+            setIsLoading(false)
+            // setPickedDay(new Date().toDateString().split(" ").slice(0, 3).join(" "))
+
+        }
     }, [])
     const fetchAppointments = async () => {
         try {
@@ -96,11 +106,11 @@ const Schedual = () => {
             const response = await fetchAppointmentByVetIdAndDateAPI(selectedVetId, pickedDay)
             if (response.status === 200) {
                 setAppointments(response.data)
-        } else if (response.status === 404) {
+            } else if (response.status === 404) {
                 toast.error(response.message)
             }
         } catch (error) {
-            toast.error("Something went wrong")
+            toast.error("There is no appointment for this day")
         }
     }
     useEffect(() => {
@@ -147,25 +157,26 @@ const Schedual = () => {
     return (
         <div className="container text-start">
             <AdminHeader title={"Veterinarian Schedual"} />
-            <label htmlFor="select-veterinarian">Select Veterinarian</label>
+            {role !== "VETERINARIAN" && <label htmlFor="select-veterinarian">Select Veterinarian</label>}
 
-            <div className='d-flex flex-row gap-5 align-items-center'>
+            {role !== "VETERINARIAN" &&
+                <div className='d-flex flex-row gap-5 align-items-center'>
 
-                <Select
-                    className="w-50"
-                    options={
-                        veterinarians.map((vet) => ({
-                            value: vet.vetId,
-                            label: `Name: ${vet.user.fullName} | username: ${vet.user.username}`
-                        }))
-                    }
-                    placeholder="Select Veterinarian"
-                    isSearchable={true} // Kích hoạt tính năng search
-                    onChange={(selectedOption) => handleChangeSelectedVet(selectedOption.value)}
-                />
-                <label htmlFor="select-veterinarian">Edit mode:</label>
-                <Switch checkedChildren="Edit" unCheckedChildren="View" checked={isEditMode} onChange={handleChangeMode} />
-            </div>
+                    <Select
+                        className="w-50"
+                        options={
+                            veterinarians.map((vet) => ({
+                                value: vet.vetId,
+                                label: `Name: ${vet.user.fullName} | username: ${vet.user.username}`
+                            }))
+                        }
+                        placeholder="Select Veterinarian"
+                        isSearchable={true} // Kích hoạt tính năng search
+                        onChange={(selectedOption) => handleChangeSelectedVet(selectedOption.value)}
+                    />
+                    <label htmlFor="select-veterinarian">Edit mode:</label>
+                    <Switch checkedChildren="Edit" unCheckedChildren="View" checked={isEditMode} onChange={handleChangeMode} />
+                </div>}
             <div className='d-flex flex-row gap-5'>
                 <div className="calendar-container mt-5 mx-0 d-flex flex-row gap-5 justify-content-center">
                     {/* Header với nút điều hướng tháng */}
@@ -191,7 +202,7 @@ const Schedual = () => {
                     </div>
                 </div>
                 <div className='d-flex flex-column gap-5 mt-5 calendar-container'>
-                    <h3>Appointment List  {pickedDay? `for ${pickedDay}`: null}</h3>
+                    <h3>Appointment List  {pickedDay ? `for ${pickedDay}` : null}</h3>
                     <table className='table table-bordered'>
                         <thead>
                             <tr>

@@ -179,7 +179,7 @@ public class TreatmentService {
         List<KoiTreatment> koiTreatments = koiTreatmentRepository.findKoiTreatmentsByAppointment_AppointmentId(appointment.getAppointmentId());
         List<PondTreatment> pondTreatments = pondTreatmentRepository.findPondTreatmentsByAppointment_AppointmentId(appointment.getAppointmentId());
         List<Delivery> deliverys= deliveryRepository.findAll() ;
-        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndAndType(appointmentId, InvoiceType.First);
+        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, InvoiceType.First);
         float locationPrice = 0 ; // km
         int quantity  = 0 ;
         float price = 0 ;

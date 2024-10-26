@@ -50,11 +50,9 @@ public class AppointmentService {
     UserRepository userRepository ;
     InvoiceRepository invoiceRepository ;
 
-    public List<AppointmentResponse> getAllAppointmentsByCustomerId(String customerId, String status) {
+        public List<AppointmentResponse> getAllAppointmentsByCustomerId(String customerId, String status) {
         List<Appointment> appointments = appointmentRepository.findByCustomer_CustomerIdOrderByCreatedAtDesc(customerId);
         List<AppointmentResponse> appointmentResponses = new ArrayList<>();
-
-
         for (Appointment appointment : appointments) {
             if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
                 AppointmentResponse response = AppointmentResponse.builder()
@@ -85,8 +83,6 @@ public class AppointmentService {
         }
         return appointmentResponses;
     }
-
-
     public AppointmentResponse getAppointmentByAppointmentId(String appointmentId) {
         AppointmentResponse appointmentResponses ;
         Appointment appointment = appointmentRepository.findAppointmentById(appointmentId);
@@ -298,7 +294,7 @@ public class AppointmentService {
     }
     public List<AppointmentResponse> getAllAppointments(String status,int offset,int pageSize) {
         Page<Appointment> appointments;
-        ZonedDateTime createdAt;
+//        ZonedDateTime createdAt;
         Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
         if (status.equalsIgnoreCase("ALL")) {
          appointments = appointmentRepository.findAll(pageable);
@@ -400,6 +396,7 @@ public class AppointmentService {
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
                 HttpStatus.NOT_FOUND)));
         appointment.setStatus(AppointmentStatus.CANCEL);
+        appointmentRepository.save(appointment);
         Veterinarian veterinarian = veterinarianRepository.findById(appointment.getVeterinarian().getVetId()).orElseThrow((() -> new AppException(
                 ErrorCode.VETSCHEDULE_NOT_FOUND.getCode(),
                 ErrorCode.VETSCHEDULE_NOT_FOUND.getMessage(),
@@ -415,13 +412,51 @@ public class AppointmentService {
                     .build();
             vetScheduleService.slotDateTime(vetScheduleRequest1,"less");
         }
-        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndAndType(appointmentId, InvoiceType.First);
+        AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
+        return appointmentResponse ;
+    }
+
+    public AppointmentResponse updateAppointmentBecomeRefund ( String appointmentId){
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
+                HttpStatus.NOT_FOUND)));
+        appointment.setStatus(AppointmentStatus.REFUND);
+        appointmentRepository.save(appointment);
+        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, InvoiceType.First);
         invoice.setStatus(PaymentStatus.Refund);
         invoiceRepository.save(invoice);
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
         return appointmentResponse ;
     }
-
+    public List<AppointmentResponse> findAppointmentsByServiceName (String customerId, String status,String serviceName){
+            List<AppointmentResponse> appointmentsResponses = getAllAppointmentsByCustomerId(customerId,status);
+            List<AppointmentResponse> appointmentResponses = new ArrayList<>();
+            for (AppointmentResponse appointmentResponse: appointmentsResponses){
+                if (serviceName.toUpperCase().equals(appointmentResponse.getCode())){
+                    appointmentResponses.add(appointmentResponse);
+                    break;
+                }
+                if (appointmentResponse.getServiceName().contains(serviceName)){
+                    appointmentResponses.add(appointmentResponse);
+                }
+            }
+            return appointmentResponses ;
+    }
+    public List<AppointmentResponse> findAppointmentsByCustomerName (String vetId, String status,String customerName){
+        List<AppointmentResponse> appointmentsResponses = getAllAppointmentByVetId(vetId,status);
+        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
+        for (AppointmentResponse appointmentResponse: appointmentsResponses){
+            if (customerName.toUpperCase().equals(appointmentResponse.getCode())){
+                appointmentResponses.add(appointmentResponse);
+                break;
+            }
+            if (appointmentResponse.getCustomerName().contains(customerName)){
+                appointmentResponses.add(appointmentResponse);
+            }
+        }
+        return appointmentResponses ;
+    }
 }
 
 

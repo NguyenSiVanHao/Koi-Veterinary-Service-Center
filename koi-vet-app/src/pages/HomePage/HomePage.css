@@ -1,127 +1,148 @@
-
-.banner-image{
+.banner-image {
     max-height: 60vh !important;
 }
-.banner-section{
+
+.banner-section {
     max-height: 30% !important;
 }
-.text-nav{
+
+.text-nav {
     color: #1F2B6C;
 }
 
-.btn-primary{
+.btn-primary {
     background-color: var(--color-primary) !important;
     border: none;
-  }
-  .btn-primary:hover{
+}
+
+.btn-primary:hover {
     background-color: #bee3f8 !important;
-    color:#333 !important;
-  }
-  .text-center-custom{
-    color:#1F2B6C;
-  }
+    color: #333 !important;
+}
+
+.text-center-custom {
+    color: #1F2B6C;
+}
 
 .service-icon {
     font-size: 1.5rem;
     color: #0d6efd;
 }
-.img-crop{
+
+.img-crop {
     object-fit: cover;
-    
+
 }
+
 .img-container {
-    width: 100%;   /* Chiều rộng của div cha */
-    height: 60vh;  /* Chiều cao của div cha */
-    overflow: hidden; /* Ẩn phần ảnh vượt ra ngoài div cha */
-    
-  }
+    width: 100%;
+    /* Chiều rộng của div cha */
+    height: 60vh;
+    /* Chiều cao của div cha */
+    overflow: hidden;
+    /* Ẩn phần ảnh vượt ra ngoài div cha */
+
+}
+
 .service-item {
     cursor: pointer;
     transition: background-color 0.3s;
 }
+
 .service-item:hover {
     background-color: #f8f9fa;
 }
+
 .service-item.active {
     background-color: #0d6efd;
     color: white;
 }
+
 .service-item.active .service-icon {
     color: white;
-}  
-.news-card {  
-    transition: all 0.3s;  
-}  
+}
 
-.news-card:hover {  
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);  
-    background-color: #f8f9fa;  
-}  
+.news-card {
+    transition: all 0.3s;
+}
 
-.dot {  
-    width: 12px;  
-    height: 12px;  
-    border-radius: 50%;  
-    display: inline-block;  
-}  
+.news-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: #f8f9fa;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
 
 
-    .news-card {  
-        display: flex;  
-        flex-direction: column;  
-        border: 1px solid #ccc;  
-        border-radius: 8px;  
-        overflow: hidden;  
-    }  
+.news-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-    .card-img-top {  
-        width: 100%;  
-        height: 200px; /* Đặt chiều cao cố định */  
-        object-fit: cover; /* Giúp hình ảnh không bị biến dạng */  
-    }  
+.card-img-top {
+    width: 100%;
+    height: 200px;
+    /* Đặt chiều cao cố định */
+    object-fit: cover;
+    /* Giúp hình ảnh không bị biến dạng */
+}
 
-    .card-body {  
-        padding: 15px;  
-    }  
+.card-body {
+    padding: 15px;
+}
 
-    .card-title {  
-        font-size: 1.25rem;  
-        color: #333;  
-    }
+.card-title {
+    font-size: 1.25rem;
+    color: #333;
+}
 
-    .service-card {  
-        transition: all 0.3s;  
-    }  
+.service-card {
+    transition: all 0.3s;
+}
 
-    .service-card:hover {  
-        transform: translateY(-5px);  
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);  
-    }  
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
 
-    .bg-blue-100 {  
-        background-color: #ebf8ff;  
-    }  
+.bg-blue-100 {
+    background-color: #ebf8ff;
+}
 
-    .bg-green-100 {  
-        background-color: #f0fff4;  
-    }  
+.bg-green-100 {
+    background-color: #f0fff4;
+}
 
-    .bg-purple-100 {  
-        background-color: #f5f3ff;  
-    }  
+.bg-purple-100 {
+    background-color: #f5f3ff;
+}
 
-    .hover\:bg-blue-200:hover {  
-        background-color: #bee3f8;  
-    }  
+.hover\:bg-blue-200:hover {
+    background-color: #bee3f8;
+}
 
-    .hover\:bg-green-200:hover {  
-        background-color: #c6f6d5;  
-    }  
+.hover\:bg-green-200:hover {
+    background-color: #c6f6d5;
+}
 
-    .hover\:bg-purple-200:hover {  
-        background-color: #e9d8fd;  
-    }  
-    .list-group-item.active{
-        background-color: var(--color-primary) !important;
-    }
-    
+.hover\:bg-purple-200:hover {
+    background-color: #e9d8fd;
+}
+
+.list-group-item.active {
+    background-color: var(--color-primary) !important;
+}
+
+.service-home-img{
+    width: 100% !important;
+    height: 450px !important;
+    object-fit: cover !important;
+}

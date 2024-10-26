@@ -174,17 +174,16 @@ function App() {
                   <Route path="/ponddetail/:appointmentId" element={<PondDetail isUpdate={true} isVeterinarian={true} isCreate={false} isAppointment={true} />} />
                   <Route path="/koidetail" element={<KoiDetail isUpdate={false} isCreate={true} isAppointment={false} />} />
                   <Route path="/invoice" element={<InvoiceListPage />} />
-                  <Route path="/medicine" element={<Medicine />} />
                   <Route path="/medpage" element={< MedicineListPage />} />
                   <Route path="/invoice-detail/:appointmentId" element={<InvoiceDetail isCheckout={false} />} />
                   <Route path="/checkout/:appointmentId" element={<InvoiceDetail isCheckout={true} />} />
-                  <Route path="/usermanagement" element={<UserManagementPage />} />
+                  <Route path="/user-management" element={<UserManagementPage />} />
                   <Route path="/schedual" element={<Schedual />} />
-                  <Route path="/servicemanagement" element={<ServiceManagementPage />} />
-                  <Route path="/homevisitprice" element={<HomeVisitPricePage />} />
-                  <Route path="/faqmanagement" element={<FAQManagement />} />
-                  <Route path="/medicinelist" element={<CreateMedicinePage />} />
-                  <Route path="/contactmanagement" element={<ContactManagement />} />
+                  <Route path="/service-management" element={<ServiceManagementPage />} />
+                  <Route path="/home-visit-price" element={<HomeVisitPricePage />} />
+                  <Route path="/faq-management" element={<FAQManagement />} />
+                  <Route path="/medicine-management" element={<CreateMedicinePage />} />
+                  <Route path="/contact-management" element={<ContactManagement />} />
                 </Route>
 
                 {/* <Route path="/koiinformation" element={<KoiInformation />} /> */}

@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, String> {
     List<Invoice> findByAppointment_AppointmentId(String appointmentId);
-    Invoice findByAppointment_AppointmentIdAndAndType(String appointmentId, InvoiceType type);
+    Invoice findByAppointment_AppointmentIdAndType(String appointmentId, InvoiceType type);
 }

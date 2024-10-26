@@ -40,9 +40,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS configuration
                 .csrf(AbstractHttpConfigurer::disable)
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(customSuccessHandler()) // Use a custom success handler
-                )
+
 
                 .authorizeHttpRequests(auth -> {
                     auth
@@ -75,12 +73,13 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/v1/vetSchedules/{vetId}/schedules/by-date").permitAll()
                             .requestMatchers(HttpMethod.PUT, "/api/v1/vetSchedules/{scheduleId}/schedules/update").permitAll()
                             .requestMatchers(HttpMethod.PUT, "/api/v1/veterinarians/{vetId}").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/veterinarians/description/{vetId}").permitAll()
 
 
                             .requestMatchers(HttpMethod.POST, "/api/v1/vetSchedules/create").permitAll()
                             .requestMatchers(HttpMethod.PUT, "/api/v1/vetSchedules/update").permitAll()
 
-
+                            .requestMatchers(HttpMethod.GET, "/api/v1/veterinarians/{VetId}/appointments/searchCustomersName").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/veterinarians").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/veterinarians ").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/veterinarians/{vetId}").permitAll()
@@ -92,6 +91,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "api/v1/appointments").permitAll()
                             .requestMatchers(HttpMethod.PUT, "api/v1/appointments/update").permitAll()
                             .requestMatchers(HttpMethod.PUT, "api/v1/appointments/cancel/{appointmentId}").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "api/v1/appointments/refund/{appointmentId}").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/appointments/userName/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/appointments/by-vetId/{vetId}").permitAll()
 
@@ -156,6 +156,9 @@ public class SecurityConfig {
 
                             .requestMatchers(HttpMethod.GET, "/api/v1/customer/{customerId}/kois").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/customer/{customerId}/ponds").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/customers/{customerId}/appointments/searchServicesName").permitAll()
+
+
 
                             .requestMatchers(HttpMethod.DELETE, "/api/v1/prescriptions/{prescriptionMedicineId}").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/prescriptions/{prescriptionId}").permitAll()
@@ -172,7 +175,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/v1/vetSchedules/vetschedules").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/vetSchedules").permitAll()
 
-                            .requestMatchers(HttpMethod.GET, "api/v1/payment/momo-pay").permitAll()
+                            .requestMatchers(HttpMethod.POST, "api/v1/payment/momo-pay").permitAll()
                             .requestMatchers(HttpMethod.POST, "api/v1/payment/momo-pay-callback").permitAll()
 
 

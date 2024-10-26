@@ -178,7 +178,7 @@ public class PaymentController {
                 .appointment(appointmentRepository.findAppointmentById(appointmentId))
                 .type(InvoiceType.First)
                 .quantity(1)
-                .code(invoiceService.getCode())
+                .code(invoiceService.getCode()+1)
                 .deliveryPrice(0)
                 .distance(0)
                 .unitPrice(ammout)
@@ -191,15 +191,25 @@ public class PaymentController {
     public ResponseEntity<ResponseObject> payWithMoMo(HttpServletRequest request, @RequestBody TreamentRequest treamentRequest) {
         try {
             String amount = request.getParameter("amount");
+            if (amount == null) {
+                return ResponseObject.APIRepsonse(400, "Amount is required", HttpStatus.BAD_REQUEST, null);
+            }
             amountTemp = Float.parseFloat(amount);
+//            treamentRequestTemp = treamentRequest;
+//            float amountTemp = treamentRequest.getAppointmentRequest().getDepositedMoney();
+//            String amountStr = String.valueOf((int) amountTemp);
+//            if (amountTemp <= 0) {
+//                return ResponseObject.APIRepsonse(400, "Amount is required", HttpStatus.BAD_REQUEST, null);
+//            }
+
             treamentRequestTemp = treamentRequest;
 
             CustomEnviroment customEnviroment = CustomEnviroment.selectEnv("dev");
             String orderId = "order-" + System.currentTimeMillis();
             String requestId = "request-" + System.currentTimeMillis();
             String orderInfo = "Pay for MoMo orders for orders";
-            String returnUrl = "http://localhost:3000/booking/paymentsuccess";
-            String notifyUrl = "http://localhost:8080/api/v1/payment/momo-pay-callback";
+            String redirectUrl  = "http://localhost:3000/booking/paymentsuccess";
+            String ipnUrl  = "https://e767-116-110-41-144.ngrok-free.app/api/v1/payment/momo-pay-callback"; //off ngrok thì phải đổi link mới!!!
             String extraData = "";
 
             PaymentResponse response = CreateOrderMoMo.process(customEnviroment,
@@ -207,8 +217,8 @@ public class PaymentController {
                     requestId,
                     String.valueOf(amount),
                     orderInfo,
-                    returnUrl,
-                    notifyUrl,
+                    redirectUrl ,
+                    ipnUrl ,
                     extraData,
                     RequestType.PAY_WITH_ATM,
                     true);
@@ -234,7 +244,7 @@ public class PaymentController {
 
             String message = (String) payload.get("message");
             Integer resultCode = (Integer) payload.get("resultCode");
-
+            log.info("Received MoMo callback with message: {}, resultCode: {}", message, resultCode);
 
             if (resultCode == 0) {
                 TreamentRequest treatmentRequest = treamentRequestTemp;

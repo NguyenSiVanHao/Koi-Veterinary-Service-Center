@@ -13,7 +13,7 @@ function Payment() {
   const bookingData = useSelector(state => state?.booking?.bookingData)
   const [serviceInfo, setServiceInfo] = useState({})
   const [vetInfo, setVetInfo] = useState({})
-  const [, setPaymentOption] = useState(null)
+  const [paymentOption, setPaymentOption] = useState(null)
   const [error, setError] = useState(false)
   const dispatch = useDispatch()
   const [appointmentCreateRequest, setAppointmentCreateRequest] = useState({
@@ -56,7 +56,7 @@ function Payment() {
         address: customerInfo.address,
         image: userInfo.image
       }, null)
-      const response = await fetchRedirectPaymentAPI(serviceInfo?.basePrice, "NCB", appointmentCreateRequest)
+      const response = await fetchRedirectPaymentAPI(serviceInfo?.basePrice, "NCB", appointmentCreateRequest, paymentOption)
       console.log(response)
       if (response.status === 200) {
         window.location.href = response.data
@@ -175,7 +175,7 @@ function Payment() {
             </div>
             <div className="payment-card-body">
               <div className="mb-3">
-                <HomeVisitPriceTable/>
+                <HomeVisitPriceTable />
               </div>
             </div>
           </div>
@@ -268,6 +268,7 @@ function Payment() {
                     name="paymentOption"
                     id="momo"
                     value="momo"
+                    onChange={(e) => setPaymentOption(e.target.value)}
                   />
                   <label className="form-check-label payment-form-check-label" htmlFor="momo">
                     <i className="fas fa-mobile-alt me-2"></i> Momo
@@ -280,13 +281,13 @@ function Payment() {
                     name="paymentOption"
                     id="vnpay"
                     value="vnpay"
+                    onChange={(e) => setPaymentOption(e.target.value)}
                   />
                   <label className="form-check-label payment-form-check-label d-flex align-items-center align-items-center gap-2" htmlFor="vnpay">
                     <i className="fas fa-credit-card me-2 ml-1"></i> VNPay
                   </label>
                 </div>
               </div>
-
               <button className="btn payment-btn w-100" id="checkoutBtn"
                 onClick={() => handlePayment(appointmentCreateRequest)}
               >

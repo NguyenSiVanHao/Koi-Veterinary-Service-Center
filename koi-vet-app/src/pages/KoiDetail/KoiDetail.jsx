@@ -260,7 +260,7 @@ function KoiDetail({ isCreate, cusId, isUpdate, onClose, onUpdate, isAppointment
             <div className="form-group col-md-6">
               <label>Treatment</label>
               <textarea
-                value={koiData.treatment}
+                value={treatmentData.treatment}
                 name="treatment"
                 onChange={(e) =>
                   handleChangeTreatmentData(e.target.name, e.target.value)
