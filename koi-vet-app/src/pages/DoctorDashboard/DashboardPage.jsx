@@ -1,165 +1,223 @@
 import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
-import { Bar, Doughnut, Line, Radar } from "react-chartjs-2";
+import { Bar, Line, Radar } from "react-chartjs-2";
 import "./DashboardPage.css";
 import { fetchDashboardAPI } from "../../apis";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
+import { Space, DatePicker, message } from "antd";
+import moment from "moment";
 
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
 
+const { RangePicker } = DatePicker;
+
 function DashboardPage() {
   const [dashboardData, setDashboardData] = useState([]);
+  const [chartLabels, setChartLabels] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [koiData, setKoiData] = useState([]);
+  const [pondData, setPondData] = useState([]);
+  const [appointmentData, setAppointmentData] = useState([]);
 
   const [time, setTime] = useState("day");
+  const [starTime, setStarTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const showWarning = (content) => {
+    messageApi.warning(content);
+  };
+
+  const validateDateRange = (start, end, currentTime) => {
+    if (!start || !end) return false;
+
+    const diffDays = end.diff(start, 'days');
+    const diffMonths = end.diff(start, 'months');
+    const diffYears = end.diff(start, 'years');
+
+    if (currentTime === "day" && diffDays > 30) {
+      showWarning("Please select a range of 30 days or less for daily view.");
+      return false;
+    } else if (currentTime === "month" && diffMonths > 12) {
+      showWarning("Please select a range of 12 months or less for monthly view.");
+      return false;
+    } else if (currentTime === "year" && diffYears > 3) {
+      showWarning("Please select a range of 3 years or less for yearly view.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleDateChange = (dates, dateStrings) => {
+    if (dates && dates[0] && dates[1]) {
+      let start = dates[0];
+      let end = dates[1];
+
+      if (validateDateRange(start, end, time)) {
+        setDateRange([start, end]);
+        setStarTime(start.format("YYYY-MM-DD"));
+        setEndTime(end.format("YYYY-MM-DD"));
+      } else {
+        setDateRange([null, null]);
+      }
+    } else {
+      setDateRange([null, null]);
+      setStarTime("");
+      setEndTime("");
+    }
+  };
+
+  const updateTimeRange = (newTime) => {
+    setTime(newTime);
+    let start, end;
+
+    if (dateRange[0] && dateRange[1]) {
+      start = dateRange[0].clone();
+      end = dateRange[1].clone();
+
+      if (newTime === "month") {
+        start = start.startOf('month');
+        end = end.endOf('month');
+      } else if (newTime === "year") {
+        start = start.startOf('year');
+        end = end.endOf('year');
+      }
+
+      if (validateDateRange(start, end, newTime)) {
+        setDateRange([start, end]);
+        setStarTime(start.format("YYYY-MM-DD"));
+        setEndTime(end.format("YYYY-MM-DD"));
+        return;
+      }
+    }
+
+    // If the current range is invalid for the new time, set default range
+    end = moment();
+    switch (newTime) {
+      case "day":
+        start = moment().subtract(7, 'days');
+        break;
+      case "month":
+        start = moment().subtract(3, 'months').startOf('month');
+        end = end.endOf('month');
+        break;
+      case "year":
+        start = moment().subtract(1, 'year').startOf('year');
+        end = end.endOf('year');
+        break;
+      default:
+        start = moment().subtract(7, 'days');
+    }
+    setDateRange([start, end]);
+    setStarTime(start.format("YYYY-MM-DD"));
+    setEndTime(end.format("YYYY-MM-DD"));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetchDashboardAPI(time);
-      console.log("API Data:", response.data); // Kiểm tra dữ liệu API
+      console.log("Fetching data with params:", { starTime, endTime, time });
+      const response = await fetchDashboardAPI(starTime, endTime, time);
+      console.log("API Data:", response.data);
       setDashboardData(response.data || []);
+
+      // Generate labels and prepare data based on the selected time range
+      let labels = [];
+      const start = moment(starTime);
+      const end = moment(endTime);
+
+      if (time === "day") {
+        for (let date = start.clone(); date.isSameOrBefore(end); date.add(1, 'day')) {
+          labels.push(date.format('YYYY-MM-DD'));
+        }
+      } else if (time === "month") {
+        for (let date = start.clone().startOf('month'); date.isSameOrBefore(end, 'month'); date.add(1, 'month')) {
+          labels.push(date.format('YYYY-MM'));
+        }
+      } else if (time === "year") {
+        for (let date = start.clone(); date.isSameOrBefore(end); date.add(1, 'year')) {
+          labels.push(date.format('YYYY'));
+        }
+      }
+
+      setChartLabels(labels);
+
+      // Prepare data for charts
+      const prepareData = (dataKey) => {
+        return labels.map(label => {
+          let value = 0;
+          response.data.forEach(item => {
+            const itemDate = moment(item.date);
+            if (
+              (time === "day" && itemDate.format('YYYY-MM-DD') === label) ||
+              (time === "month" && itemDate.format('YYYY-MM') === label) ||
+              (time === "year" && itemDate.format('YYYY') === label)
+            ) {
+              value += item[dataKey];
+            }
+          });
+          return value;
+        });
+      };
+
+      setRevenueData(prepareData('totalRevenue'));
+      setKoiData(prepareData('totalKoi'));
+      setPondData(prepareData('totalPond'));
+      setAppointmentData(prepareData('totalAppointment'));
+
+      console.log("Prepared Data:", {
+        labels,
+        revenue: prepareData('totalRevenue'),
+        koi: prepareData('totalKoi'),
+        pond: prepareData('totalPond'),
+        appointment: prepareData('totalAppointment')
+      });
     };
-    fetchData();
-  }, [time]);
-
-  //Polling 10s
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      const response = await fetchDashboardAPI(time);
-      setDashboardData(response.data || []);
-    }, 10000);
-    return () => clearInterval(intervalId);
-  }, [time]);
-
-  // Xủ lý dữ liệu nếu như API trả về bị thiếu dữ liệu
-  const generateData = (length, formatter) => {
-    return Array.from({ length }).map((_, i) => formatter(i) || {});
-  };
-
-  // Tạo dữ liệu 7 ngày, 6 tháng, hoặc 3 năm tùy thuộc vào `time`
-  const formattedData = (() => {
-    if (time === "day") {
-      return generateData(7, (i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const dateString = date.toISOString().split("T")[0] || [];
-        const matchedData = dashboardData.find((item) =>
-          item.date?.startsWith(dateString)
-        );
-        return (
-          matchedData || {
-            date: dateString,
-            totalAppointment: 0,
-            totalKoi: 0,
-            totalPond: 0,
-            totalRevenue: 0,
-          }
-        );
-      }).reverse();
-    } else if (time === "month") {
-      return generateData(6, (i) => {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const monthName = date
-          .toLocaleString("en-US", { month: "long" })
-          .toUpperCase();
-        const matchedData = dashboardData.find(
-          (item) => item.month === monthName
-        );
-        console.log(`Checking month: ${monthName}`); // Debugging line
-
-        return (
-          matchedData || {
-            month: monthName,
-            totalAppointment: 0,
-            totalKoi: 0,
-            totalPond: 0,
-            totalRevenue: 0,
-          }
-        );
-      }).reverse();
-    } else {
-      return generateData(3, (i) => {
-        const year = new Date().getFullYear() - i;
-        const matchedData = dashboardData.find((item) => item.year == year);
-        return (
-          matchedData || {
-            year: String(year),
-            totalAppointment: 0,
-            totalKoi: 0,
-            totalPond: 0,
-            totalRevenue: 0,
-          }
-        );
-      }).reverse();
+    
+    if (starTime && endTime) {
+      fetchData();
     }
-  })();
+  }, [time, starTime, endTime]);
 
-  // Tổng hợp dữ liệu cho các card
-  const totalAppointmentcard = formattedData.reduce(
-    (acc, item) => acc + item.totalAppointment,
-    0
-  );
-  const totalKoicard = formattedData.reduce(
-    (acc, item) => acc + item.totalKoi,
-    0
-  );
-  const totalPondcard = formattedData.reduce(
-    (acc, item) => acc + item.totalPond,
-    0
-  );
-  const totalRevenuecard = formattedData.reduce(
-    (acc, item) => acc + item.totalRevenue,
-    0
-  );
+  const totalAppointmentcard = dashboardData.reduce((sum, item) => sum + item.totalAppointment, 0);
+  const totalKoicard = dashboardData.reduce((sum, item) => sum + item.totalKoi, 0);
+  const totalPondcard = dashboardData.reduce((sum, item) => sum + item.totalPond, 0);
+  const totalRevenuecard = dashboardData.reduce((sum, item) => sum + item.totalRevenue, 0);
 
   return (
     <div className="container">
+      {contextHolder}
       <AdminHeader title="Dashboard" />
       <nav className="w-100" style={{ marginBottom: "20px" }}>
         <div className="nav nav-tabs" id="nav-tab" role="tablist">
           <button
             className="nav-link custom-text-color"
-            id="nav-day-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#nav-day"
-            type="button"
-            role="tab"
-            aria-controls="nav-contact"
-            aria-selected="false"
-            onClick={() => setTime("day")}
+            onClick={() => updateTimeRange("day")}
           >
-            <i className="fas fa-calendar-day me-2 text-primary"></i>Day
+            Day
           </button>
           <button
             className="nav-link custom-text-color"
-            id="nav-disabled-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#nav-disabled"
-            type="button"
-            role="tab"
-            aria-controls="nav-disabled"
-            aria-selected="false"
-            onClick={() => setTime("month")}
+            onClick={() => updateTimeRange("month")}
           >
-            <i className="fas fa-calendar-alt me-2 text-success"></i>
             Month
           </button>
           <button
             className="nav-link custom-text-color"
-            id="nav-disabled-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#nav-disabled"
-            type="button"
-            role="tab"
-            aria-controls="nav-disabled"
-            aria-selected="false"
-            onClick={() => setTime("year")}
+            onClick={() => updateTimeRange("year")}
           >
-            <i class="bi bi-calendar2-fill"></i> Year
+            Year
           </button>
         </div>
       </nav>
+      <Space direction="vertical" size={12}>
+        <RangePicker
+          value={dateRange}
+          onChange={handleDateChange}
+          picker={time === "month" ? "month" : time === "year" ? "year" : "date"}
+        />
+      </Space>
       <div className="row dashboard-card">
         <div className="col-md-3">
           <div
@@ -232,21 +290,14 @@ function DashboardPage() {
       </div>
       <div className="row">
         <div className="col-md-12">
-          <div
-            className="dataCard numberCard"
-            // style={{ backgroundColor: "#0f3490 " }}
-          >
+          <div className="dataCard numberCard">
             <Bar
               data={{
-                labels: formattedData.map((item, index) =>
-                  time === "day"
-                    ? item.date || "N/A"
-                    : item.month || item.year || "N/A"
-                ),
+                labels: chartLabels,
                 datasets: [
                   {
                     label: "Revenue",
-                    data: formattedData.map((item) => item.totalRevenue || 0),
+                    data: revenueData,
                     backgroundColor: "#9479DA",
                     borderColor: "#9479DA",
                   },
@@ -261,31 +312,29 @@ function DashboardPage() {
           <div className="dataCard categoryCard">
             <Radar
               data={{
-                labels: formattedData.map(
-                  (item) => item.date || item.month || item.year
-                ),
+                labels: chartLabels,
                 datasets: [
                   {
                     label: "Koi",
-                    data: formattedData.map((item) => item.totalKoi),
-                    backgroundColor: "rgba(75, 192, 192, 0.2)", // Màu nền
-                    borderColor: "rgba(75, 192, 192, 1)", // Màu viền
+                    data: koiData,
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    borderColor: "rgba(75, 192, 192, 1)",
                     borderWidth: 1,
-                    pointBackgroundColor: "rgba(75, 192, 192, 1)", // Màu điểm
-                    pointBorderColor: "#fff", // Màu viền điểm
-                    pointHoverBackgroundColor: "#fff", // Màu nền khi hover
-                    pointHoverBorderColor: "rgba(75, 192, 192, 1)", // Màu viền khi hover
+                    pointBackgroundColor: "rgba(75, 192, 192, 1)",
+                    pointBorderColor: "#fff",
+                    pointHoverBackgroundColor: "#fff",
+                    pointHoverBorderColor: "rgba(75, 192, 192, 1)",
                   },
                   {
                     label: "Pond",
-                    data: formattedData.map((item) => item.totalPond),
-                    backgroundColor: "rgba(255, 165, 0, 0.2)", // Màu nền
-                    borderColor: "rgba(255, 165, 0, 1)", // Màu viền
+                    data: pondData,
+                    backgroundColor: "rgba(255, 165, 0, 0.2)",
+                    borderColor: "rgba(255, 165, 0, 1)",
                     borderWidth: 1,
-                    pointBackgroundColor: "rgba(255, 165, 0, 1)", // Màu điểm
-                    pointBorderColor: "#fff", // Màu viền điểm
-                    pointHoverBackgroundColor: "#fff", // Màu nền khi hover
-                    pointHoverBorderColor: "rgba(255, 165, 0, 1)", // Màu viền khi hover
+                    pointBackgroundColor: "rgba(255, 165, 0, 1)",
+                    pointBorderColor: "#fff",
+                    pointHoverBackgroundColor: "#fff",
+                    pointHoverBorderColor: "rgba(255, 165, 0, 1)",
                   },
                 ],
               }}
@@ -296,13 +345,11 @@ function DashboardPage() {
           <div className="dataCard categoryCard">
             <Line
               data={{
-                labels: formattedData.map(
-                  (item) => item.date || item.month || item.year
-                ),
+                labels: chartLabels,
                 datasets: [
                   {
                     label: "Appointment",
-                    data: formattedData.map((item) => item.totalAppointment),
+                    data: appointmentData,
                     borderColor: "#E74C35",
                     backgroundColor: "#E74C35",
                   },
