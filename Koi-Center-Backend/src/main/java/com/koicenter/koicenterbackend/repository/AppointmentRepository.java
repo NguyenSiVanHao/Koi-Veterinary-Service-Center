@@ -89,4 +89,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
 //    Page<Appointment> findByService_ServiceName(String serviceName) ;
     Page<Appointment> findByVeterinarian_VetId(String veterinarian_id,Pageable pageable);
 
+    Page<Appointment> findByCustomer_CustomerIdAndStatus(String customer_id,String status,Pageable pageable);
+
 }

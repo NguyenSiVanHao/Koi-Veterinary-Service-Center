@@ -17,7 +17,9 @@ import java.util.List;
 @Setter
 public class PageResponse<T> {
     List<T> content ;
-    int totalElements;
     int totalPages;
+    int currentPage ;
+    long totalElements;
+    int pageSize;
 }
 
