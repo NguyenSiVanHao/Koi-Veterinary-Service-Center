@@ -40,4 +40,5 @@ public class AppointmentResponse {
      float balanceDue ;
      String code ;
      String invoiceId ;
+     String phone;
 }

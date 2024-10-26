@@ -3,6 +3,7 @@ import com.koicenter.koicenterbackend.exception.AppException;
 import com.koicenter.koicenterbackend.model.request.veterinarian.UpdateVetDescriptionRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VerinarianUpdateRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VeterinarianRequest;
+import com.koicenter.koicenterbackend.model.response.PageResponse;
 import com.koicenter.koicenterbackend.model.response.ResponseObject;
 import com.koicenter.koicenterbackend.model.response.appointment.AppointmentResponse;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VetDescriptionResponse;
@@ -63,9 +64,9 @@ public class VeterinarianController {
       }
     }
     @GetMapping("/{vetId}/appointments")
-    public ResponseEntity<ResponseObject> getAllAppointmentByVetId(@PathVariable String vetId, @RequestParam String status) {
-        List<AppointmentResponse> listAppointment = appointmentService.getAllAppointmentByVetId(vetId, status);
-        if (listAppointment != null && !listAppointment.isEmpty()) {
+    public ResponseEntity<ResponseObject> getAllAppointmentByVetId(@PathVariable String vetId, @RequestParam String status,@RequestParam int offSet , @RequestParam int pageSize,@RequestParam String search) {
+        PageResponse<AppointmentResponse> listAppointment = appointmentService.getAllAppointmentByVetId(vetId, status,offSet,pageSize,search);
+        if (listAppointment != null && !listAppointment.getContent().isEmpty()) {
             return ResponseObject.APIRepsonse(200, "Success", HttpStatus.OK, listAppointment);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -88,17 +89,6 @@ public class VeterinarianController {
             }
         } else {
             return ResponseObject.APIRepsonse(400, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, "");
-        }
-    }
-    @GetMapping("/{VetId}/appointments/searchCustomersName")
-    public ResponseEntity<ResponseObject> findAppointmentsByCustomersName(@PathVariable("VetId") String vetId, @RequestParam String status,@RequestParam String customerName) {
-        List<AppointmentResponse> listAppointment = appointmentService.findAppointmentsByCustomerName(vetId, status, customerName);
-
-        if (listAppointment != null && !listAppointment.isEmpty()) {
-            return ResponseEntity.ok(new ResponseObject(200, "Find Appointments By " + customerName + "Success", listAppointment));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject(404, "Not Found Appoitment By  " + customerName, null));
         }
     }
     @PutMapping("/description/{vetId}")

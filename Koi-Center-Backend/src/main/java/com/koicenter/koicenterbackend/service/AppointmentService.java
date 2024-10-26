@@ -10,6 +10,7 @@ import com.koicenter.koicenterbackend.model.enums.InvoiceType;
 import com.koicenter.koicenterbackend.model.enums.PaymentStatus;
 import com.koicenter.koicenterbackend.model.request.appointment.AppointmentRequest;
 import com.koicenter.koicenterbackend.model.request.veterinarian.VetScheduleRequest;
+import com.koicenter.koicenterbackend.model.response.PageResponse;
 import com.koicenter.koicenterbackend.model.response.appointment.AppointmentResponse;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VetScheduleResponse;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VeterinarianResponse;
@@ -19,10 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,9 +28,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -47,13 +45,13 @@ public class AppointmentService {
     VeterinarianRepository veterinarianRepository;
     AppointmentMapper appointmentMapper;
     VetScheduleService vetScheduleService;
-    UserRepository userRepository ;
-    InvoiceRepository invoiceRepository ;
+    UserRepository userRepository;
+    InvoiceRepository invoiceRepository;
 
-        public List<AppointmentResponse> getAllAppointmentsByCustomerId(String customerId, String status) {
-        List<Appointment> appointments = appointmentRepository.findByCustomer_CustomerIdOrderByCreatedAtDesc(customerId);
-        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
-        for (Appointment appointment : appointments) {
+    public PageResponse<AppointmentResponse> getAllAppointmentsByCustomerId(String customerId, String status, int offset, int pageSize,String search) {
+        Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Appointment> appointments = appointmentRepository.findByCustomer_CustomerId(customerId, pageable);
+        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
             if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
                 AppointmentResponse response = AppointmentResponse.builder()
                         .appointmentId(appointment.getAppointmentId())
@@ -74,17 +72,20 @@ public class AppointmentService {
                         .code(appointment.getCode())
                         .distance(appointment.getDistance())
                         .build();
-                        if(appointment.getVeterinarian()!=null) {
-                            response.setVetId(appointment.getVeterinarian().getVetId());
-                            response.setVetName(appointment.getVeterinarian().getUser().getFullName());
-                        }
-                appointmentResponses.add(response);
+                if (appointment.getVeterinarian() != null) {
+                    response.setVetId(appointment.getVeterinarian().getVetId());
+                    response.setVetName(appointment.getVeterinarian().getUser().getFullName());
+                }
+                return response ;
+            }else {
+                return null;
             }
-        }
-        return appointmentResponses;
+            });
+      return filterBySearch(appointmentResponses,search,AppointmentResponse::getServiceName);
     }
+
     public AppointmentResponse getAppointmentByAppointmentId(String appointmentId) {
-        AppointmentResponse appointmentResponses ;
+        AppointmentResponse appointmentResponses;
         Appointment appointment = appointmentRepository.findAppointmentById(appointmentId);
 
         AppointmentResponse response = AppointmentResponse.builder()
@@ -101,33 +102,26 @@ public class AppointmentService {
                 .type(appointment.getType())
                 .customerId(appointment.getCustomer().getCustomerId())
                 .customerName(appointment.getCustomer().getUser().getFullName())
+                .phone(appointment.getCustomer().getPhone())
                 .serviceName(appointment.getService().getServiceName())
                 .serviceId(appointment.getService().getServiceId())
                 .distance(appointment.getDistance())
                 .code(appointment.getCode())
                 .build();
-        if(appointment.getVeterinarian()!=null){
+        if (appointment.getVeterinarian() != null) {
 
             response.setVetId(appointment.getVeterinarian().getVetId());
             response.setVetName(appointment.getVeterinarian().getUser().getFullName());
         }
         return response;
     }
-
-    public List<AppointmentResponse> getAllAppointmentByVetId(String vetId, String status) {
-        List<Appointment> appointments = appointmentRepository.findByVeterinarian_VetIdOrderByCreatedAtDesc(vetId);
-        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
-
+    public PageResponse<AppointmentResponse> getAllAppointmentByVetId(String vetId, String status, int offset, int pageSize,String search) {
+        Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Appointment> appointments = appointmentRepository.findByVeterinarian_VetId(vetId,pageable);
         if (appointments == null) { // Thêm kiểm tra null
             throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(), "No appointments found", HttpStatus.NOT_FOUND);
         }
-
-        appointments.sort(Comparator
-                .comparing(Appointment::getAppointmentDate)
-                .thenComparing(Appointment::getCreatedAt)
-                .reversed());
-
-        for (Appointment appointment : appointments) {
+        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
             if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
                 AppointmentResponse response = AppointmentResponse.builder()
                         .appointmentId(appointment.getAppointmentId())
@@ -149,11 +143,15 @@ public class AppointmentService {
                         .code(appointment.getCode())
                         .distance(appointment.getDistance())
                         .build();
-                appointmentResponses.add(response);
+
+                return response ;
+            }else {
+                return null;
             }
-        }
-        return appointmentResponses;
+        });
+        return filterBySearch(appointmentResponses,search,AppointmentResponse::getCustomerName);
     }
+
     //CREATE APPOINTMENT
     public AppointmentResponse createAppointment(AppointmentRequest appointmentRequest) {
         Customer customer = customerRepository.findByCustomerId(appointmentRequest.getCustomerId());
@@ -167,15 +165,15 @@ public class AppointmentService {
                     .date(appointmentRequest.getAppointmentDate())
                     .appointmentType(appointmentRequest.getType())
                     .build();
-            vetScheduleService.slotDateTime(vetScheduleRequest,"add");
+            vetScheduleService.slotDateTime(vetScheduleRequest, "add");
         }
         com.koicenter.koicenterbackend.model.entity.Service service = servicesRepository.findByServiceId(appointmentRequest.getServiceId());
         log.info("service ID " + service.getServiceId());
         Appointment appointment = new Appointment();
         appointment = appointmentMapper.toAppointment(appointmentRequest);
-        if(appointmentRequest.getResult() == null){
+        if (appointmentRequest.getResult() == null) {
             appointment.setResult(null);
-        }else {
+        } else {
             appointment.setResult(appointmentRequest.getResult());
         }
         appointment.setCustomer(customer);
@@ -194,6 +192,7 @@ public class AppointmentService {
         }
         return appointmentResponse;
     }
+
     public AppointmentResponse updateAppointment(AppointmentRequest appointmentRequest) {
         Appointment appointment = appointmentRepository.findAppointmentById(appointmentRequest.getAppointmentId());
         if (appointment != null) {
@@ -203,14 +202,14 @@ public class AppointmentService {
             String vetId = appointmentRequest.getVetId();
             Customer customer = customerRepository.findByCustomerId(appointmentRequest.getCustomerId());
             Veterinarian veterinarian = null;
-            if (appointmentRequest.getVetId()!=null) {
+            if (appointmentRequest.getVetId() != null) {
                 veterinarian = veterinarianRepository.findByVetId(appointmentRequest.getVetId());
-                log.info("vetId "+ veterinarian.getVetId());
+                log.info("vetId " + veterinarian.getVetId());
             }
 
             com.koicenter.koicenterbackend.model.entity.Service service = servicesRepository.findByServiceId(appointmentRequest.getServiceId());
 
-            if (appointment.getAppointmentDate().equals(date) && appointment.getStartTime().equals(startTime) && appointment.getEndTime().equals(endTime) && appointment.getVeterinarian() == null || !appointment.getAppointmentDate().equals(date) && appointment.getVeterinarian()== null|| !appointment.getStartTime().equals(startTime) && appointment.getVeterinarian()== null||  !appointment.getEndTime().equals(endTime) &&  appointment.getVeterinarian()== null) {
+            if (appointment.getAppointmentDate().equals(date) && appointment.getStartTime().equals(startTime) && appointment.getEndTime().equals(endTime) && appointment.getVeterinarian() == null || !appointment.getAppointmentDate().equals(date) && appointment.getVeterinarian() == null || !appointment.getStartTime().equals(startTime) && appointment.getVeterinarian() == null || !appointment.getEndTime().equals(endTime) && appointment.getVeterinarian() == null) {
                 log.info("If 1 ");
                 VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
                         .vet_id(appointmentRequest.getVetId())
@@ -219,26 +218,23 @@ public class AppointmentService {
                         .date(appointmentRequest.getAppointmentDate())
                         .appointmentType(appointmentRequest.getType())
                         .build();
-                List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest1,"add");
-            }
-             else if (appointment.getAppointmentDate().equals(date) && appointment.getStartTime().equals(startTime) && appointment.getEndTime().equals(endTime) && appointment.getVeterinarian().getVetId().equals(vetId)) {
+                List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest1, "add");
+            } else if (appointment.getAppointmentDate().equals(date) && appointment.getStartTime().equals(startTime) && appointment.getEndTime().equals(endTime) && appointment.getVeterinarian().getVetId().equals(vetId)) {
                 //NEU KHONG DOI THOI GIAN , KHONG DOI BAC SI
                 log.info("If2 ");
-            }
-             else if ( appointmentRequest.getType().equals(AppointmentStatus.CANCEL)||!appointment.getAppointmentDate().equals(date) && appointmentRequest.getVetId()== null|| !appointment.getStartTime().equals(startTime) &&  appointmentRequest.getVetId()== null||  !appointment.getEndTime().equals(endTime) &&   appointmentRequest.getVetId()== null){
+            } else if (appointmentRequest.getType().equals(AppointmentStatus.CANCEL) || !appointment.getAppointmentDate().equals(date) && appointmentRequest.getVetId() == null || !appointment.getStartTime().equals(startTime) && appointmentRequest.getVetId() == null || !appointment.getEndTime().equals(endTime) && appointmentRequest.getVetId() == null) {
                 log.info("If3 ");
-                 if (appointment.getVeterinarian() !=null ){
-                     VetScheduleRequest vetScheduleRequest = VetScheduleRequest.builder()
-                             .vet_id(appointment.getVeterinarian().getVetId())
-                             .endTime(appointment.getEndTime())
-                             .startTime(appointment.getStartTime())
-                             .date(appointment.getAppointmentDate())
-                             .appointmentType(appointment.getType())
-                             .build();
-                     List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest,"less");
-                 }
-            }
-            else  if (!appointment.getAppointmentDate().equals(date) || !appointment.getStartTime().equals(startTime) ||  !appointment.getEndTime().equals(endTime) || !appointment.getVeterinarian().getVetId().equals(vetId)){
+                if (appointment.getVeterinarian() != null) {
+                    VetScheduleRequest vetScheduleRequest = VetScheduleRequest.builder()
+                            .vet_id(appointment.getVeterinarian().getVetId())
+                            .endTime(appointment.getEndTime())
+                            .startTime(appointment.getStartTime())
+                            .date(appointment.getAppointmentDate())
+                            .appointmentType(appointment.getType())
+                            .build();
+                    List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest, "less");
+                }
+            } else if (!appointment.getAppointmentDate().equals(date) || !appointment.getStartTime().equals(startTime) || !appointment.getEndTime().equals(endTime) || !appointment.getVeterinarian().getVetId().equals(vetId)) {
                 log.info("if 4 ");
                 VetScheduleRequest vetScheduleRequest = VetScheduleRequest.builder()
                         .vet_id(appointment.getVeterinarian().getVetId())
@@ -247,7 +243,7 @@ public class AppointmentService {
                         .date(appointment.getAppointmentDate())
                         .appointmentType(appointment.getType())
                         .build();
-                List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest,"less");
+                List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest, "less");
                 VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
                         .vet_id(appointmentRequest.getVetId())
                         .startTime(appointmentRequest.getStartTime())
@@ -255,20 +251,20 @@ public class AppointmentService {
                         .date(appointmentRequest.getAppointmentDate())
                         .appointmentType(appointmentRequest.getType())
                         .build();
-                vetScheduleService.slotDateTime(vetScheduleRequest1,"add");
+                vetScheduleService.slotDateTime(vetScheduleRequest1, "add");
             }
 
             appointment = appointmentMapper.toAppointment(appointmentRequest);
-            if (appointmentRequest.getVetId()!=null) {
+            if (appointmentRequest.getVetId() != null) {
                 appointment.setVeterinarian(veterinarian);
             }
-            if(appointmentRequest.getResult()!=null ){
+            if (appointmentRequest.getResult() != null) {
                 appointment.setResult(appointmentRequest.getResult());
             }
-            if(appointmentRequest.getCode()!=null){
+            if (appointmentRequest.getCode() != null) {
                 appointment.setCode(appointmentRequest.getCode());
             }
-            if(appointmentRequest.getCreatedAt()!=null){
+            if (appointmentRequest.getCreatedAt() != null) {
                 appointment.setCreatedAt(appointmentRequest.getCreatedAt());
             }
             appointment.setCustomer(customer);
@@ -280,7 +276,7 @@ public class AppointmentService {
             AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
             appointmentResponse.setCustomerId(appointment.getCustomer().getCustomerId());
 
-            if(appointmentRequest.getVetId()!=null){
+            if (appointmentRequest.getVetId() != null) {
                 appointmentResponse.setVetId(appointmentRequest.getVetId());
             }
             appointmentResponse.setServiceId(appointment.getService().getServiceId());
@@ -292,20 +288,17 @@ public class AppointmentService {
                     HttpStatus.NOT_FOUND);
         }
     }
-    public List<AppointmentResponse> getAllAppointments(String status,int offset,int pageSize) {
+
+    public PageResponse<AppointmentResponse> getAllAppointments(String status, int offset, int pageSize) {
         Page<Appointment> appointments;
-//        ZonedDateTime createdAt;
+        ZonedDateTime createdAt;
         Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
         if (status.equalsIgnoreCase("ALL")) {
-         appointments = appointmentRepository.findAll(pageable);
+            appointments = appointmentRepository.findAll(pageable);
         } else {//PageRequest.of()
-            appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status),pageable);
+            appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status), pageable);
         }
-
-        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
-
-        for (Appointment appointment : appointments) {
-
+        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
             AppointmentResponse response = AppointmentResponse.builder()
                     .appointmentId(appointment.getAppointmentId())
                     .appointmentDate(appointment.getAppointmentDate())
@@ -325,72 +318,76 @@ public class AppointmentService {
                     .code(appointment.getCode())
                     .distance(appointment.getDistance())
                     .build();
+            log.info(appointment.getCustomer().getCustomerId());
+
             if (appointment.getVeterinarian() != null) {
                 response.setVetId(appointment.getVeterinarian().getVetId());
                 response.setVetName(appointment.getVeterinarian().getUser().getFullName());
             }
-            appointmentResponses.add(response);
-
-        }
-        return appointmentResponses;
+            return response;
+        });
+        return new PageResponse<>(appointmentResponses.getContent(),appointments.getNumberOfElements(),appointments.getTotalPages());
     }
-    private  String getCode(AppointmentType appointmentType){
+
+    private String getCode(AppointmentType appointmentType) {
         List<Appointment> appointments = appointmentRepository.findAll();
-        int count = 1 ;
-        String aphabet ="";
+        int count = 1;
+        String aphabet = "";
         if (appointmentType.equals(AppointmentType.HOME))
-            aphabet="H";
+            aphabet = "H";
         else if (appointmentType.equals(AppointmentType.CENTER))
-            aphabet="C";
+            aphabet = "C";
         else
-            aphabet="O";
+            aphabet = "O";
 
-        for (Appointment appointment : appointments ){
-            count++ ;
+        for (Appointment appointment : appointments) {
+            count++;
         }
-        return aphabet+count;
+        return aphabet + count;
     }
+
     public List<AppointmentResponse> getAppointmentByUserName(String full_name) {
         List<Appointment> appointments = new ArrayList<>();
-        if (full_name!= null){
+        if (full_name != null) {
             User user = userRepository.findByFullName(full_name);
             if (user != null) {
                 Customer customer = customerRepository.findByUser_UserId(user.getUserId());
                 if (customer != null) {
                     appointments = appointmentRepository.findAllByCustomerId(customer.getCustomerId());
-                }else {
-                    throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND.getCode(),ErrorCode.CUSTOMER_NOT_FOUND.getMessage(),HttpStatus.NOT_FOUND);
+                } else {
+                    throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND.getCode(), ErrorCode.CUSTOMER_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
                 }
-            }else{
-                throw new AppException(ErrorCode.USER_NOT_EXISTS.getCode(),ErrorCode.USER_NOT_EXISTS.getMessage(),HttpStatus.NOT_FOUND);
+            } else {
+                throw new AppException(ErrorCode.USER_NOT_EXISTS.getCode(), ErrorCode.USER_NOT_EXISTS.getMessage(), HttpStatus.NOT_FOUND);
             }
-        }else{
+        } else {
             appointments = appointmentRepository.findAll();
         }
-
 
 
         List<AppointmentResponse> appointmentResponses = new ArrayList<>();
         for (Appointment appointment : appointments) {
             appointmentResponses.add(appointmentMapper.toAppointmentResponse(appointment));
         }
-        return appointmentResponses ;
+        return appointmentResponses;
     }
-    public List<AppointmentResponse> getAppointmentByVetId(String vetId, LocalDate date){
-        List<Appointment> appointments = appointmentRepository.findByVeterinarian_VetIdAndAppointmentDate(vetId,date);
+
+    public List<AppointmentResponse> getAppointmentByVetId(String vetId, LocalDate date) {
+        List<Appointment> appointments = appointmentRepository.findByVeterinarian_VetIdAndAppointmentDate(vetId, date);
         List<AppointmentResponse> appointmentResponses = new ArrayList<>();
         if (appointments != null) {
-            for (Appointment appointment : appointments ){
+            for (Appointment appointment : appointments) {
                 appointmentResponses.add(appointmentMapper.toAppointmentResponse(appointment));
             }
-        }else {
+        } else {
             throw new AppException(ErrorCode.APPOINTMENT_NOT_FOUND.getCode(),
                     ErrorCode.APPOINTMENT_NOT_FOUND.getMessage(),
                     HttpStatus.NOT_FOUND);
         }
-        return appointmentResponses ;
+        return appointmentResponses;
     }
-    public AppointmentResponse updateAppointmentBecomeCannel(String appointmentId){
+
+    public AppointmentResponse updateAppointmentBecomeCannel(String appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
@@ -402,7 +399,7 @@ public class AppointmentService {
                 ErrorCode.VETSCHEDULE_NOT_FOUND.getMessage(),
                 HttpStatus.NOT_FOUND
         )));
-        if (veterinarian!= null){
+        if (veterinarian != null) {
             VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
                     .vet_id(appointment.getVeterinarian().getVetId())
                     .startTime(appointment.getStartTime())
@@ -410,13 +407,13 @@ public class AppointmentService {
                     .date(appointment.getAppointmentDate())
                     .appointmentType(appointment.getType())
                     .build();
-            vetScheduleService.slotDateTime(vetScheduleRequest1,"less");
+            vetScheduleService.slotDateTime(vetScheduleRequest1, "less");
         }
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
-        return appointmentResponse ;
+        return appointmentResponse;
     }
 
-    public AppointmentResponse updateAppointmentBecomeRefund ( String appointmentId){
+    public AppointmentResponse updateAppointmentBecomeRefund(String appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
@@ -427,35 +424,24 @@ public class AppointmentService {
         invoice.setStatus(PaymentStatus.Refund);
         invoiceRepository.save(invoice);
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
-        return appointmentResponse ;
+        return appointmentResponse;
     }
-    public List<AppointmentResponse> findAppointmentsByServiceName (String customerId, String status,String serviceName){
-            List<AppointmentResponse> appointmentsResponses = getAllAppointmentsByCustomerId(customerId,status);
-            List<AppointmentResponse> appointmentResponses = new ArrayList<>();
-            for (AppointmentResponse appointmentResponse: appointmentsResponses){
-                if (serviceName.toUpperCase().equals(appointmentResponse.getCode())){
-                    appointmentResponses.add(appointmentResponse);
-                    break;
-                }
-                if (appointmentResponse.getServiceName().contains(serviceName)){
-                    appointmentResponses.add(appointmentResponse);
-                }
-            }
-            return appointmentResponses ;
-    }
-    public List<AppointmentResponse> findAppointmentsByCustomerName (String vetId, String status,String customerName){
-        List<AppointmentResponse> appointmentsResponses = getAllAppointmentByVetId(vetId,status);
-        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
-        for (AppointmentResponse appointmentResponse: appointmentsResponses){
-            if (customerName.toUpperCase().equals(appointmentResponse.getCode())){
-                appointmentResponses.add(appointmentResponse);
-                break;
-            }
-            if (appointmentResponse.getCustomerName().contains(customerName)){
-                appointmentResponses.add(appointmentResponse);
-            }
+    private PageResponse<AppointmentResponse> filterBySearch(Page<AppointmentResponse> appointmentResponses, String search , Function<AppointmentResponse,String> getNameFunction){
+        if(search == null || search.trim().isEmpty()){
+            return new PageResponse<>(appointmentResponses.getContent(),appointmentResponses.getNumberOfElements(),appointmentResponses.getTotalPages());
         }
-        return appointmentResponses ;
+            Optional<AppointmentResponse> extactMatch = appointmentResponses.getContent().stream()
+                    .filter(Objects::nonNull)
+                    .filter(appointmentResponse -> appointmentResponse.getCode().toUpperCase().equals(search.toUpperCase()))
+                    .findFirst();
+            if(extactMatch.isPresent()){
+                return new PageResponse<>(Collections.singletonList(extactMatch.get()),1,1);
+            }
+            List<AppointmentResponse> filteredResponse = appointmentResponses.getContent().stream()
+                    .filter(Objects::nonNull)
+                    .filter(appointmentResponse -> getNameFunction.apply(appointmentResponse).toLowerCase().contains(search.toLowerCase()))
+                    .collect(Collectors.toList());
+            return new PageResponse<>(filteredResponse,filteredResponse.size(),filteredResponse.size()/appointmentResponses.getSize());
     }
 }
 
