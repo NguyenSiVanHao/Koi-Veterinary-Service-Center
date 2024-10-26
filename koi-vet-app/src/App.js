@@ -90,6 +90,7 @@ function App() {
     <PersistGate loading={null} persistor={persistor}>
       <Router>
         <Routes>
+          <Route path="/rating" element={<Rating />} />
           <Route path="/medpage" element={<MedicineListPage />} />
           <Route path="/image" element={<ImageUpload />} />
           <Route path="/ggm" element={<GGM />} />

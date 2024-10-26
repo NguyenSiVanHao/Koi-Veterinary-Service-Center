@@ -1,47 +1,85 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Rating.css";
+import { createRatingAPI } from "../../apis";
+import { useNavigate } from "react-router-dom";
 
-function Rating() {
+function Rating({ appointmentId }) {
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState("");
+  const navigate = useNavigate();
+
+console.log(appointmentId)
+
+  const handleRatingChange = (event) => {
+    setRating(Number(event.target.value));
+  };
+
+  const handleFeedbackChange = (event) => {
+    setFeedback(event.target.value);
+  };
+
+  const handleSubmit = async () => {
+    if (rating === 0) {
+      alert("Please select a rating before submitting.");
+      return;
+    }
+
+    try {
+      const feedbackData = {
+        feedbackId: "",
+        star: rating,
+        description: feedback,
+        appointmentId: appointmentId
+      };
+
+      console.log("Sending feedback data:", feedbackData);
+      const response = await createRatingAPI(appointmentId, feedbackData);
+      console.log("API response:", response);
+
+      alert("Thank you for your feedback!");
+      navigate("/");
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      alert(`Error submitting rating: ${error.message || "Unknown error occurred"}`);
+    }
+  };
+
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
   return (
-    <div className="container">
-      <div className=" row justify-content-center">
-        <h1 className="text-center">Rating & Feedbacks</h1>
-        <div className="session-card card p-4">
-          <h3 className="text-center">Session feedback</h3>
-          <h5 className="text-center">Please rate your experience below</h5>
-          <div className="rating text-center">
-            <input type="radio" id="star5" name="rating" value="5" />
-            <label htmlFor="star5" title="5 sao"></label>
-
-            <input type="radio" id="star4" name="rating" value="4" />
-            <label htmlFor="star4" title="4 sao"></label>
-
-            <input type="radio" id="star3" name="rating" value="3" />
-            <label htmlFor="star3" title="3 sao"></label>
-
-            <input type="radio" id="star2" name="rating" value="2" />
-            <label htmlFor="star2" title="2 sao"></label>
-
-            <input type="radio" id="star1" name="rating" value="1" />
-            <label htmlFor="star1" title="1 sao"></label>
-            <div className="feedback-section text-center mt-3">
-              <p>Additional Feedback</p>
-              <textarea
-                className="session-input form-control"
-                placeholder="My feedback"
-              ></textarea>
-            </div>
-            <div className="text-center mt-3">
-              <button className="btn btn-primary submit">Submit</button>
-              <p className="mt-2">OR</p>
-              <button type="button" className="btn btn-primary button">
-                Rejoin Session
-              </button>
-              <button type="button" className="btn btn-primary button">
-                Home
-              </button>
-            </div>
-          </div>
+    <div className="rating-container">
+      <div className="rating-card">
+        <h1>Rating & Feedback</h1>
+        <p>Please rate your experience below</p>
+        <div className="star-rating">
+          {[5, 4, 3, 2, 1].map((star) => (
+            <React.Fragment key={star}>
+              <input
+                type="radio"
+                id={`star${star}`}
+                name="rating"
+                value={star}
+                checked={rating === star}
+                onChange={handleRatingChange}
+              />
+              <label htmlFor={`star${star}`} title={`${star} stars`}></label>
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="feedback-section">
+          <p>Additional Feedback</p>
+          <textarea
+            className="feedback-input"
+            placeholder="Your feedback is valuable to us..."
+            value={feedback}
+            onChange={handleFeedbackChange}
+          ></textarea>
+        </div>
+        <div className="button-group">
+          <button className="btn btn-primary submit-btn" onClick={handleSubmit}>Submit</button>
+          <button className="btn btn-secondary home-btn" onClick={handleHomeClick}>Home</button>
         </div>
       </div>
     </div>

@@ -366,10 +366,11 @@ function UserManagementPage() {
               label="Phone"
               name="phone"
               rules={[
+                { required: true, message: "Please enter phone number" },
                 {
-                  required: true,
-                  message: "pls enter",
-                },
+                  pattern: /^\d+$/,
+                  message: "Phone number must contain only numbers"
+                }
               ]}
             >
               <Input />
@@ -556,7 +557,13 @@ function UserManagementPage() {
             <Form.Item
               label="Phone"
               name="phone"
-              rules={[{ required: true, message: "Please enter phone number" }]}
+              rules={[
+                { required: true, message: "Please enter phone number" },
+                {
+                  pattern: /^\d+$/,
+                  message: "Phone number must contain only numbers"
+                }
+              ]}
             >
               <Input />
             </Form.Item>

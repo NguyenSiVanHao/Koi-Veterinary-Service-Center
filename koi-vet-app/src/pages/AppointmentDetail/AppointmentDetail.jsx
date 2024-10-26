@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { Modal } from "antd";
 import PreLoader from "../../components/Preloader/Preloader";
 import InvoiceList from "../../components/InvoiceList/InvoiceList";
+import Rating from "../Rating/Rating";
 const updateAppointment = async (appointmentData, appointmentId) => {
   try {
     await updateAppointmentAPI(appointmentData, appointmentId);
@@ -23,6 +24,7 @@ function AppointmentDetail() {
   const [assignVetTrigger, setAssignVetTrigger] = useState(0);
   const [service, setService] = useState({});
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);  // Rating Modal
   const [navigateLink, setNavigateLink] = useState({
     link: null,
     title: null
@@ -233,6 +235,22 @@ function AppointmentDetail() {
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
   if (isLoading) return <PreLoader />
+
+  
+
+  //Rating Modal
+  const handleOpenRatingModal = () => {
+    if (appointmentId) {
+      setIsRatingModalOpen(true);
+    } else {
+      console.error("appointmentId is null or undefined");
+      // Có thể hiển thị thông báo lỗi cho người dùng ở đây
+    }
+  }
+
+  const handleCloseRatingModal = () => {
+    setIsRatingModalOpen(false);
+  }
 
   return (
     <>
@@ -558,6 +576,22 @@ function AppointmentDetail() {
         width={670}
       >
         <InvoiceList appointment={appointment} />
+      </Modal>
+
+
+
+
+      <button onClick={handleOpenRatingModal}>Rating</button>
+      <Modal
+        open={isRatingModalOpen}
+        onCancel={handleCloseRatingModal}
+        width={670}
+      >
+        {appointmentId ? (
+          <Rating appointmentId={appointmentId} />
+        ) : (
+          <p>Unable to load rating component. Appointment ID is missing.</p>
+        )}
       </Modal>
     </>
 
