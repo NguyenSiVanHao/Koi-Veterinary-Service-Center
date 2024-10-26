@@ -1,20 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fecthServiceByServiceIdAPI } from "../../apis";
+import { fecthServiceByServiceIdAPI, fetchAllRatingByServiceIdAPI } from "../../apis";
 import "./ServicePageDetail.css";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/Loading/Loading";
+import { Table } from "antd";
 
 function ServicePageDetail() {
   const { serviceId } = useParams();
   console.log(serviceId);
 
   const [serviceDetail, setServiceDetail] = useState(null);
-
+  const [ratings, setRatings] = useState([]);
   const fectchServiceDetail = async () => {
     const response = await fecthServiceByServiceIdAPI(serviceId);
     setServiceDetail(response.data);
   };
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      const response = await fetchAllRatingByServiceIdAPI(serviceId);
+      setRatings(response.data);
+    }
+    fetchRating();
+  }, [serviceId]);
 
   useEffect(() => {
     fectchServiceDetail();
@@ -40,6 +49,21 @@ function ServicePageDetail() {
     }
   }
 
+  const columns = [
+    {
+      title: "Rating",
+      dataIndex: "star",
+    },
+    {
+      title: "Feedback",
+      dataIndex: "description",
+    },
+    {
+      title: "Number",
+      dataIndex: "number",
+    }
+  ]
+  
   return (
     <Container fluid className="service-detail">
       <Row className="align-items-center service-row">
@@ -69,6 +93,8 @@ function ServicePageDetail() {
               <strong>Service Type:</strong>{" "}
               <span><strong>{serviceDetail.serviceFor}</strong></span>
             </p>
+            <p>Rating: {ratings.averageStar} ★</p>
+            <Table columns={columns} dataSource={ratings} style={{color: "red"}} pagination={{pageSize: 5}}/>
           </div>
         </Col>
       </Row>
