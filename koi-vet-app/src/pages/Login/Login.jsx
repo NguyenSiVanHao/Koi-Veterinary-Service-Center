@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Login.css";
-import google_logo from "../../assets/img/google.png";
 import logo from "../../assets/img/logo.png";
 import logim_side from "../../assets/img/login_side.png";
 import { toast } from "react-toastify";
@@ -8,7 +7,6 @@ import { fetchLoginAPI, fetchLoginWithGoogleAPI } from "../../apis";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setIsAuthorized } from "../../store/userSlice";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -93,7 +91,7 @@ const Login = () => {
             <hr />
           </div>
         </div>
-        <form action="#!" className="mx-5" onSubmit={handleLogin}>
+        <form className="mx-5" onSubmit={handleLogin}>
           <div className="row gy-2 overflow-hidden">
             <div className="col-12">
               <div className="form-floating mb-3">
@@ -146,9 +144,9 @@ const Login = () => {
                     Keep me logged in
                   </label>
                 </div>
-                <a href="#!" className="link-primary text-decoration-none">
+                <Link to="/forgot-password" className="link-primary text-decoration-none">
                   Forgot password?
-                </a>
+                </Link>
               </div>
             </div>
             <div className="col-12">

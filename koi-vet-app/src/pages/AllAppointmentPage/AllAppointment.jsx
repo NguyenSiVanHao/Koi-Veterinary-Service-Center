@@ -17,7 +17,8 @@ import refund from "../../assets/img/refund logo.svg"
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [status, setStatus] = useState("ALL");
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(2);
+  const [totalPage, setTotalPage] = useState(0);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
   const [search, setSearch] = useState("")
@@ -27,6 +28,7 @@ function AllAppointment() {
   const [page, setPage] = useState(1);
 
   const handleChangePage = (value) => {
+    console.log("value", value)
     setPage(value);
   };
   useEffect(() => {
@@ -35,6 +37,7 @@ function AllAppointment() {
       try {
         const response = await fetchAllAppointmentByVetIdAPI(vetId, status, search);
         setAppointments(response?.data?.content);
+        setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
         console.log(response?.data)
       } catch (error) {
@@ -48,6 +51,7 @@ function AllAppointment() {
       try {
         const response = await fetchAllAppointmentAPI(status, page - 1, pageSize, search);
         setAppointments(response?.data?.content);
+        setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -60,6 +64,7 @@ function AllAppointment() {
       try {
         const response = await fetchAppointmentByCustomerIdAPI(customerId, status, search);
         setAppointments(response?.data?.content);
+        setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
         setTitle("My Appointments");
       } catch (error) {
@@ -233,7 +238,7 @@ function AllAppointment() {
           </tbody>
         </table>
         <div className="d-flex justify-content-center mt-3">
-          <Pagination count={10} page={page} onChange={handleChangePage} />
+          <Pagination count={totalPage} page={page} onChange={handleChangePage} />
         </div>
 
       </div>

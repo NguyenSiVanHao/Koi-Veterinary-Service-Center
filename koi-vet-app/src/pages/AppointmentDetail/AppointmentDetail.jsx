@@ -555,6 +555,7 @@ function AppointmentDetail() {
       <Modal
         open={isInvoiceModalOpen}
         onCancel={() => setIsInvoiceModalOpen(false)}
+        width={670}
       >
         <InvoiceList appointment={appointment} />
       </Modal>
