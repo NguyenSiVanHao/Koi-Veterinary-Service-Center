@@ -5,6 +5,7 @@ import com.koicenter.koicenterbackend.exception.AppException;
 import com.koicenter.koicenterbackend.model.entity.Koi;
 import com.koicenter.koicenterbackend.model.entity.Pond;
 import com.koicenter.koicenterbackend.model.request.user.UpdateUserRequest;
+import com.koicenter.koicenterbackend.model.response.PageResponse;
 import com.koicenter.koicenterbackend.model.response.ResponseObject;
 import com.koicenter.koicenterbackend.model.response.appointment.AppointmentResponse;
 import com.koicenter.koicenterbackend.model.response.koi.KoiResponse;
@@ -13,6 +14,7 @@ import com.koicenter.koicenterbackend.service.AppointmentService;
 import com.koicenter.koicenterbackend.service.CustomerService;
 import com.koicenter.koicenterbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,10 +58,9 @@ public class CustomerController {
     }
     // Get appointment by customerId
     @GetMapping("/{customerId}/appointments")
-    public ResponseEntity<ResponseObject> getAppointmentById(@PathVariable("customerId") String customerId, @RequestParam String status) {
-        List<AppointmentResponse> listAppointment = appointmentService.getAllAppointmentsByCustomerId(customerId, status);
-
-        if (listAppointment != null && !listAppointment.isEmpty()) {
+    public ResponseEntity<ResponseObject> getAppointmentById(@PathVariable("customerId") String customerId, @RequestParam String status,@RequestParam int offSet , @RequestParam int pageSize,@RequestParam String search) {
+        PageResponse<AppointmentResponse> listAppointment = appointmentService.getAllAppointmentsByCustomerId(customerId, status,offSet,pageSize,search);
+        if (listAppointment != null && !listAppointment.getContent().isEmpty()) {
             return ResponseEntity.ok(new ResponseObject(200, "Success", listAppointment));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -75,16 +76,16 @@ public class CustomerController {
             return ResponseObject.APIRepsonse(404, "User does not exist!", HttpStatus.NOT_FOUND, null);
         }
     }
-    @GetMapping("/{customerId}/appointments/searchServicesName")
-    public ResponseEntity<ResponseObject> findAppointmentsByServiceName(@PathVariable("customerId") String customerId, @RequestParam String status,@RequestParam String serviceName) {
-        List<AppointmentResponse> listAppointment = appointmentService.findAppointmentsByServiceName(customerId, status,serviceName);
-
-        if (listAppointment != null && !listAppointment.isEmpty()) {
-            return ResponseEntity.ok(new ResponseObject(200, "Find Appointments By "+ serviceName + "Success", listAppointment));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject(404, "Not Found Appoitment By  " + serviceName, null));
-        }
-    }
+//    @GetMapping("/{customerId}/appointments/searchServicesName")
+//    public ResponseEntity<ResponseObject> findAppointmentsByServiceName(@PathVariable("customerId") String customerId, @RequestParam String status,@RequestParam String serviceName) {
+//        List<AppointmentResponse> listAppointment = appointmentService.findAppointmentsByServiceName(customerId, status,serviceName);
+//
+//        if (listAppointment != null && !listAppointment.isEmpty()) {
+//            return ResponseEntity.ok(new ResponseObject(200, "Find Appointments By "+ serviceName + "Success", listAppointment));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(new ResponseObject(404, "Not Found Appoitment By  " + serviceName, null));
+//        }
+//    }
     
 }

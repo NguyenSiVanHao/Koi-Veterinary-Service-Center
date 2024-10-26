@@ -3,6 +3,7 @@ package com.koicenter.koicenterbackend.controller;
 
 import com.koicenter.koicenterbackend.model.request.appointment.AppointmentRequest;
 import com.koicenter.koicenterbackend.model.request.treament.TreamentRequest;
+import com.koicenter.koicenterbackend.model.response.PageResponse;
 import com.koicenter.koicenterbackend.model.response.appointment.AppointmentResponse;
 import com.koicenter.koicenterbackend.model.response.ResponseObject;
 import com.koicenter.koicenterbackend.model.response.koi.KoiTreatmentResponse;
@@ -12,6 +13,7 @@ import com.koicenter.koicenterbackend.service.KoiTreatmentService;
 import com.koicenter.koicenterbackend.service.PondTreatmentService;
 import com.koicenter.koicenterbackend.service.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +37,7 @@ public class AppointmentController {
      TreatmentService treatmentService;
     @GetMapping("")
     public ResponseEntity<ResponseObject> getAllAppointments(@RequestParam String status,@RequestParam int offSet , @RequestParam int pageSize) {
-        List<AppointmentResponse> listAppointment = appointmentService.getAllAppointments(status, offSet, pageSize);
+        PageResponse<AppointmentResponse> listAppointment = appointmentService.getAllAppointments(status, offSet, pageSize);
         return ResponseObject.APIRepsonse(200, "", HttpStatus.OK, listAppointment);
     }
 
