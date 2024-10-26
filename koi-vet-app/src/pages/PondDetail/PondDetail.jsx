@@ -242,7 +242,7 @@ const PondDetail = ({ isCreate, isUpdate, onClose, onUpdate, isAppointment, cusI
             <div className="form-group col-md-6">
               <label>Treatment</label>
               <textarea
-                value={pondData.treatment}
+                value={treatmentData.treatment}
                 name="treatment"
                 onChange={(e) => handleChangeTreatmentData(e.target.name, e.target.value)}
                 placeholder="Enter treatment"

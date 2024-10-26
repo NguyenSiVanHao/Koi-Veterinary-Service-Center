@@ -10,6 +10,7 @@ function ForgotPassword() {
   const [username, setUsername] = useState("");
   const [fullname, setFullname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [repassword, setRepassword] = useState(""); // New state for repassword
@@ -51,31 +52,20 @@ function ForgotPassword() {
             </div>
           </div>
           <form action="#!" className="mx-5" onSubmit={handleSubmit}>
+            {step === 1 &&
+              <div className="row gy-2 overflow-hidden">
+                <div className="col-12">
+                  <div className="form-floating mb-3">
+                    <input type="email" className="form-control" name="email" id="email" placeholder="abc@email.com" required onChange={(e) => setEmail(e.target.value)} />
+                    <label htmlFor="email" className="form-label">
+                      Email
+                    </label>
+                  </div>
+                </div>
+              </div>
+            }
+
             <div className="row gy-2 overflow-hidden">
-              <div className="col-12">
-                <div className="form-floating mb-3">
-                  <input type="email" className="form-control" name="email" id="email" placeholder="abc@email.com" required onChange={(e) => setEmail(e.target.value)} />
-                  <label htmlFor="email" className="form-label">
-                    Email
-                  </label>
-                </div>
-              </div>
-              <div className="col-12">
-                <div className="form-floating mb-3">
-                  <input type="text" className="form-control" name="username" id="username" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required />
-                  <label htmlFor="username" className="form-label">
-                    Username
-                  </label>
-                </div>
-              </div>
-              <div className="col-12">
-                <div className="form-floating mb-3">
-                  <input type="text" className="form-control" name="name" id="fullname" placeholder="Full name" onChange={(e) => setFullname(e.target.value)} required />
-                  <label htmlFor="fullname" className="form-label">
-                    Full name
-                  </label>
-                </div>
-              </div>
               <div className="col-12">
                 <div className="form-floating mb-3">
                   <input
@@ -106,28 +96,6 @@ function ForgotPassword() {
                     Repassword
                   </label>
                 </div>
-              </div>
-              <div className="col-12">
-                {/* <div className="d-flex gap-2 justify-content-between">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      name="rememberMe"
-                      id="rememberMe"
-                    />
-                    <label
-                      className="form-check-label text-secondary"
-                      htmlFor="rememberMe"
-                    >
-                      Keep me logged in
-                    </label>
-                  </div>
-                  <a href="#!" className="link-primary text-decoration-none">
-                    Forgot password?
-                  </a>
-                </div> */}
               </div>
               <div className="col-12">
                 <div className="d-grid my-3">

@@ -3,8 +3,9 @@ import register from "../../assets/img/login_side.png";
 import { createUserAPI } from "../../apis";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/img/logo.png";
 
-function Register() {
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -45,9 +46,9 @@ function Register() {
           <img src={register} alt="login" className="img-fluid" />
         </div>
         <div className="col-md-6 justify-content-center align-items-center login-left text-center mx-auto my-auto">
-          <div className="col-md-8 login-container  my-15">
+          <div className="col-md-8 login-container  my-1">
             <div className="d-grid gap-2 mb-4">
-              <h2>Registration</h2>
+              <h2 className="text-center fw-semibold booking-title">Registration</h2>
             </div>
           </div>
           <form action="#!" className="mx-5" onSubmit={handleSubmit}>

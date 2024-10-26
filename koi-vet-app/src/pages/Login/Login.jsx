@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Login.css";
-import google_logo from "../../assets/img/google.png";
 import logo from "../../assets/img/logo.png";
 import logim_side from "../../assets/img/login_side.png";
 import { toast } from "react-toastify";
@@ -8,7 +7,6 @@ import { fetchLoginAPI, fetchLoginWithGoogleAPI } from "../../apis";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setIsAuthorized } from "../../store/userSlice";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 

@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import KoiDetail from "../KoiDetail/KoiDetail";
-import { fetchPrescriptionByAppointmentIdAPI } from "../../apis";
+import { fetchAppointmentByIdAPI, fetchPrescriptionByAppointmentIdAPI } from "../../apis";
 import Pond from "../../components/Pond/Pond";
 import PondDetail from "../PondDetail/PondDetail";
 import MedicineListPage from "../MedicineListPage/MedicineListPage";
 import PrescriptionDetail from "../PrescriptionDetail/PrescriptionDetail";
 import { useSelector } from "react-redux";
+import { APPOINTMENT_STATUS } from "../../utils/constants";
 
 const PondTreatmentPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [prescriptions, setPrescriptions] = useState([]);
   const [pondUpdateTrigger, setPondUpdateTrigger] = useState(0);
   const { appointmentId } = useParams();
+  const [appointment, setAppointment] = useState(null);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const customerId = queryParams.get("customerId");
@@ -39,7 +41,12 @@ const PondTreatmentPage = () => {
       const response = await fetchPrescriptionByAppointmentIdAPI(appointmentId);
       setPrescriptions(response.data);
     };
+    const fetchAppointment = async () => {
+      const response = await fetchAppointmentByIdAPI(appointmentId);
+      setAppointment(response.data);
+    };
     fetchPrescription();
+    fetchAppointment();
   }, [appointmentId]);
 
   const handleOpenMedicineModal = () => {
@@ -76,11 +83,12 @@ const PondTreatmentPage = () => {
 
 
       {/* Add New Pond Button */}
-      <div className="text-center">
-        <button className="btn btn-primary" onClick={() => handleAddNewPond()}>
-          Add New Pond
+      {(appointment?.status === APPOINTMENT_STATUS.PROCESS || appointment?.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) &&
+        <div className="text-center">
+          <button className="btn btn-primary" onClick={() => handleAddNewPond()}>
+            Add New Pond
         </button>
-      </div>
+      </div>}
 
       {/* Modal for PondDetail */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
@@ -130,9 +138,9 @@ const PondTreatmentPage = () => {
               ))}
             </tbody>
           </table>
-          <button className="btn btn-primary" onClick={handleOpenMedicineModal}>
+          {appointment?.status === APPOINTMENT_STATUS.PROCESS && <button className="btn btn-primary" onClick={handleOpenMedicineModal}>
             Add Prescription
-          </button>
+          </button>}
           <Modal
             isOpen={isMedicineModalOpen}
             onClose={handleCloseMedicineModal}

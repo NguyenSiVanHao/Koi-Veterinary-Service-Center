@@ -45,7 +45,7 @@ const InvoiceList = ({appointment}) => {
                         <th>Create Date</th>
                         <th>Quantity</th>
                         <th>Status</th>
-                        <th>Total</th>
+                        <th>Total(VND)</th>
                         <th className="text-center">Action</th>
                     </tr>
                 </thead>
@@ -57,7 +57,7 @@ const InvoiceList = ({appointment}) => {
                                     <td>{formatDate(invoice?.createAt)}</td>
                                     <td>{invoice?.quantity}</td>
                                     <td>{invoice?.status}</td>
-                                    <td>{invoice?.totalPrice}</td>
+                                    <td>{invoice?.totalPrice.toLocaleString()}</td>
                                     <td>
                                         <button 
                                         className="btn btn-primary"
