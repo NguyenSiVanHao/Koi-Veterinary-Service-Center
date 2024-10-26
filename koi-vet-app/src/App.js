@@ -56,6 +56,8 @@ import AboutUsPage from './pages/AboutUsPage/AboutUsPage';
 import Contact from './pages/Contact/Contact';
 import InvoiceDetail from './pages/PaymentCheckout/InvoiceDetail';
 import ContactManagement from './pages/ContactManagement/ContactManagement';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import NewsManagement from './pages/NewsManagement/NewsManagement';
 
 function App() {
   const isAuthorized = useSelector(state => state?.user?.isAuthorized)
@@ -93,6 +95,7 @@ function App() {
           <Route path="/ggm" element={<GGM />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/*" element={
             <UserLayout>
@@ -184,6 +187,7 @@ function App() {
                   <Route path="/faq-management" element={<FAQManagement />} />
                   <Route path="/medicine-management" element={<CreateMedicinePage />} />
                   <Route path="/contact-management" element={<ContactManagement />} />
+                  <Route path="/news-management" element={<NewsManagement />} />
                 </Route>
 
                 {/* <Route path="/koiinformation" element={<KoiInformation />} /> */}

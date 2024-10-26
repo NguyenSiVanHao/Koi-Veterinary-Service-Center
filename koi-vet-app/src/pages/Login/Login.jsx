@@ -93,7 +93,7 @@ const Login = () => {
             <hr />
           </div>
         </div>
-        <form action="#!" className="mx-5" onSubmit={handleLogin}>
+        <form className="mx-5" onSubmit={handleLogin}>
           <div className="row gy-2 overflow-hidden">
             <div className="col-12">
               <div className="form-floating mb-3">
@@ -146,9 +146,9 @@ const Login = () => {
                     Keep me logged in
                   </label>
                 </div>
-                <a href="#!" className="link-primary text-decoration-none">
+                <Link to="/forgot-password" className="link-primary text-decoration-none">
                   Forgot password?
-                </a>
+                </Link>
               </div>
             </div>
             <div className="col-12">

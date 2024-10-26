@@ -36,6 +36,8 @@ const Schedual = () => {
         if (isEditMode) {
             if (selectedDate.includes(date)) {
                 setSelectedDate(selectedDate.filter(item => item !== date)) // xóa ngày đã chọn
+            } else if (schedules.includes(date)) {
+                return;
             } else {
                 setSelectedDate([...selectedDate, date]) // thêm ngày đã chọn
             }
@@ -58,8 +60,15 @@ const Schedual = () => {
         });
         console.log(schedules)
     }
+    // Lấy ngày tháng theo định dạng yyyy-MM-dd
+    const getLocalDateString = (date) => {
+        const year = new Date(date).getFullYear();
+        const month = (new Date(date).getMonth() + 1).toString().padStart(2, '0'); // Adjust for zero-based month
+        const day = new Date(date).getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
     const formatMonth = (date) => {
-        return date.toLocaleString('vi-VN', { month: 'long', year: 'numeric' });
+        return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
     }
     const handleChangeSelectedVet = async (value) => {
         setPickedDay(null)
@@ -96,7 +105,7 @@ const Schedual = () => {
         } else if (role === "VETERINARIAN") {
             setSelectedVetId(vetId)
             setIsLoading(false)
-            // setPickedDay(new Date().toDateString().split(" ").slice(0, 3).join(" "))
+            setPickedDay(getLocalDateString(new Date()))
 
         }
     }, [])
@@ -143,7 +152,7 @@ const Schedual = () => {
             days.push(
                 <div
                     key={day}
-                    className={`${isAvailable ? 'day' : 'disabled'} ${isToday ? 'current-day' : ''} ${isSelected ? 'chooosed-day' : ''}`}
+                    className={`${isAvailable ? 'day' : 'disabled'} ${isToday && !isSelected ? 'current-day' : ''} ${isSelected ? 'chooosed-day' : ''}`}
                     onClick={() => isAvailable ? handleDateClick(date) : null}
                 >
                     {day}
@@ -225,6 +234,7 @@ const Schedual = () => {
                                     </td>
                                 </tr>
                             ))}
+                            {appointments.length === 0 && selectedDate.length !== 0 && pickedDay && <tr><td colSpan="5" className='text-center'>No appointment</td></tr>}
                         </tbody>
                     </table>
                 </div>
