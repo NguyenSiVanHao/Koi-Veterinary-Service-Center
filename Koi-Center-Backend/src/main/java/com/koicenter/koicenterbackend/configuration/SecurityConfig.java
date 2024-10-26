@@ -40,9 +40,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS configuration
                 .csrf(AbstractHttpConfigurer::disable)
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(customSuccessHandler()) // Use a custom success handler
-                )
+
 
                 .authorizeHttpRequests(auth -> {
                     auth
