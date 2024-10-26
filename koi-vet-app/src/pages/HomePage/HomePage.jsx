@@ -125,7 +125,7 @@ function HomePage() {
                         </div>
                     </div>
                     <div className="col-md-8">
-                        <Carousel activeIndex={currentIndex} onSelect={(index) => setCurrentIndex(index)}>
+                        <Carousel activeIndex={currentIndex} onSelect={(index) => setCurrentIndex(index)} interval={1500}>
                             {serviceList.map((service) => (
                                 <Carousel.Item key={service.serviceId}>
                                     <div className="row">
