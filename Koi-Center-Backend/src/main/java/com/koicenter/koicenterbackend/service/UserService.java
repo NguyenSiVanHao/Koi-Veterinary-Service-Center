@@ -272,7 +272,11 @@ public class UserService {
     public boolean deleteUser(String userId) {
         try {
             User user = userRepository.findByUserId(userId);
-            user.setStatus(false);
+            if(user.isStatus()){
+                user.setStatus(false);
+            }else{
+                user.setStatus(true);
+            }
             userRepository.save(user);
             return true;
         } catch (Exception e) {
