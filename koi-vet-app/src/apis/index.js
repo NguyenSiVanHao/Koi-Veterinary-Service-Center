@@ -89,7 +89,7 @@ export const updateVetByIdAPI = async (vetId, data, image) => {
 
 
 export const updateDescriptionByVetIdAPI = async (vetId, data) => {
-    const response = await api.put(`/veterinarians/${vetId}`, data);
+    const response = await api.put(`/veterinarians/description/${vetId}`, data);
     return response.data;
 }
 
@@ -480,8 +480,12 @@ export const fetchNewsByIdAPI = async (id) => {
     return response.data;
 }
 
-export const createNewsAPI = async (data) => {
-    const response = await api.post('/news', data);
+export const createNewsAPI = async (data, image) => {
+    let imageURL = data.image;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.post('/news', { ...data, image: imageURL });
     return response.data;
 }
 

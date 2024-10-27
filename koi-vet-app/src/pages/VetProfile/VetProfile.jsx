@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./VetProfile.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchVetByVetIdAPI } from "../../apis";
+import { fetchVetByVetIdAPI, updateDescriptionByVetIdAPI } from "../../apis";
 import Loading from "../../components/Loading/Loading";
 import { ROLE } from "../../utils/constants";
 import Modal from "antd/es/modal/Modal";
@@ -18,13 +18,28 @@ function VetProfile() {
   const [vets, setVets] = useState(null);
 
   const fectchVetProfile = async () => {
+
     const response = await fetchVetByVetIdAPI(vetId);
     setVets(response?.data);
   };
 
-  const handleSubmit = () => {
-    
+  const handleSubmit = async () => {
+    await updateDescriptionByVetIdAPI(vetId, {description});
+    setOpen(false);
   };
+
+  const handleOpen = () => {
+    setOpen(true);
+  }
+
+  const handleCancel = () => {
+    setOpen(false);
+    form.resetFields();
+  }
+
+  const handleOk = () => {
+    handleSubmit();
+  }
 
   useEffect(() => {
     fectchVetProfile();
@@ -59,7 +74,9 @@ function VetProfile() {
           >
             Previous Step
           </button>
-          <button className="vet-profile-edit mt-5" onClick={() => setOpen(true)}>Edit</button>
+          {ROLE !== "CUSTOMER" && (
+          <button className="vet-profile-edit mt-5" onClick={handleOpen}>Edit</button>
+          )}
         </div>
 
         <div className="col-md-6">
@@ -74,7 +91,7 @@ function VetProfile() {
       </div>
     </div>
     
-    <Modal open={open} onCancel={() => setOpen(false)}>
+    <Modal open={open} onCancel={handleCancel} onOk={handleOk}>
       <p>Information Veterinarian</p>
       <Form form={form} onFinish={handleSubmit}>
       <Form.Item
