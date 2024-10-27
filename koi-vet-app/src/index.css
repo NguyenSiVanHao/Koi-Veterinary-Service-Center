@@ -25,3 +25,5 @@ html, body {
   overflow-x: hidden; /* Tắt tràn ngang */
   width: 100%; /* Đảm bảo body chiếm toàn bộ chiều rộng */
 }
+@import url('https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css');
+@import url('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css');

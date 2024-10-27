@@ -25,17 +25,23 @@ function AllAppointment() {
   const vetId = useSelector((state) => state?.user?.veterinarian?.vetId);
   const role = useSelector((state) => state.user.role);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
-
-  const handleChangePage = (value) => {
-    console.log("value", value)
-    setPage(value);
+  const [offSet, setOffSet] = useState(1);
+  const handleChangePage = async (event, value) => {
+    await setAppointments([]);
+    await setSearch("");
+    await setTotalPage(0);
+    setOffSet(value);
   };
+  const handleSearch = () => {
+    setOffSet(1);
+    setSearch(search);
+
+  }
   useEffect(() => {
     setIsLoading(true);
-    const fetchAppointmentForVet = async (vetId, status, search) => {
+    const fetchAppointmentForVet = async (vetId, status, pageSize, search, offSet) => {
       try {
-        const response = await fetchAllAppointmentByVetIdAPI(vetId, status, search);
+        const response = await fetchAllAppointmentByVetIdAPI(vetId, status, offSet, pageSize, search);
         setAppointments(response?.data?.content);
         setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
@@ -49,7 +55,7 @@ function AllAppointment() {
 
     const fetchAppointmentForStaff = async (search) => {
       try {
-        const response = await fetchAllAppointmentAPI(status, page - 1, pageSize, search);
+        const response = await fetchAllAppointmentAPI(status, offSet, pageSize, search);
         setAppointments(response?.data?.content);
         setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
@@ -74,7 +80,7 @@ function AllAppointment() {
       }
     };
     if (role === ROLE.VETERINARIAN) {
-      fetchAppointmentForVet(vetId, status, search);
+      fetchAppointmentForVet(vetId, status, pageSize, search, offSet);
       setTitle("All My Appointments");
     } else if (role === ROLE.STAFF) {
       fetchAppointmentForStaff();
@@ -84,7 +90,7 @@ function AllAppointment() {
       setTitle("My Appointments");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role, customerId, status, pageSize, page]);
+  }, [role, customerId, status, pageSize, offSet, search]);
 
   const handleChangeStatus = (status) => {
     setStatus(status);
@@ -114,8 +120,8 @@ function AllAppointment() {
       <div className="row mb-3 justify-content-center">
         <div className="col-md-8">
           <div className="input-group">
-            <input type="text" className="form-control" placeholder="Search" />
-            <button className="btn btn-primary" type="button" onClick={() => setSearch(search)}>
+            <input type="text" className="form-control" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <button className="btn btn-primary" type="button" onClick={() => handleSearch()}>
               Search <i className="fas fa-search"></i>
             </button>
           </div>
@@ -238,7 +244,7 @@ function AllAppointment() {
           </tbody>
         </table>
         <div className="d-flex justify-content-center mt-3">
-          <Pagination count={totalPage} page={page} onChange={handleChangePage} />
+          <Pagination count={totalPage} page={offSet} onChange={(event, value) => handleChangePage(event, value)} />
         </div>
 
       </div>
