@@ -30,7 +30,7 @@ function ServicePage() {
                         {isLoading && <PreLoader />}
                         {
                             services.map((service) => {
-                                return <Service image={service.image} serviceId={service.serviceId} description={service.description} serviceName={service.serviceName} basePrice={service.basePrice} pondPrice={service.pondPrice} koiPrice={service.koiPrice} />
+                                return <Service image={service.image} serviceId={service.serviceId} description={service.description} serviceName={service.serviceName} basePrice={service.basePrice} pondPrice={service.pondPrice} koiPrice={service.koiPrice} serviceFor={service.serviceFor} />
                             })
                         }
                     </div>

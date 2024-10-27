@@ -57,7 +57,7 @@ const ServiceForm = ({ selectedService, setSelectedService, setSelectedImage, se
                     <label htmlFor='basePrice' className='form-label'>Base Price</label>
                     <input name='basePrice' type='number' className='form-control' id='basePrice' value={selectedService?.basePrice} onChange={handleChange} />
                     {
-                        selectedService?.serviceFor === 'KOI' && (
+                        selectedService?.serviceFor === 'FISH' && (
                             <>
                                 <label htmlFor='koiPrice' className='form-label'>Koi Price</label>
                                 <input name='koiPrice' type='number' className='form-control' id='koiPrice' value={selectedService?.koiPrice} onChange={handleChange} />
