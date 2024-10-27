@@ -9,6 +9,7 @@ public enum ErrorCode {
     USER_ID_NOT_EXITS(404,"User id not found"),
     USER_EXISTED(401,"User already existed"),
     USER_NOT_EXISTS(403,"User not found "),
+    USER_FALSE(401,"User not authorized"),
     INVALID_LOGIN(401,"Invalid username or password"),
     INVALID_LOGOUT(401,"Logout failed"),
     INVALID_TOKEN(401,"Invalid token"),
