@@ -35,7 +35,7 @@ public class NewsController {
         }
     }
     @PostMapping("")
-    public ResponseEntity<ResponseObject> createNews(@RequestBody News news) {
+    public ResponseEntity<ResponseObject> createNews(@RequestBody NewsRequest news) {
         boolean isCreated = newsService.createNews(news);
         if (isCreated) {
             return ResponseObject.APIRepsonse(200, "Create new news successfully", HttpStatus.OK, null);
