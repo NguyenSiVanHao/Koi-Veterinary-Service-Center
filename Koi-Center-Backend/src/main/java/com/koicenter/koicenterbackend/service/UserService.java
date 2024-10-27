@@ -245,7 +245,7 @@ public class UserService {
                     }
                 }
                 List<String> serviceNames = new ArrayList<>();
-                for (com.koicenter.koicenterbackend.model.entity.Service service : serviceList) {
+                for (com.koicenter.koicenterbackend.model.entity.Service service :  serviceList) {
                     if(service.getServiceName() != null) {
                         serviceNames.add(service.getServiceId());
                     }
