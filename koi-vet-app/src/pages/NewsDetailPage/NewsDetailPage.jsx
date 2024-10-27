@@ -42,7 +42,13 @@ function NewsDetailPage() {
                 }
             } catch (err) {
                 console.error("Error fetching news:", err);
-                setError("Failed to fetch news data. Please try again later.");
+                if (err.response && err.response.status === 401) {
+                    setError("Unauthorized access. Please log in again.");
+                    // Optionally, redirect to login page
+                    // navigate('/login');
+                } else {
+                    setError("Failed to fetch news data. Please try again later.");
+                }
             }
         }
         fetchNewsById();
@@ -65,16 +71,20 @@ function NewsDetailPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <>
+        
+        <div className="container mx-auto px-4 py-8" style={{margin: "100px 0 100px 250px"}}>
             <div className="flex flex-col lg:flex-row gap-8">
                 <Row>
                     <Col lg={8}>
                         {/* Main Content */}
-                        <div className="lg:w-2/3">
+                        <div className="lg:w-2/3 card news-card" style={{ width: "800px"}}>
                             <img 
                                 src={newsData.img} 
                                 alt={newsData.title} 
                                 className="w-full h-96 object-cover rounded-lg mb-6"
+                                width={800}
+                                height={400}
                             />
                             <h1 
                                 className="text-3xl font-bold mb-4"
@@ -101,8 +111,9 @@ function NewsDetailPage() {
                                             onChange={(e) => handleSearch(e.target.value)}
                                         />
                                     </div>
-                                    <div className="divide-y max-h-96 overflow-y-auto">
+                                    <div className="divide-y max-h-96 overflow-y-auto scrollable-list" style={{margin: "0 0 0 20px"}}>
                                         {filteredNews.map(news => (
+                                            <div className="card news-card" style={{width: "300px"}}>
                                             <div 
                                                 key={news.newId}
                                                 className={`flex gap-4 p-3 cursor-pointer ${
@@ -110,16 +121,21 @@ function NewsDetailPage() {
                                                 }`}
                                                 onClick={() => navigate(`/news/${news.newId}`)}
                                             >
+                                                <div className='flex gap-4' style={{display: "flex", alignItems: "center"}}>
                                                 <img 
-                                                    src={news.image} 
+                                                    src={news.img} 
                                                     alt={news.title} 
                                                     className="w-24 h-24 object-cover rounded"
+                                                    width={40}
+                                                    height={40}
                                                 />
                                                 <div className="flex-1">
                                                     <h3 
                                                         className="text-sm font-medium line-clamp-2"
                                                         dangerouslySetInnerHTML={{ __html: news.title }}
                                                     />
+                                                    </div>  
+                                                </div>
                                                 </div>
                                             </div>
                                         ))}
@@ -131,6 +147,8 @@ function NewsDetailPage() {
                 </Row>
             </div>
         </div>
+        <button className='btn btn-primary' type="primary" onClick={() => navigate('/news')}>Back to News</button>
+        </>
     )
 }
 

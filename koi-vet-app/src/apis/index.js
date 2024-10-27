@@ -476,16 +476,26 @@ export const fetchAllNewsAPI = async () => {
 }
 
 export const fetchNewsByIdAPI = async (id) => {
-    const response = await api.get(`/news/${id}`);
-    return response.data;
+    try {
+        const token = localStorage.getItem('accessToken'); // or however you store your token
+        const response = await api.get(`/news/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching news by ID:", error);
+        throw error;
+    }
 }
 
 export const createNewsAPI = async (data, image) => {
-    let imageURL = data.image;
+    let imageURL = null;
     if (image) {
         imageURL = await fetchUpLoadImageAPI(image);
     }
-    const response = await api.post('/news', { ...data, image: imageURL });
+    const response = await api.post('/news', { ...data, img: imageURL });
     return response.data;
 }
 
@@ -592,6 +602,8 @@ export const createStaffAPI = async (data) => {
     const response = await api.post('/staffs/create', data);
     return response.data;
 }
+
+
 
 
 
