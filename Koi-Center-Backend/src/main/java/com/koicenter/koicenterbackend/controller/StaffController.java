@@ -16,14 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class StaffController {
     @Autowired
     UserService userService;
+
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createStaff(@RequestBody RegisterRequest newUser) {
         try {
             if (userService.getUserByUsername(newUser.getUsername()) || userService.getUserByEmail(newUser.getEmail())) {
                 return ResponseObject.APIRepsonse(409, "Username or email already exists", HttpStatus.CONFLICT, "");
             }
-            userService.createStaff(newUser);
-            return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
+            boolean isCreated = userService.createStaff(newUser);
+            if (isCreated) {
+                return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
+            }else {
+                return ResponseObject.APIRepsonse(409, "Register failed", HttpStatus.CONFLICT, "");
+            }
         } catch (Exception e) {
             return ResponseObject.APIRepsonse(500, "An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "");
         }
