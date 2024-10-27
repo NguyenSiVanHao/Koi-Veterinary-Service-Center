@@ -150,7 +150,8 @@ public class UserService {
                     user.getVeterinarian().getImage(),
                     user.getVeterinarian().getPhone(),
                     user.getVeterinarian().getVeterinarianStatus().name(),
-                    user.getVeterinarian().getStatus()
+                    user.getVeterinarian().getStatus(),
+                    null
             );
             userResponseBuilder.veterinarian(veterinarianDTO);
         }
@@ -216,7 +217,7 @@ public class UserService {
                     userResponse.setCustomer(customerDTO);
                     userResponseList.add(userResponse);
                 }
-            } else if (user.getRole() == Role.VETERINARIAN && user.isStatus()) {
+            } else if (user.getRole() == Role.VETERINARIAN && user.isStatus() && user.getVeterinarian() != null) {
                 UserResponse userResponse = UserResponse.builder()
                         .user_id(user.getUserId())
                         .username(user.getUsername())
@@ -229,18 +230,29 @@ public class UserService {
                         .staff(null)
                         .build();
                 Veterinarian veterinarian = veterinarianRepository.findByUserId(user.getUserId());
-                if (veterinarian != null) {
-                    VeterinarianDTO veterinarianDTO = VeterinarianDTO.builder()
-                            .phone(veterinarian.getPhone())
-                            .vetId(veterinarian.getVetId())
-                            .description(veterinarian.getDescription())
-                            .image(user.getImage())
-                            .googleMeet(veterinarian.getGoogleMeet())
-                            .veterinarianStatus(veterinarian.getStatus())
-                            .build();
-                    userResponse.setVeterinarian(veterinarianDTO);
-                    userResponseList.add(userResponse);
+
+                VeterinarianDTO veterinarianResponse = new VeterinarianDTO();
+                veterinarianResponse.setVetId(veterinarian.getVetId());
+                veterinarianResponse.setStatus(veterinarian.getStatus());
+                veterinarianResponse.setDescription(veterinarian.getDescription());
+                veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
+                veterinarianResponse.setPhone(veterinarian.getPhone());
+                veterinarianResponse.setImage(veterinarian.getImage());
+                List<com.koicenter.koicenterbackend.model.entity.Service> serviceList = new ArrayList<>();
+                for(com.koicenter.koicenterbackend.model.entity.Service service: veterinarian.getServices()){
+                    if(service != null){
+                        serviceList.add(service);
+                    }
                 }
+                List<String> serviceNames = new ArrayList<>();
+                for (com.koicenter.koicenterbackend.model.entity.Service service : serviceList) {
+                    if(service.getServiceName() != null) {
+                        serviceNames.add(service.getServiceId());
+                    }
+                }
+                veterinarianResponse.setListOfServices(serviceNames);
+                userResponse.setVeterinarian(veterinarianResponse);
+                userResponseList.add(userResponse);
             } else if (user.getRole() == Role.STAFF && user.isStatus()) {
                 UserResponse userResponse = UserResponse.builder()
                         .user_id(user.getUserId())
