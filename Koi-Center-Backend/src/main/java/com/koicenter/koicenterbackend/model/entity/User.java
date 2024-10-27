@@ -5,10 +5,7 @@ import com.koicenter.koicenterbackend.model.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
@@ -16,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Data
 @Entity
+@Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id

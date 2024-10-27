@@ -86,7 +86,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
             "WHERE YEAR(appointment_date) = :year and MONTH(appointment_date) = :month", nativeQuery = true)
     Double sumTotalPriceByMonth(@Param("month") int month, @Param("year") int year);
     Page<Appointment> findByCustomer_CustomerId(String customer_id,Pageable pageable);
-//    Page<Appointment> findByService_ServiceName(String serviceName) ;
     Page<Appointment> findByVeterinarian_VetId(String veterinarian_id,Pageable pageable);
 
     Page<Appointment> findByCustomer_CustomerIdAndStatus(String customer_id,String status,Pageable pageable);

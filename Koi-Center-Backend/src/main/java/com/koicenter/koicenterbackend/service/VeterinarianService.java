@@ -48,34 +48,43 @@ public class VeterinarianService {
                 ErrorCode.VETERINARIAN_ID_NOT_EXITS.getCode(),
                 ErrorCode.VETERINARIAN_ID_NOT_EXITS.getMessage(),
                 HttpStatus.NOT_FOUND));
-        VeterinarianResponse veterinarianResponse = new VeterinarianResponse();
-        veterinarianResponse.setVetId(veterinarian.getVetId());
-        veterinarianResponse.setVetStatus(veterinarian.getStatus());
-        veterinarianResponse.setDescription(veterinarian.getDescription());
-        veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
-        veterinarianResponse.setPhone(veterinarian.getPhone());
-        veterinarianResponse.setImageVeterinarian(veterinarian.getImage());
-        List<String> serviceNames = new ArrayList<>();
-        for (com.koicenter.koicenterbackend.model.entity.Service service : veterinarian.getServices()) {
-            serviceNames.add(service.getServiceName());
+        if (veterinarian.getUser().isStatus()) {
+
+            VeterinarianResponse veterinarianResponse = new VeterinarianResponse();
+            veterinarianResponse.setVetId(veterinarian.getVetId());
+            veterinarianResponse.setVetStatus(veterinarian.getStatus());
+            veterinarianResponse.setDescription(veterinarian.getDescription());
+            veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
+            veterinarianResponse.setPhone(veterinarian.getPhone());
+            veterinarianResponse.setImageVeterinarian(veterinarian.getImage());
+            List<String> serviceNames = new ArrayList<>();
+            for (com.koicenter.koicenterbackend.model.entity.Service service : veterinarian.getServices()) {
+                serviceNames.add(service.getServiceName());
+            }
+            veterinarianResponse.setServiceNames(serviceNames);
+            veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
+
+            User user = userRepository.findById(veterinarian.getUser().getUserId()).orElseThrow(() -> new AppException(
+                    ErrorCode.USER_ID_NOT_EXITS.getCode(),
+                    ErrorCode.USER_ID_NOT_EXITS.getMessage(),
+                    HttpStatus.NOT_FOUND));
+            UserResponse userResponse = new UserResponse();
+            userResponse.setUser_id(user.getUserId());
+            userResponse.setFullName(user.getFullName());
+            userResponse.setUsername(user.getUsername());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setStatus(user.isStatus());
+            userResponse.setRole(user.getRole());
+
+            veterinarianResponse.setUser(userResponse);
+            return veterinarianResponse;
+        }else {
+            throw new AppException(
+                    ErrorCode.USER_FALSE.getCode(),
+                    ErrorCode.USER_FALSE.getMessage(),
+                    HttpStatus.BAD_REQUEST
+            );
         }
-        veterinarianResponse.setServiceNames(serviceNames);
-        veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
-
-        User user = userRepository.findById(veterinarian.getUser().getUserId()).orElseThrow(() -> new AppException(
-                ErrorCode.USER_ID_NOT_EXITS.getCode(),
-                ErrorCode.USER_ID_NOT_EXITS.getMessage(),
-                HttpStatus.NOT_FOUND));
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUser_id(user.getUserId());
-        userResponse.setFullName(user.getFullName());
-        userResponse.setUsername(user.getUsername());
-        userResponse.setEmail(user.getEmail());
-        userResponse.setStatus(user.isStatus());
-        userResponse.setRole(user.getRole());
-
-        veterinarianResponse.setUser(userResponse);
-        return veterinarianResponse;
     }
 
     public List<VeterinarianResponse> getAllVet() {
@@ -165,24 +174,26 @@ public class VeterinarianService {
         }
         List<VeterinarianResponse> responseList = new ArrayList<>();
         for (Veterinarian veterinarian : veterinarians) {
-            List<String> serviceNames = veterinarianRepository.findServiceNamesByVetId(veterinarian.getVetId());
+            if (veterinarian.getUser().isStatus()) {
+                List<String> serviceNames = veterinarianRepository.findServiceNamesByVetId(veterinarian.getVetId());
 
-            VeterinarianResponse veterinarianResponse = new VeterinarianResponse();
-            veterinarianResponse.setServiceNames(serviceNames);
-            veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
-            veterinarianResponse.setPhone(veterinarian.getPhone());
-            veterinarianResponse.setVetId(veterinarian.getVetId());
-            veterinarianResponse.setDescription(veterinarian.getDescription());
-            veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
-            veterinarianResponse.setVetStatus(veterinarian.getVeterinarianStatus() == null ? "" : veterinarian.getVeterinarianStatus().toString());
-            veterinarianResponse.setImageVeterinarian((veterinarian.getImage() != null ? veterinarian.getImage() : null));
-            veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
-            UserResponse userResponse = new UserResponse();
-            userResponse.setFullName(veterinarian.getUser().getFullName());
-            userResponse.setEmail(veterinarian.getUser().getEmail());
-            userResponse.setUsername(veterinarian.getUser().getUsername());
-            veterinarianResponse.setUser(userResponse);
-            responseList.add(veterinarianResponse);
+                VeterinarianResponse veterinarianResponse = new VeterinarianResponse();
+                veterinarianResponse.setServiceNames(serviceNames);
+                veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
+                veterinarianResponse.setPhone(veterinarian.getPhone());
+                veterinarianResponse.setVetId(veterinarian.getVetId());
+                veterinarianResponse.setDescription(veterinarian.getDescription());
+                veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
+                veterinarianResponse.setVetStatus(veterinarian.getVeterinarianStatus() == null ? "" : veterinarian.getVeterinarianStatus().toString());
+                veterinarianResponse.setImageVeterinarian((veterinarian.getImage() != null ? veterinarian.getImage() : null));
+                veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
+                UserResponse userResponse = new UserResponse();
+                userResponse.setFullName(veterinarian.getUser().getFullName());
+                userResponse.setEmail(veterinarian.getUser().getEmail());
+                userResponse.setUsername(veterinarian.getUser().getUsername());
+                veterinarianResponse.setUser(userResponse);
+                responseList.add(veterinarianResponse);
+            }
         }
         return responseList;
     }
