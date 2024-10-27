@@ -211,7 +211,7 @@ public class UserService {
                             .customerId(customer.getCustomerId())
                             .phone(customer.getPhone())
                             .address(customer.getAddress())
-                            .image(customer.getImage())
+                            .image(user.getImage())
                             .build();
                     userResponse.setCustomer(customerDTO);
                     userResponseList.add(userResponse);
@@ -223,6 +223,7 @@ public class UserService {
                         .fullName(user.getFullName())
                         .role(user.getRole())
                         .status(user.isStatus())
+                        .image(user.getImage())
                         .email(user.getEmail())
                         .customer(null)
                         .staff(null)
@@ -233,7 +234,7 @@ public class UserService {
                             .phone(veterinarian.getPhone())
                             .vetId(veterinarian.getVetId())
                             .description(veterinarian.getDescription())
-                            .image(veterinarian.getImage())
+                            .image(user.getImage())
                             .googleMeet(veterinarian.getGoogleMeet())
                             .veterinarianStatus(veterinarian.getStatus())
                             .build();
