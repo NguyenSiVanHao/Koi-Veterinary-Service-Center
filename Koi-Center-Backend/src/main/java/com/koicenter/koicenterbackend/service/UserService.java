@@ -245,25 +245,13 @@ public class UserService {
                         .username(user.getUsername())
                         .fullName(user.getFullName())
                         .role(user.getRole())
+                        .image(user.getImage())
                         .status(user.isStatus())
                         .email(user.getEmail())
                         .customer(null)
                         .veterinarian(null)
                         .build();
-                Staff staff = staffRepository.findByUser_UserId(user.getUserId());
-                if (staff != null) {
-                    StaffDTO staffDTO = StaffDTO.builder()
-                            .staffId(staff.getStaffId())
-                            .salary(staff.getSalary())
-                            .hireDate(staff.getHireDate())
-                            .phone(staff.getPhone())
-                            .image(staff.getImage())
-                            .address(staff.getAddress())
-                            .status(staff.getStatus())
-                            .build();
-                    userResponse.setStaff(staffDTO);
-                    userResponseList.add(userResponse);
-                }
+                userResponseList.add(userResponse);
             }
         }
         return userResponseList;
