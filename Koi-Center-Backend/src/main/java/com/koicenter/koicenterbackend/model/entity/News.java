@@ -25,4 +25,5 @@ public class News {
     @Column(name = "content", columnDefinition = "TEXT")
     String content;
     String img;
+    boolean status;
 }

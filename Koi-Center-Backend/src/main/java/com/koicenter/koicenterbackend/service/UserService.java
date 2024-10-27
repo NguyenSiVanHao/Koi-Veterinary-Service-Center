@@ -199,6 +199,7 @@ public class UserService {
                         .username(user.getUsername())
                         .fullName(user.getFullName())
                         .role(user.getRole())
+                        .image(user.getImage())
                         .status(user.isStatus())
                         .email(user.getEmail())
                         .veterinarian(null)
@@ -210,7 +211,7 @@ public class UserService {
                             .customerId(customer.getCustomerId())
                             .phone(customer.getPhone())
                             .address(customer.getAddress())
-                            .image(customer.getImage())
+                            .image(user.getImage())
                             .build();
                     userResponse.setCustomer(customerDTO);
                     userResponseList.add(userResponse);
@@ -222,6 +223,7 @@ public class UserService {
                         .fullName(user.getFullName())
                         .role(user.getRole())
                         .status(user.isStatus())
+                        .image(user.getImage())
                         .email(user.getEmail())
                         .customer(null)
                         .staff(null)
@@ -232,7 +234,7 @@ public class UserService {
                             .phone(veterinarian.getPhone())
                             .vetId(veterinarian.getVetId())
                             .description(veterinarian.getDescription())
-                            .image(veterinarian.getImage())
+                            .image(user.getImage())
                             .googleMeet(veterinarian.getGoogleMeet())
                             .veterinarianStatus(veterinarian.getStatus())
                             .build();
@@ -245,25 +247,13 @@ public class UserService {
                         .username(user.getUsername())
                         .fullName(user.getFullName())
                         .role(user.getRole())
+                        .image(user.getImage())
                         .status(user.isStatus())
                         .email(user.getEmail())
                         .customer(null)
                         .veterinarian(null)
                         .build();
-                Staff staff = staffRepository.findByUser_UserId(user.getUserId());
-                if (staff != null) {
-                    StaffDTO staffDTO = StaffDTO.builder()
-                            .staffId(staff.getStaffId())
-                            .salary(staff.getSalary())
-                            .hireDate(staff.getHireDate())
-                            .phone(staff.getPhone())
-                            .image(staff.getImage())
-                            .address(staff.getAddress())
-                            .status(staff.getStatus())
-                            .build();
-                    userResponse.setStaff(staffDTO);
-                    userResponseList.add(userResponse);
-                }
+                userResponseList.add(userResponse);
             }
         }
         return userResponseList;

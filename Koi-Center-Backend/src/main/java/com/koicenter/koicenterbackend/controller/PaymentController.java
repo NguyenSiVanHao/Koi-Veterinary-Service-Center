@@ -161,7 +161,7 @@ public class PaymentController {
                 "We truly appreciate your trust in our services and are committed to ensuring the best care for your koi. Our team will be ready to assist you at the scheduled time to provide a smooth and professional experience.\n\n" +
                 "Should you have any questions or need to modify your appointment, please do not hesitate to contact us at 0345999999 or via email at koicenter.swp@gmail.com.\n\n" +
                 "Once again, thank you for choosing KOI MED CENTER. We look forward to serving you and ensuring the health and happiness of your koi.\n\n" +
-                "We would love to hear your feedback on our services. Please take a moment to rate us and share your experience by visiting the following link:"+ urlRating +"Your feedback helps us improve and continue providing the best care for your koi.\n\n" +
+                "We would love to hear your feedback on our services." +
                 "Warm regards,\n" +
                 "KOI MED CENTER\n" +
                 "0345999999\n" +
@@ -195,14 +195,12 @@ public class PaymentController {
                 return ResponseObject.APIRepsonse(400, "Amount is required", HttpStatus.BAD_REQUEST, null);
             }
             amountTemp = Float.parseFloat(amount);
-//            treamentRequestTemp = treamentRequest;
-//            float amountTemp = treamentRequest.getAppointmentRequest().getDepositedMoney();
-//            String amountStr = String.valueOf((int) amountTemp);
-//            if (amountTemp <= 0) {
-//                return ResponseObject.APIRepsonse(400, "Amount is required", HttpStatus.BAD_REQUEST, null);
-//            }
-
             treamentRequestTemp = treamentRequest;
+            float amountTemp = treamentRequest.getAppointmentRequest().getDepositedMoney();
+            String amountStr = String.valueOf((int) amountTemp);
+            if (amountTemp <= 0) {
+                return ResponseObject.APIRepsonse(400, "Amount is required", HttpStatus.BAD_REQUEST, null);
+            }
 
             CustomEnviroment customEnviroment = CustomEnviroment.selectEnv("dev");
             String orderId = "order-" + System.currentTimeMillis();
