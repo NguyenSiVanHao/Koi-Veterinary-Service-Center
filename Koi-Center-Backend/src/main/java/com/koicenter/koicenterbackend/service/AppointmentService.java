@@ -238,7 +238,7 @@ public class AppointmentService {
         List<Appointment> appointments = new ArrayList<>();
         List<AppointmentResponse>appointmentResponses = new ArrayList<>();
         if (status.equalsIgnoreCase("ALL")) {
-            appointments = appointmentRepository.findAll();
+            appointments = appointmentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
         } else {//PageRequest.of()
             appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status));
         }
