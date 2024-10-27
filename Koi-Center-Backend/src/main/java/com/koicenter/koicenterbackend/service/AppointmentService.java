@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -49,107 +50,51 @@ public class AppointmentService {
     InvoiceRepository invoiceRepository;
 
     public PageResponse<AppointmentResponse> getAllAppointmentsByCustomerId(String customerId, String status, int offset, int pageSize,String search) {
-        Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Appointment> appointments = appointmentRepository.findByCustomer_CustomerId(customerId, pageable);
-        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
+        List<Appointment> appointments = appointmentRepository.findByCustomer_CustomerIdOrderByCreatedAtDesc(customerId);
+        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
+        for (Appointment appointment : appointments) {
             if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
-                AppointmentResponse response = AppointmentResponse.builder()
-                        .appointmentId(appointment.getAppointmentId())
-                        .appointmentDate(appointment.getAppointmentDate())
-                        .endTime(appointment.getEndTime())
-                        .status(appointment.getStatus())
-                        .location(String.valueOf(appointment.getLocation()))
-                        .createdAt(appointment.getCreatedAt())
-                        .location(String.valueOf(appointment.getLocation()))
-                        .result(String.valueOf(appointment.getResult()))
-                        .startTime(appointment.getStartTime())
-                        .status(appointment.getStatus())
-                        .type(appointment.getType())
-                        .customerId(appointment.getCustomer().getCustomerId())
-                        .customerName(appointment.getCustomer().getUser().getFullName())
-                        .serviceId(appointment.getService().getServiceId())
-                        .serviceName(appointment.getService().getServiceName())
-                        .code(appointment.getCode())
-                        .distance(appointment.getDistance())
-                        .build();
-                if (appointment.getVeterinarian() != null) {
+                AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
+                if(appointment.getVeterinarian()!=null) {
                     response.setVetId(appointment.getVeterinarian().getVetId());
                     response.setVetName(appointment.getVeterinarian().getUser().getFullName());
                 }
-                return response ;
-            }else {
-                return null;
+                appointmentResponses.add(response);
             }
-            });
-      return filterBySearch(appointmentResponses,search,AppointmentResponse::getServiceName);
+        }
+        appointmentResponses = filterBySearch(appointmentResponses,search,AppointmentResponse::getServiceName);
+        return paginateAppointments(appointmentResponses,offset,pageSize);
     }
-
     public AppointmentResponse getAppointmentByAppointmentId(String appointmentId) {
         AppointmentResponse appointmentResponses;
         Appointment appointment = appointmentRepository.findAppointmentById(appointmentId);
 
-        AppointmentResponse response = AppointmentResponse.builder()
-                .appointmentId(appointment.getAppointmentId())
-                .appointmentDate(appointment.getAppointmentDate())
-                .endTime(appointment.getEndTime())
-                .status(appointment.getStatus())
-                .location(String.valueOf(appointment.getLocation()))
-                .createdAt(appointment.getCreatedAt())
-                .location(String.valueOf(appointment.getLocation()))
-                .result(String.valueOf(appointment.getResult()))
-                .startTime(appointment.getStartTime())
-                .status(appointment.getStatus())
-                .type(appointment.getType())
-                .customerId(appointment.getCustomer().getCustomerId())
-                .customerName(appointment.getCustomer().getUser().getFullName())
-                .phone(appointment.getCustomer().getPhone())
-                .serviceName(appointment.getService().getServiceName())
-                .serviceId(appointment.getService().getServiceId())
-                .distance(appointment.getDistance())
-                .code(appointment.getCode())
-                .build();
+        AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
         if (appointment.getVeterinarian() != null) {
-
             response.setVetId(appointment.getVeterinarian().getVetId());
             response.setVetName(appointment.getVeterinarian().getUser().getFullName());
         }
         return response;
     }
-    public PageResponse<AppointmentResponse> getAllAppointmentByVetId(String vetId, String status, int offset, int pageSize,String search) {
-        Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Appointment> appointments = appointmentRepository.findByVeterinarian_VetId(vetId,pageable);
+    public PageResponse<AppointmentResponse> getAllAppointmentByVetId(String vetId, String status,int offset, int pageSize,String search) {
+        List<Appointment> appointments = appointmentRepository.findByVeterinarian_VetIdOrderByCreatedAtDesc(vetId);
+        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
+
         if (appointments == null) { // Thêm kiểm tra null
             throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(), "No appointments found", HttpStatus.NOT_FOUND);
         }
-        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
+        appointments.sort(Comparator
+                .comparing(Appointment::getAppointmentDate)
+                .thenComparing(Appointment::getCreatedAt)
+                .reversed());
+        for (Appointment appointment : appointments) {
             if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
-                AppointmentResponse response = AppointmentResponse.builder()
-                        .appointmentId(appointment.getAppointmentId())
-                        .appointmentDate(appointment.getAppointmentDate())
-                        .endTime(appointment.getEndTime())
-                        .status(appointment.getStatus())
-                        .location(String.valueOf(appointment.getLocation()))
-                        .createdAt(appointment.getCreatedAt())
-                        .location(String.valueOf(appointment.getLocation()))
-                        .result(String.valueOf(appointment.getResult()))
-                        .startTime(appointment.getStartTime())
-                        .status(appointment.getStatus())
-                        .type(appointment.getType())
-                        .customerId(appointment.getCustomer().getCustomerId())
-                        .serviceName(appointment.getService().getServiceName())
-                        .customerName(appointment.getCustomer().getUser().getFullName())
-                        .serviceId(appointment.getService().getServiceId())
-                        .vetId(appointment.getVeterinarian().getVetId())
-                        .code(appointment.getCode())
-                        .distance(appointment.getDistance())
-                        .build();
-
-                return response ;
-            }else {
-                return null;
+                AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
+                appointmentResponses.add(response);
             }
-        });
-        return filterBySearch(appointmentResponses,search,AppointmentResponse::getCustomerName);
+        }
+        appointmentResponses=filterBySearch(appointmentResponses,search,AppointmentResponse::getCustomerName);
+        return paginateAppointments(appointmentResponses,offset,pageSize);
     }
 
     //CREATE APPOINTMENT
@@ -289,46 +234,27 @@ public class AppointmentService {
         }
     }
 
-    public PageResponse<AppointmentResponse> getAllAppointments(String status, int offset, int pageSize) {
-        Page<Appointment> appointments;
-        ZonedDateTime createdAt;
-        Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
+    public PageResponse<AppointmentResponse> getAllAppointments(String status, int offset, int pageSize,String search) {
+        List<Appointment> appointments = new ArrayList<>();
+        List<AppointmentResponse>appointmentResponses = new ArrayList<>();
         if (status.equalsIgnoreCase("ALL")) {
-            appointments = appointmentRepository.findAll(pageable);
+            appointments = appointmentRepository.findAll();
         } else {//PageRequest.of()
-            appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status), pageable);
+            appointments = appointmentRepository.findByStatusOrderByCreatedAtDesc(AppointmentStatus.valueOf(status));
         }
-        Page<AppointmentResponse> appointmentResponses = appointments.map(appointment -> {
-            AppointmentResponse response = AppointmentResponse.builder()
-                    .appointmentId(appointment.getAppointmentId())
-                    .appointmentDate(appointment.getAppointmentDate())
-                    .endTime(appointment.getEndTime())
-                    .status(appointment.getStatus())
-                    .location(String.valueOf(appointment.getLocation()))
-                    .createdAt(appointment.getCreatedAt())
-                    .location(String.valueOf(appointment.getLocation()))
-                    .result(appointment.getResult())
-                    .startTime(appointment.getStartTime())
-                    .status(appointment.getStatus())
-                    .type(appointment.getType())
-                    .customerId(appointment.getCustomer().getCustomerId())
-                    .customerName(appointment.getCustomer().getUser().getFullName())
-                    .serviceName(appointment.getService().getServiceName())
-                    .serviceId(appointment.getService().getServiceId())
-                    .code(appointment.getCode())
-                    .distance(appointment.getDistance())
-                    .build();
-            log.info(appointment.getCustomer().getCustomerId());
-
-            if (appointment.getVeterinarian() != null) {
-                response.setVetId(appointment.getVeterinarian().getVetId());
-                response.setVetName(appointment.getVeterinarian().getUser().getFullName());
+        for (Appointment appointment : appointments) {
+            if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
+                AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
+                if (appointment.getVeterinarian() != null) {
+                    response.setVetId(appointment.getVeterinarian().getVetId());
+                    response.setVetName(appointment.getVeterinarian().getUser().getFullName());
+                }
+                appointmentResponses.add(response);
             }
-            return response;
-        });
-        return new PageResponse<>(appointmentResponses.getContent(),appointments.getNumberOfElements(),appointments.getTotalPages());
+        }
+        appointmentResponses = filterBySearch(appointmentResponses,search,AppointmentResponse::getCustomerName);
+        return paginateAppointments(appointmentResponses,offset,pageSize);
     }
-
     private String getCode(AppointmentType appointmentType) {
         List<Appointment> appointments = appointmentRepository.findAll();
         int count = 1;
@@ -426,22 +352,34 @@ public class AppointmentService {
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
         return appointmentResponse;
     }
-    private PageResponse<AppointmentResponse> filterBySearch(Page<AppointmentResponse> appointmentResponses, String search , Function<AppointmentResponse,String> getNameFunction){
+    private List<AppointmentResponse> filterBySearch(List<AppointmentResponse> appointments, String search , Function<AppointmentResponse,String> getNameFunction){
+        List<AppointmentResponse> appointmentResponses = new ArrayList<>();
+
         if(search == null || search.trim().isEmpty()){
-            return new PageResponse<>(appointmentResponses.getContent(),appointmentResponses.getNumberOfElements(),appointmentResponses.getTotalPages());
-        }
-            Optional<AppointmentResponse> extactMatch = appointmentResponses.getContent().stream()
-                    .filter(Objects::nonNull)
-                    .filter(appointmentResponse -> appointmentResponse.getCode().toUpperCase().equals(search.toUpperCase()))
-                    .findFirst();
-            if(extactMatch.isPresent()){
-                return new PageResponse<>(Collections.singletonList(extactMatch.get()),1,1);
+            return appointments ;
+        }else {
+            for ( AppointmentResponse appointmentResponse : appointments ) {
+                if(appointmentResponse.getCode().toUpperCase().equals(search.toUpperCase())){
+                    return List.of(appointmentResponse);
+                } else if ( StringUtils.stripAccents(getNameFunction.apply(appointmentResponse).toLowerCase()).contains(StringUtils.stripAccents(search.toLowerCase()))) {
+                    appointmentResponses.add(appointmentResponse);
+                }
             }
-            List<AppointmentResponse> filteredResponse = appointmentResponses.getContent().stream()
-                    .filter(Objects::nonNull)
-                    .filter(appointmentResponse -> getNameFunction.apply(appointmentResponse).toLowerCase().contains(search.toLowerCase()))
-                    .collect(Collectors.toList());
-            return new PageResponse<>(filteredResponse,filteredResponse.size(),filteredResponse.size()/appointmentResponses.getSize());
+        }
+        return appointmentResponses ;
+    }
+    private PageResponse<AppointmentResponse> paginateAppointments (List<AppointmentResponse> appointmentResponses,int offSet ,int pageSize){
+        Pageable pageable = PageRequest.of(offSet-1, pageSize).withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
+        int totalItems  = appointmentResponses.size();
+        int totalElements = pageSize;
+        int totalPages = (totalItems + pageSize - 1) / pageSize;
+        Integer start = (int) pageable.getOffset();
+        int end = Math.min(start + pageSize, totalItems);
+        if (start > totalItems) {
+            return new PageResponse<>(new ArrayList<>(), (int) Math.ceil((double) appointmentResponses.size() / pageSize), offSet, 0, pageSize);
+        }
+        appointmentResponses = appointmentResponses.subList(start, end);
+        return new PageResponse<>(appointmentResponses,totalPages,offSet,totalItems,totalElements);
     }
 }
 

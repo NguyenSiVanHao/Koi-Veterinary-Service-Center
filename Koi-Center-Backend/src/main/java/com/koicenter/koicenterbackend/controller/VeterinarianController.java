@@ -73,8 +73,6 @@ public class VeterinarianController {
                     .body(new ResponseObject(404, "No appointments found", null));
         }
     }
-
-
     @PutMapping("/{vetId}")
     public ResponseEntity<ResponseObject> updateVeterinarian(@PathVariable String vetId,@RequestBody VerinarianUpdateRequest request) {
 
