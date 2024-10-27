@@ -106,6 +106,8 @@ function AllAppointment() {
   const handleChangeStatus = (status) => {
     setStatus(status);
     setAppointments([]);
+    setSearch("");
+    setOffSet(1);
     console.log("status", status)
   };
 
