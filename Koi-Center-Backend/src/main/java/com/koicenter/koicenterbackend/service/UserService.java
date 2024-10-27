@@ -199,6 +199,7 @@ public class UserService {
                         .username(user.getUsername())
                         .fullName(user.getFullName())
                         .role(user.getRole())
+                        .image(user.getImage())
                         .status(user.isStatus())
                         .email(user.getEmail())
                         .veterinarian(null)
