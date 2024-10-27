@@ -145,8 +145,8 @@ export const fetchAllAppointmentAPI = async (status, offSet, pageSize,search) =>
     const response = await api.get(`appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}&search=${search}`);
     return response.data;
 }
-export const fetchAppointmentByCustomerIdAPI = async (customerId, status,search) => {
-    const response = await api.get(`/customers/${customerId}/appointments?status=${status}&search=${search}`);
+export const fetchAppointmentByCustomerIdAPI = async (customerId, status, offSet, pageSize, search) => {
+    const response = await api.get(`/customers/${customerId}/appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}&search=${search}`);
     return response.data;
 }
 

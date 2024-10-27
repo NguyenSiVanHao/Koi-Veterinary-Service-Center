@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import debounce from 'lodash/debounce';
 import { Link } from "react-router-dom";
 import "./AllAppointment.css";
 import {
@@ -9,19 +10,19 @@ import {
 import { ROLE, APPOINTMENT_STATUS } from "../../utils/constants";
 import { useSelector } from "react-redux";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
-import Loading from "../../components/Loading/Loading";
-import { Pagination } from "@mui/material";
+import { Pagination, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import PreLoader from "../../components/Preloader/Preloader";
 import refund from "../../assets/img/refund logo.svg"
 
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [status, setStatus] = useState("ALL");
-  const [pageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const vetId = useSelector((state) => state?.user?.veterinarian?.vetId);
   const role = useSelector((state) => state.user.role);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,11 +33,21 @@ function AllAppointment() {
     await setTotalPage(0);
     setOffSet(value);
   };
-  const handleSearch = () => {
-    setOffSet(1);
-    setSearch(search);
 
-  }
+  // Create a debounced function
+  const debouncedSetSearch = useCallback(
+    debounce((value) => {
+      setDebouncedSearch(value);
+    }, 1000),
+    []
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    debouncedSetSearch(e.target.value);
+  };
+
   useEffect(() => {
     setIsLoading(true);
     const fetchAppointmentForVet = async (vetId, status, pageSize, search, offSet) => {
@@ -66,9 +77,9 @@ function AllAppointment() {
       }
     };
 
-    const fetchAppointmentForCustomer = async (customerId, status, search) => {
+    const fetchAppointmentForCustomer = async (customerId, status, offSet, pageSize, search) => {
       try {
-        const response = await fetchAppointmentByCustomerIdAPI(customerId, status, search);
+        const response = await fetchAppointmentByCustomerIdAPI(customerId, status, offSet, pageSize, search);
         setAppointments(response?.data?.content);
         setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
@@ -80,17 +91,17 @@ function AllAppointment() {
       }
     };
     if (role === ROLE.VETERINARIAN) {
-      fetchAppointmentForVet(vetId, status, pageSize, search, offSet);
+      fetchAppointmentForVet(vetId, status, pageSize, debouncedSearch, offSet);
       setTitle("All My Appointments");
     } else if (role === ROLE.STAFF) {
-      fetchAppointmentForStaff();
+      fetchAppointmentForStaff(debouncedSearch);
       setTitle("All Veterinarian Appointments");
     } else if (role === ROLE.CUSTOMER) {
-      fetchAppointmentForCustomer(customerId, status);
+      fetchAppointmentForCustomer(customerId, status, offSet, pageSize, debouncedSearch);
       setTitle("My Appointments");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role, customerId, status, pageSize, offSet, search]);
+  }, [role, customerId, status, pageSize, offSet, debouncedSearch]);
 
   const handleChangeStatus = (status) => {
     setStatus(status);
@@ -120,10 +131,14 @@ function AllAppointment() {
       <div className="row mb-3 justify-content-center">
         <div className="col-md-8">
           <div className="input-group">
-            <input type="text" className="form-control" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
-            <button className="btn btn-primary" type="button" onClick={() => handleSearch()}>
-              Search <i className="fas fa-search"></i>
-            </button>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search"
+              value={search}
+              onChange={handleSearchChange}
+            />
+            {/* Remove the search button if not needed */}
           </div>
         </div>
       </div>
@@ -243,15 +258,35 @@ function AllAppointment() {
 
           </tbody>
         </table>
-        <div className="d-flex justify-content-center mt-3">
-          <Pagination count={totalPage} page={offSet} onChange={(event, value) => handleChangePage(event, value)} />
+        <div className="d-flex justify-content-center align-items-center mt-3">
+          <Pagination
+            count={totalPage}
+            page={offSet}
+            onChange={(event, value) => handleChangePage(event, value)}
+          />
+          <FormControl variant="outlined" size="small" style={{ minWidth: 120, marginRight: 16 }}>
+            <InputLabel id="page-size-select-label">Page Size</InputLabel>
+            <Select
+              labelId="page-size-select-label"
+              id="page-size-select"
+              value={pageSize}
+              onChange={(event) => {
+                setPageSize(event.target.value);
+                setOffSet(1);
+              }}
+              label="Page Size"
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </Select>
+          </FormControl>
         </div>
 
       </div>
     </>
-
   );
 }
-
 
 export default AllAppointment;
