@@ -58,6 +58,8 @@ import InvoiceDetail from './pages/PaymentCheckout/InvoiceDetail';
 import ContactManagement from './pages/ContactManagement/ContactManagement';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import NewsManagement from './pages/NewsManagement/NewsManagement';
+import NewsPage from './pages/NewsPage/NewsPage';
+import NewsDetailPage from './pages/NewsDetailPage/NewsDetailPage';
 
 function App() {
   const isAuthorized = useSelector(state => state?.user?.isAuthorized)
@@ -90,7 +92,6 @@ function App() {
     <PersistGate loading={null} persistor={persistor}>
       <Router>
         <Routes>
-          <Route path="/rating" element={<Rating />} />
           <Route path="/medpage" element={<MedicineListPage />} />
           <Route path="/image" element={<ImageUpload />} />
           <Route path="/ggm" element={<GGM />} />
@@ -101,6 +102,9 @@ function App() {
           <Route path="/*" element={
             <UserLayout>
               <Routes>
+              <Route path="/news" element={<NewsPage />} />
+                <Route path="/news/:id" element={<NewsDetailPage />} />
+                <Route path="/rating" element={<Rating />} />
                 <Route path="/about-us" element={<AboutUsPage />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/services/:serviceId" element={<ServicePageDetail />} />

@@ -88,6 +88,10 @@ export const updateVetByIdAPI = async (vetId, data, image) => {
 }
 
 
+export const updateDescriptionByVetIdAPI = async (vetId, data) => {
+    const response = await api.put(`/veterinarians/${vetId}`, data);
+    return response.data;
+}
 
 // Service API
 export const fecthAllServicesAPI = async () => {
@@ -472,7 +476,7 @@ export const fetchAllNewsAPI = async () => {
 }
 
 export const fetchNewsByIdAPI = async (id) => {
-    const response = await api.get(`/news/id?id=${id}`);
+    const response = await api.get(`/news/${id}`);
     return response.data;
 }
 
