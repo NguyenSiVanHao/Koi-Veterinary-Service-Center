@@ -200,21 +200,30 @@ public class VeterinarianService {
         veterinarian.setPhone(request.getPhone());
         veterinarian.setImage(request.getImage());
 
-        List<com.koicenter.koicenterbackend.model.entity.Service> services = new ArrayList<>();
-        if (request.getService() != null && !request.getService().isEmpty()) {
-            for (String service : request.getService()) {
-                com.koicenter.koicenterbackend.model.entity.Service serviceEntity = servicesRepository.findByServiceId(service);
-                if (serviceEntity != null) {
-                    boolean exists = servicesRepository.existsByServiceIdAndVeterinarianId(service, vetId);
-                    if (!exists) {
-                        services.add(serviceEntity);
-                        serviceEntity.getVeterinarians().add(veterinarian);
-                    }
-                } else {
-                    throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
-                            ErrorCode.SERVICE_NOT_EXITS.getMessage(),
-                            HttpStatus.NOT_FOUND);
+        List<String> newServiceIds = request.getService();
+        List<com.koicenter.koicenterbackend.model.entity.Service> currentServices = veterinarian.getServices();
+        List<com.koicenter.koicenterbackend.model.entity.Service> servicesToRemove = new ArrayList<>();
+        for (com.koicenter.koicenterbackend.model.entity.Service currentService : currentServices) {
+            if (!newServiceIds.contains(currentService.getServiceId())) {
+                servicesToRemove.add(currentService);
+            }
+        }
+        for (com.koicenter.koicenterbackend.model.entity.Service serviceToRemove : servicesToRemove) {
+            serviceToRemove.getVeterinarians().remove(veterinarian);
+        }
+        currentServices.removeAll(servicesToRemove);
+        for (String serviceId : newServiceIds) {
+            com.koicenter.koicenterbackend.model.entity.Service serviceEntity = servicesRepository.findByServiceId(serviceId);
+            if (serviceEntity != null) {
+                boolean exists = servicesRepository.existsByServiceIdAndVeterinarianId(serviceId, vetId);
+                if (!exists) {
+                    currentServices.add(serviceEntity);
+                    serviceEntity.getVeterinarians().add(veterinarian);
                 }
+            } else {
+                throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
+                        ErrorCode.SERVICE_NOT_EXITS.getMessage(),
+                        HttpStatus.NOT_FOUND);
             }
         }
 
