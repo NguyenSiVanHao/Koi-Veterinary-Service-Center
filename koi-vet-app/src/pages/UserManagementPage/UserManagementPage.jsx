@@ -24,7 +24,7 @@ const UserManagementPage = () => {
   const handleImageChange = (file) => {
     setImage(file);
   }
-  const handleOpenModalEditUser = (userData, isEdit = true) => {
+  const handleOpenModalEditUser = (userData, isEdit) => {
     console.log("userData", userData);
     setSelectedUser(userData); // Tạo một bản sao của userData
     console.log("selectedUser", selectedUser);
@@ -68,23 +68,50 @@ const UserManagementPage = () => {
       case "STAFF":
         response = await createStaffAPI(
           {
-            "userId": selectedUser.user_id,
-            "fullName": selectedUser.fullName,
             "email": selectedUser.email,
-            "phoneNumber": selectedUser.phoneNumber,
+            "password": selectedUser.password,
+            "username": selectedUser.username,
+            "fullname": selectedUser.fullName,
             "address": selectedUser.address,
-            "image": image
+            "phone": selectedUser.phone,
+            "status": selectedUser.status,
+            "image": null
           }
           , image);
         break;
       case "VETERINARIAN":
-        response = await createVetAPI(selectedUser, image);
+        response = await createVetAPI(
+          {
+
+            "status": "string",
+            "description": selectedUser.veterinarian.description,
+            "google_meet": selectedUser.veterinarian.googleMeet,
+            "phone": selectedUser.veterinarian.phone,
+            "image": selectedUser.veterinarian.image,
+            "user": {
+              "email": selectedUser.email,
+              "username": selectedUser.username,
+              "password": selectedUser.password,
+              "fullname": selectedUser.fullName,
+              "address": selectedUser.address,
+              "phone": selectedUser.phone,
+              "status": selectedUser.status,
+              "image": null
+            },
+            "service": selectedUser.veterinarian.listOfServices
+
+          }
+          , image);
         break;
       case "CUSTOMER":
         // await createCustomerAPI(selectedUser, image);
         break;
       default:
         break;
+    }
+    if (response.status === 200) {
+      fetchUserData();
+      handleCloseModal();
     }
   }
   const handleSubmitUpdateUser = async () => {
@@ -115,7 +142,7 @@ const UserManagementPage = () => {
               "address": selectedUser.address,
               "phone": selectedUser.phone,
               "status": selectedUser.status,
-              "image":null
+              "image": null
             },
             "service": selectedUser.veterinarian.listOfServices
 
@@ -146,9 +173,9 @@ const UserManagementPage = () => {
       <AdminHeader title="User Management" />
       <div className="d-flex justify-content-between align-items-center text-center mb-3">
         <input type="text" placeholder="Search" className="form-control w-50" />
-        {tab === "CUSTOMER" && <button className="btn btn-primary">Add Customer</button>}
-        {tab === "VETERINARIAN" && <button className="btn btn-primary">Add Veterinarian</button>}
-        {tab === "STAFF" && <button className="btn btn-primary">Add Staff</button>}
+        {tab === "CUSTOMER" && <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(null, false)}>Add Customer</button>}
+        {tab === "VETERINARIAN" && <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(null, false)}>Add Veterinarian</button>}
+        {tab === "STAFF" && <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(null, false)}>Add Staff</button>}
       </div>
       <div className="row mb-3 justify-content-center">
         <nav className="w-100">

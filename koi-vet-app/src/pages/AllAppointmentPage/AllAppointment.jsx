@@ -36,7 +36,9 @@ function AllAppointment() {
 
   // Create a debounced function
   const debouncedSetSearch = useCallback(
+    
     debounce((value) => {
+      setOffSet(1);
       setDebouncedSearch(value);
     }, 1000),
     []
@@ -45,6 +47,7 @@ function AllAppointment() {
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
+   
     debouncedSetSearch(e.target.value);
   };
 

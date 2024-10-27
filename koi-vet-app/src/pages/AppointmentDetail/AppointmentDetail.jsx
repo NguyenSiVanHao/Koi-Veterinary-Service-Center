@@ -236,7 +236,7 @@ function AppointmentDetail() {
 
   if (isLoading) return <PreLoader />
 
-  
+
 
   //Rating Modal
   const handleOpenRatingModal = () => {
@@ -513,7 +513,7 @@ function AppointmentDetail() {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={() => navigate(`/rating-feedback/${appointmentId}`)}
+                  onClick={handleOpenRatingModal}
                 >
                   Rating & Feedback
                 </button>
@@ -578,10 +578,6 @@ function AppointmentDetail() {
         <InvoiceList appointment={appointment} />
       </Modal>
 
-
-
-
-      <button onClick={handleOpenRatingModal}>Rating</button>
       <Modal
         open={isRatingModalOpen}
         onCancel={handleCloseRatingModal}

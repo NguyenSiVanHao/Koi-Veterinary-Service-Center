@@ -28,7 +28,6 @@ const VeterinarianStep = () => {
     <div className="container text-center my-5">
       <div className="container mt-5">
         <div className="text-center mb-5">
-          <img src="process-image.png" alt="Process Step" />
           <h3>Choose Doctor</h3>
         </div>
 

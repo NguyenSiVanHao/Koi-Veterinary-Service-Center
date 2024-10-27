@@ -117,6 +117,11 @@ function Header() {
                   Contacts
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink to="/faq" className="nav-link">
+                  FAQ
+                </NavLink>
+              </li>
             </ul>
             {/* User Actions */}
             <div className="d-flex">
@@ -145,6 +150,7 @@ function Header() {
                 <Link to="/admin" className="btn btn-outline-light">
                   <i className="fas fa-user"></i>
                 </Link>}
+              
 
             </div>
           </div>
