@@ -1,7 +1,7 @@
 import { Form, Input, message, Select, Table } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Row } from 'react-bootstrap'
-import { createMedicineAPI, fetchMedicinesAPI } from '../../apis';
+import { createMedicineAPI, deleteMedicineByIdAPI, fetchMedicinesAPI } from '../../apis';
 import './CreateMedicinePage.css';
 import TextArea from 'antd/es/input/TextArea';
 
@@ -61,13 +61,13 @@ function CreateMedicinePage() {
     fetchMedicines();
   }, []);
 
+  const handleDeleteMedicine = async (medicineId) => {
+    await deleteMedicineByIdAPI(medicineId);
+    const updatedMedicines = await fetchMedicinesAPI();
+    setAvailableMedicines(updatedMedicines.data || []);
+  };
+
   const columns = [
-    {
-      title: "Medicine ID",
-      dataIndex: "medicineId",
-      key: "medicineId",
-      width: '150',
-    },
     {
       title: "Name",
       dataIndex: "name",
@@ -87,7 +87,13 @@ function CreateMedicinePage() {
       key: "medUnit",
       width: '100',
     },
-    
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <button onClick={() => handleDeleteMedicine(record.medicineId)} className="btn btn-sm btn-outline-danger">Delete</button>
+      )
+    }
   ];
   return (
     <>
