@@ -83,10 +83,7 @@ public class AppointmentService {
         if (appointments == null) { // Thêm kiểm tra null
             throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(), "No appointments found", HttpStatus.NOT_FOUND);
         }
-        appointments.sort(Comparator
-                .comparing(Appointment::getAppointmentDate)
-                .thenComparing(Appointment::getCreatedAt)
-                .reversed());
+
         for (Appointment appointment : appointments) {
             if (appointment.getStatus().name().equals(status) || status.equals("ALL")) {
                 AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
