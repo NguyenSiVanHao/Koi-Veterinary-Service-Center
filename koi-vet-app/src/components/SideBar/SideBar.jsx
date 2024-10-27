@@ -39,21 +39,21 @@ function SideBar() {
         </Link>
       </div>
       <ul className="nav flex-column">
-        <li className="nav-item">
+        {role === ROLE.MANAGER && <li className="nav-item">
           <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>
             <i className="fas fa-chart-line"></i> Dashboard
           </Link>
-        </li>
+        </li>}
 
         {(role === ROLE.MANAGER || role === ROLE.STAFF) && (
           <>
             <li className="nav-item">
               <Link to="/admin/user-management" className={`nav-link ${location.pathname === '/admin/user-management' ? 'active' : ''}`}>
                 <i className="fas fa-users"></i> Users
-            </Link>
-          </li>
-           <li className="nav-item">
-           <Link to="/admin/schedual" className={`nav-link ${location.pathname === '/admin/schedual' ? 'active' : ''}`}>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/admin/schedual" className={`nav-link ${location.pathname === '/admin/schedual' ? 'active' : ''}`}>
                 <i className="fas fa-calendar-alt"></i> Veterinarian Schedual
               </Link>
             </li>
@@ -66,13 +66,14 @@ function SideBar() {
             </Link>
           </li>
         )}
-        <li className="nav-item">
-          <Link to="/admin/service-management" className={`nav-link ${location.pathname === '/admin/service-management' ? 'active' : ''}`}>
-            <i className="fas fa-cogs"></ i> Services Management
-          </Link>
-        </li>
+
         {(role === ROLE.MANAGER || role === ROLE.STAFF) && (
           <>
+            <li className="nav-item">
+              <Link to="/admin/service-management" className={`nav-link ${location.pathname === '/admin/service-management' ? 'active' : ''}`}>
+                <i className="fas fa-cogs"></ i> Services Management
+              </Link>
+            </li>
             <li className="nav-item">
               <Link to="/admin/faq-management" className={`nav-link ${location.pathname === '/admin/faq-management' ? 'active' : ''}`}>
                 <i className="fas fa-question-circle"></i> FAQ

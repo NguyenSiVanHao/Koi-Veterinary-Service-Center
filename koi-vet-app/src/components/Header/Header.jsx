@@ -147,7 +147,7 @@ function Header() {
                   <i className="fas fa-user"></i>
                 </Link>}
               {[ROLE.VETERINARIAN, ROLE.STAFF,ROLE.MANAGER].includes(user?.role) &&
-                <Link to="/admin" className="btn btn-outline-light">
+                <Link to={user?.role === ROLE.MANAGER ? "/admin" : "/admin/appointment"} className="btn btn-outline-light">
                   <i className="fas fa-user"></i>
                 </Link>}
               
