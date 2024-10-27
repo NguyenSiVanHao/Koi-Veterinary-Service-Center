@@ -82,35 +82,36 @@ public class VeterinarianService {
         List<User> users = userRepository.findByRole(Role.VETERINARIAN);
         List<VeterinarianResponse> responseList = new ArrayList<>();
         for (User user : users) {
+            if (user.isStatus()) {
+                try {
+                    Veterinarian veterinarian = veterinarianRepository.findByUserId(user.getUserId());
+                    if (veterinarian != null) {
+                        UserResponse userResponse = UserResponse.builder()
+                                .user_id(user.getUserId())
+                                .role(user.getRole())
+                                .status(user.isStatus())
+                                .username(user.getUsername())
+                                .email(user.getEmail())
+                                .fullName(user.getFullName())
+                                .build();
 
-            try {
-                Veterinarian veterinarian = veterinarianRepository.findByUserId(user.getUserId());
-                if (veterinarian != null) {
-                    UserResponse userResponse = UserResponse.builder()
-                            .user_id(user.getUserId())
-                            .role(user.getRole())
-                            .status(user.isStatus())
-                            .username(user.getUsername())
-                            .email(user.getEmail())
-                            .fullName(user.getFullName())
-                            .build();
+                        List<String> serviceNames = veterinarianRepository.findServiceNamesByVetId(veterinarian.getVetId());
 
-                    List<String> serviceNames = veterinarianRepository.findServiceNamesByVetId(veterinarian.getVetId());
-
-                    VeterinarianResponse veterinarianResponse = VeterinarianResponse.builder()
-                            .vetId(veterinarian.getVetId())
-                            .description(veterinarian.getDescription())
-                            .googleMeet(veterinarian.getGoogleMeet())
-                            .phone(veterinarian.getPhone())
-                            .imageVeterinarian(veterinarian.getImage() != null ? veterinarian.getImage() : null)
-                            .vetStatus(veterinarian.getVeterinarianStatus().toString())
-                            .serviceNames(serviceNames)
-                            .user(userResponse)
-                            .build();
-                    responseList.add(veterinarianResponse);
+                        VeterinarianResponse veterinarianResponse = VeterinarianResponse.builder()
+                                .vetId(veterinarian.getVetId())
+                                .description(veterinarian.getDescription())
+                                .googleMeet(veterinarian.getGoogleMeet())
+                                .phone(veterinarian.getPhone())
+                                .imageVeterinarian(veterinarian.getImage() != null ? veterinarian.getImage() : null)
+                                .vetStatus(veterinarian.getVeterinarianStatus().toString())
+                                .serviceNames(serviceNames)
+                                .user(userResponse)
+                                .build();
+                        responseList.add(veterinarianResponse);
+                    }
+                } catch (Exception e) {
+                    log.error("Error while retrieving Veterinarian: {}", e.getMessage());
                 }
-            } catch (Exception e) {
-                log.error("Error while retrieving Veterinarian: {}", e.getMessage());
             }
         }
         return responseList;
@@ -136,7 +137,7 @@ public class VeterinarianService {
                 if (serviceId != null) {
                     services.add(serviceId);
                     serviceId.getVeterinarians().add(veterinarian);
-                }else {
+                } else {
                     throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
                             ErrorCode.SERVICE_NOT_EXITS.getMessage(),
                             HttpStatus.NOT_FOUND);
@@ -153,13 +154,13 @@ public class VeterinarianService {
         veterinarian.setUser(newVeterinarian);
 
 
-
         veterinarianRepository.save(veterinarian);
     }
+
     public List<VeterinarianResponse> getVeterinariansByServiceId(String serviceId) {
         List<Veterinarian> veterinarians = veterinarianRepository.findByServices_ServiceId(serviceId);
 
-        if(veterinarians.isEmpty()){
+        if (veterinarians.isEmpty()) {
             throw new AppException(404, "Not found", HttpStatus.NOT_FOUND);
         }
         List<VeterinarianResponse> responseList = new ArrayList<>();
@@ -173,13 +174,13 @@ public class VeterinarianService {
             veterinarianResponse.setVetId(veterinarian.getVetId());
             veterinarianResponse.setDescription(veterinarian.getDescription());
             veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
-            veterinarianResponse.setVetStatus(veterinarian.getVeterinarianStatus() == null? "" : veterinarian.getVeterinarianStatus().toString() );
+            veterinarianResponse.setVetStatus(veterinarian.getVeterinarianStatus() == null ? "" : veterinarian.getVeterinarianStatus().toString());
             veterinarianResponse.setImageVeterinarian((veterinarian.getImage() != null ? veterinarian.getImage() : null));
             veterinarianResponse.setUserId(veterinarian.getUser().getUserId());
-                    UserResponse userResponse = new UserResponse();
-                    userResponse.setFullName(veterinarian.getUser().getFullName());
-                    userResponse.setEmail(veterinarian.getUser().getEmail());
-                    userResponse.setUsername(veterinarian.getUser().getUsername());
+            UserResponse userResponse = new UserResponse();
+            userResponse.setFullName(veterinarian.getUser().getFullName());
+            userResponse.setEmail(veterinarian.getUser().getEmail());
+            userResponse.setUsername(veterinarian.getUser().getUsername());
             veterinarianResponse.setUser(userResponse);
             responseList.add(veterinarianResponse);
         }
@@ -206,7 +207,7 @@ public class VeterinarianService {
                 if (serviceEntity != null) {
                     services.add(serviceEntity);
                     serviceEntity.getVeterinarians().add(veterinarian);
-                }else {
+                } else {
                     throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
                             ErrorCode.SERVICE_NOT_EXITS.getMessage(),
                             HttpStatus.NOT_FOUND);
@@ -215,11 +216,11 @@ public class VeterinarianService {
         }
 
         User user = veterinarian.getUser();
-            user.setUsername(request.getUser().getUsername());
-            user.setEmail(request.getUser().getEmail());
-            user.setFullName(request.getUser().getFullname());
-            user.setImage(request.getUser().getImage());
-            user.setStatus(request.getUser().isStatus());
+        user.setUsername(request.getUser().getUsername());
+        user.setEmail(request.getUser().getEmail());
+        user.setFullName(request.getUser().getFullname());
+        user.setImage(request.getUser().getImage());
+        user.setStatus(request.getUser().isStatus());
 
         veterinarianRepository.save(veterinarian);
 
