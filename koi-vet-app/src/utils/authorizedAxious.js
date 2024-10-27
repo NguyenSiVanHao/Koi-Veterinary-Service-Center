@@ -33,7 +33,7 @@ api.interceptors.response.use((response) => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     if(response.data?.message){
-        toast.success(response.data.message);
+        // toast.success(response.data.message);
     }
     return response;
 }, (error) => {
@@ -41,7 +41,7 @@ api.interceptors.response.use((response) => {
     // Do something with response error
 
     if (error.response?.status !== 410) {
-        toast.error(error.response?.data.message  || 'Có lỗi xảy ra');
+        // toast.error(error.response?.data.message  || 'Có lỗi xảy ra');
         
        
     }
