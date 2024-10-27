@@ -38,7 +38,7 @@ public class NewsService {
         }
     }
 
-    public boolean createNews(News news) {
+    public boolean createNews(NewsRequest news) {
         try {
             News news1 = News.builder()
                     .img(news.getImg())
