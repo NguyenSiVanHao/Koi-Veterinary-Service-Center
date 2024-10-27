@@ -334,15 +334,20 @@ public class UserService {
         return false;
     }
     public boolean createStaff(RegisterRequest newUser) {
-        User user = new User();
-        user.setUsername(newUser.getUsername());
-        user.setPassword(encoder.encode(newUser.getPassword()));
-        user.setFullName(newUser.getFullname());
-        user.setEmail(newUser.getEmail());
-        user.setStatus(true);
-        user.setRole(Role.STAFF);
-        userRepository.save(user);
-        return true;
+        try{
+            User user = new User();
+            user.setUsername(newUser.getUsername());
+            user.setPassword(encoder.encode(newUser.getPassword()));
+            user.setFullName(newUser.getFullname());
+            user.setEmail(newUser.getEmail());
+            user.setStatus(true);
+            user.setImage(newUser.getImage());
+            user.setRole(Role.STAFF);
+            userRepository.save(user);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 }
 
