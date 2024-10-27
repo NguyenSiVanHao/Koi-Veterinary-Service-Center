@@ -205,8 +205,11 @@ public class VeterinarianService {
             for (String service : request.getService()) {
                 com.koicenter.koicenterbackend.model.entity.Service serviceEntity = servicesRepository.findByServiceId(service);
                 if (serviceEntity != null) {
-                    services.add(serviceEntity);
-                    serviceEntity.getVeterinarians().add(veterinarian);
+                    boolean exists = servicesRepository.existsByServiceIdAndVeterinarianId(service, vetId);
+                    if (!exists) {
+                        services.add(serviceEntity);
+                        serviceEntity.getVeterinarians().add(veterinarian);
+                    }
                 } else {
                     throw new AppException(ErrorCode.SERVICE_NOT_EXITS.getCode(),
                             ErrorCode.SERVICE_NOT_EXITS.getMessage(),
