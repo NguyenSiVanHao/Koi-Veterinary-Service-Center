@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagementPage.css"
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
-import { createStaffAPI, createVetAPI, fetchAllUsersAPI, updateUserInfoAPI, updateVetByIdAPI } from "../../apis";
+import { createStaffAPI, createVetAPI, fecthAllServicesAPI, fetchAllUsersAPI, updateUserInfoAPI, updateVetByIdAPI } from "../../apis";
 import avatar_default from "../../assets/img/profile_default.png"
 import { Modal } from "antd";
 import StaffForm from "../../components/StaffForm/StaffForm";
+import VeterinarianForm from "../../components/VeterinarianForm";
 
 const UserManagementPage = () => {
   const [tab, setTab] = useState("STAFF");
   const [staffs, setStaffs] = useState([]);
   const [veterinarians, setVeterinarians] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [serviceList, setServiceList] = useState([]);
   const [isAddUser, setIsAddUser] = useState(false);
   const [isModalVeterinarianPopup, setIsModalVeterinarianPopup] = useState(false);
   const [isModalCustomerPopup, setIsModalCustomerPopup] = useState(false);
@@ -22,8 +24,10 @@ const UserManagementPage = () => {
   const handleImageChange = (file) => {
     setImage(file);
   }
-  const handleOpenModalEditUser = async (userData, isEdit = true) => {
-    await setSelectedUser(userData);
+  const handleOpenModalEditUser = (userData, isEdit = true) => {
+    console.log("userData", userData);
+    setSelectedUser(userData); // Tạo một bản sao của userData
+    console.log("selectedUser", selectedUser);
     setIsEditUser(isEdit);
     switch (tab) {
       case "STAFF":
@@ -38,9 +42,9 @@ const UserManagementPage = () => {
       default:
         break;
     }
-    setIsModalPopup(true);
   }
   const handleCloseModal = () => {
+    console.log("selectedUser", selectedUser);
     setSelectedUser(null);
     setIsModalPopup(false);
     setIsModalVeterinarianPopup(false);
@@ -59,12 +63,22 @@ const UserManagementPage = () => {
     }
   }
   const handleSubmitCreateUser = async () => {
+    let response;
     switch (tab) {
       case "STAFF":
-        await createStaffAPI(selectedUser, image);
+        response = await createStaffAPI(
+          {
+            "userId": selectedUser.user_id,
+            "fullName": selectedUser.fullName,
+            "email": selectedUser.email,
+            "phoneNumber": selectedUser.phoneNumber,
+            "address": selectedUser.address,
+            "image": image
+          }
+          , image);
         break;
       case "VETERINARIAN":
-        await createVetAPI(selectedUser, image);
+        response = await createVetAPI(selectedUser, image);
         break;
       case "CUSTOMER":
         // await createCustomerAPI(selectedUser, image);
@@ -74,19 +88,57 @@ const UserManagementPage = () => {
     }
   }
   const handleSubmitUpdateUser = async () => {
+    let response;
     switch (tab) {
       case "STAFF":
-        await updateUserInfoAPI(selectedUser, image);
+        response = await updateUserInfoAPI({
+          "userId": selectedUser.user_id,
+          "fullName": selectedUser.fullName,
+          "email": selectedUser.email,
+          "phoneNumber": selectedUser.phoneNumber,
+          "image": image
+        }, image);
         break;
       case "VETERINARIAN":
-        await updateVetByIdAPI(selectedUser._id, selectedUser, image);
+        response = await updateVetByIdAPI(selectedUser.veterinarian.vetId,
+          {
+
+            "status": "string",
+            "description": selectedUser.veterinarian.description,
+            "google_meet": selectedUser.veterinarian.googleMeet,
+            "phone": selectedUser.veterinarian.phone,
+            "image": selectedUser.veterinarian.image,
+            "user": {
+              "email": selectedUser.email,
+              "username": selectedUser.username,
+              "fullname": selectedUser.fullName,
+              "address": selectedUser.address,
+              "phone": selectedUser.phone,
+              "status": selectedUser.status,
+              "image":null
+            },
+            "service": selectedUser.veterinarian.listOfServices
+
+          }
+          , image);
         break;
       default:
         break;
     }
+    if (response.status === 200) {
+      fetchUserData();
+      handleCloseModal();
+    }
+  }
+  const fetchServiceList = async () => {
+    const res = await fecthAllServicesAPI();
+    setServiceList(res.data);
   }
   useEffect(() => {
     fetchUserData();
+    if (tab === "VETERINARIAN") {
+      fetchServiceList();
+    }
   }, [tab])
 
   return (
@@ -138,7 +190,7 @@ const UserManagementPage = () => {
                   <td>{staff.status}</td>
                   <td>{staff.email}</td>
                   <td className="d-flex gap-2" >
-                    <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(staff)}>Edit</button>
+                    <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(staff, true)}>Edit</button>
                     <button className="btn btn-danger">Delete</button>
                   </td>
                 </tr>
@@ -150,35 +202,42 @@ const UserManagementPage = () => {
           </Modal>
         </>
       }
-      {tab === "VETERINARIAN" && <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Avatar</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {veterinarians.map((veterinarian) => (
-            <tr>
-              <td><img src={veterinarian.veterinarian.image || avatar_default} alt="avatar" style={{ width: '50px', height: '50px' }} /></td>
-              <td>{veterinarian.username}</td>
-              <td>{veterinarian.fullName}</td>
-              <td>{veterinarian.veterinarian.status}</td>
-              <td>{veterinarian.email}</td>
-              <td>{veterinarian.veterinarian.phone}</td>
-              <td className="d-flex gap-2" >
-                <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(veterinarian)}>Edit</button>
-                <button className="btn btn-danger">Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>}
+      {tab === "VETERINARIAN" &&
+        <>
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th>Avatar</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {veterinarians.map((veterinarian) => (
+                <tr>
+                  <td><img src={veterinarian.veterinarian.image || avatar_default} alt="avatar" style={{ width: '50px', height: '50px' }} /></td>
+                  <td>{veterinarian.username}</td>
+                  <td>{veterinarian.fullName}</td>
+                  <td>{veterinarian.veterinarian.status}</td>
+                  <td>{veterinarian.email}</td>
+                  <td>{veterinarian.veterinarian.phone}</td>
+                  <td className="d-flex gap-2" >
+                    <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(veterinarian, true)}>Edit</button>
+                    <button className="btn btn-danger">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {isModalVeterinarianPopup && <Modal open={isModalVeterinarianPopup} onCancel={() => handleCloseModal()} onOk={isEditUser ? handleSubmitUpdateUser : handleSubmitCreateUser} width={900}>
+            <VeterinarianForm selectedUser={selectedUser} setSelectedUser={setSelectedUser} handleImageChange={handleImageChange} image={image} isEditUser={isEditUser} serviceList={serviceList} />
+          </Modal>}
+        </>
+      }
       {tab === "CUSTOMER" && <table className="table table-bordered">
         <thead>
           <tr>

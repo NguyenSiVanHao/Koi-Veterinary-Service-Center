@@ -4,6 +4,7 @@ import React from "react";
 import avatar_default from "../../assets/img/profile_default.png";
 
 const StaffForm = ({ selectedUser, setSelectedUser, handleImageChange, image, isEditUser }) => {
+    console.log("selectedUser fss", selectedUser);
     return (
         <div className="d-flex flex-column gap-2">
 
