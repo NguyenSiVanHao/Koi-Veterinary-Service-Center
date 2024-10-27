@@ -230,17 +230,19 @@ public class UserService {
                         .staff(null)
                         .build();
                 Veterinarian veterinarian = veterinarianRepository.findByUserId(user.getUserId());
-                if (veterinarian != null) {
-                    VeterinarianDTO veterinarianDTO = VeterinarianDTO.builder()
-                            .phone(veterinarian.getPhone())
-                            .vetId(veterinarian.getVetId())
-                            .description(veterinarian.getDescription())
-                            .image(veterinarian.getImage())
-                            .googleMeet(veterinarian.getGoogleMeet())
-                            .veterinarianStatus(veterinarian.getStatus())
-                            .build();
-                    userResponse.setVeterinarian(veterinarianDTO);
-                    userResponseList.add(userResponse);
+
+                VeterinarianDTO veterinarianResponse = new VeterinarianDTO();
+                veterinarianResponse.setVetId(veterinarian.getVetId());
+                veterinarianResponse.setStatus(veterinarian.getStatus());
+                veterinarianResponse.setDescription(veterinarian.getDescription());
+                veterinarianResponse.setGoogleMeet(veterinarian.getGoogleMeet());
+                veterinarianResponse.setPhone(veterinarian.getPhone());
+                veterinarianResponse.setImage(veterinarian.getImage());
+                List<com.koicenter.koicenterbackend.model.entity.Service> serviceList = new ArrayList<>();
+                for(com.koicenter.koicenterbackend.model.entity.Service service: veterinarian.getServices()){
+                    if(service != null){
+                        serviceList.add(service);
+                    }
                 }
                 List<String> serviceNames = new ArrayList<>();
                 for (com.koicenter.koicenterbackend.model.entity.Service service :  serviceList) {
@@ -272,7 +274,11 @@ public class UserService {
     public boolean deleteUser(String userId) {
         try {
             User user = userRepository.findByUserId(userId);
-            user.setStatus(false);
+            if(user.isStatus()){
+                user.setStatus(false);
+            }else{
+                user.setStatus(true);
+            }
             userRepository.save(user);
             return true;
         } catch (Exception e) {
