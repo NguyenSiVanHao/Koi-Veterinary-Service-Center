@@ -194,7 +194,16 @@ public class VetScheduleService {
                 }
             }
         }
-        return veterinarians;
+        Set<String> addedVetIds = new HashSet<>();
+        List<VeterinarianResponse> veterinariansResponses = new ArrayList<>();
+
+        for (VeterinarianResponse response : veterinarians) {
+            if(!addedVetIds.contains(response.getVetId())){
+                veterinariansResponses.add(response);
+                addedVetIds.add(response.getVetId());
+            }
+        }
+        return veterinariansResponses;
     }
 
     public List<VetScheduleResponse> slotDateTime(VetScheduleRequest vetScheduleRequest, String caculator) {
@@ -231,6 +240,7 @@ public class VetScheduleService {
                 }
             }
         }
+
         return vetScheduleResponse;
     }
 
