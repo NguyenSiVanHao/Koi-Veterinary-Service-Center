@@ -52,4 +52,18 @@ public class NewsController {
             return ResponseObject.APIRepsonse(400, "Failed to update news", HttpStatus.BAD_REQUEST, null);
         }
     }
+    @DeleteMapping("")
+    public ResponseEntity<ResponseObject> deleteNews(@RequestParam String newsId) {
+        try {
+            boolean isDeleted = newsService.deleteNews(newsId);
+            if (isDeleted) {
+                return ResponseObject.APIRepsonse(200, "Delete news successfully", HttpStatus.OK, null);
+            } else {
+                return ResponseObject.APIRepsonse(404, "Not found to delete news", HttpStatus.NOT_FOUND, null);
+            }
+        } catch (Exception e) {
+            return ResponseObject.APIRepsonse(500, "An error occurred while deleting news", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
 }
