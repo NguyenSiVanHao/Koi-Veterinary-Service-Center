@@ -458,7 +458,12 @@ export const fetchCheckoutAPI = async (appointmentId) => {
 
 //Rating
 export const fetchAllRatingByServiceIdAPI = async (serviceId) => {
-    const response = await api.get(`/feedbacks/${serviceId}`);
+    const response = await api.get(`/feedbacks/${serviceId}/feedback/total`);
+    return response.data;
+}
+
+export const fetchAllRatingByServiceIdAPI2 = async (serviceId) => {
+    const response = await api.get(`/feedbacks/${serviceId}/feedback`);
     return response.data;
 }
 

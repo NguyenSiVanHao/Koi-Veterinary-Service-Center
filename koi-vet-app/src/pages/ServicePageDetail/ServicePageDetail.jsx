@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fecthServiceByServiceIdAPI, fetchAllRatingByServiceIdAPI } from "../../apis";
+import { fecthServiceByServiceIdAPI, fetchAllRatingByServiceIdAPI, fetchAllRatingByServiceIdAPI2 } from "../../apis";
 import "./ServicePageDetail.css";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import Loading from "../../components/Loading/Loading";
@@ -12,22 +12,42 @@ function ServicePageDetail() {
 
   const [serviceDetail, setServiceDetail] = useState(null);
   const [ratings, setRatings] = useState([]);
-  const fectchServiceDetail = async () => {
-    const response = await fecthServiceByServiceIdAPI(serviceId);
-    setServiceDetail(response.data);
-  };
+  const [ratings2, setRatings2] = useState([]);
+  console.log(ratings);
+
 
   useEffect(() => {
     const fetchRating = async () => {
-      const response = await fetchAllRatingByServiceIdAPI(serviceId);
-      setRatings(response.data);
+      try {
+        const response = await fetchAllRatingByServiceIdAPI(serviceId);
+        console.log(response.data);
+        setRatings(response.data);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+        setRatings([]);
+      }
     }
     fetchRating();
   }, [serviceId]);
 
   useEffect(() => {
-    fectchServiceDetail();
+    const fetchRating2 = async () => {
+      const response = await fetchAllRatingByServiceIdAPI2(serviceId);
+      setRatings2(response.data);
+    }
+    fetchRating2();
   }, [serviceId]);
+
+  useEffect(() => {
+    const fetchServiceDetail = async () => {
+      const response = await fecthServiceByServiceIdAPI(serviceId);
+      setServiceDetail(response.data);
+    }
+    fetchServiceDetail();
+  }, [serviceId]);
+
+
+
 
   if (!serviceDetail) {
     return <Loading />;
@@ -51,17 +71,27 @@ function ServicePageDetail() {
 
   const columns = [
     {
+      title: "Image",
+      dataIndex: ["userResponse", "image"],
+      key: "userResponse.image",
+      render: (image) => <img src={image} alt="Feedback" width={50} height={50} />,
+    },
+    {
+      title: "Name",
+      dataIndex: ["userResponse", "username"],
+      key: "userResponse.username",
+    },
+    {
       title: "Rating",
       dataIndex: "star",
+      key: "star",
+      render: (star) => `${star} ★`,
     },
     {
       title: "Feedback",
       dataIndex: "description",
+      key: "description",
     },
-    {
-      title: "Number",
-      dataIndex: "number",
-    }
   ]
   
   return (
@@ -69,7 +99,7 @@ function ServicePageDetail() {
       <Row className="align-items-center service-row">
         {/* Left Side - Image */}
         <Col md={6} className="p-0">
-          <Card className="border-0">
+          <Card className="border-0" style={{height: "1000px"}}>
             <Card.Img
               src={serviceDetail.image}
               alt="Service"
@@ -93,8 +123,14 @@ function ServicePageDetail() {
               <strong>Service Type:</strong>{" "}
               <span><strong>{serviceDetail.serviceFor}</strong></span>
             </p>
-            <p>Rating: {ratings.averageStar} ★</p>
-            <Table columns={columns} dataSource={ratings} style={{color: "red"}} pagination={{pageSize: 5}}/>
+            <p>Rating: {ratings.averageStar ? `${ratings.averageStar.toFixed(1)} ★` : "0★"}</p>
+            <p>Number of feedback: {ratings.number ? ratings.number : 0}</p>
+            <Table 
+              columns={columns} 
+              dataSource={Array.isArray(ratings2) ? ratings2 : []} 
+              pagination={{pageSize: 5}}
+              rowKey="feedbackId"
+            />
           </div>
         </Col>
       </Row>
