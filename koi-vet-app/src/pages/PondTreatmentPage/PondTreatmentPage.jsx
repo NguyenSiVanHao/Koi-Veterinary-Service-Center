@@ -87,8 +87,8 @@ const PondTreatmentPage = () => {
         <div className="text-center">
           <button className="btn btn-primary" onClick={() => handleAddNewPond()}>
             Add New Pond
-        </button>
-      </div>}
+          </button>
+        </div>}
 
       {/* Modal for PondDetail */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
@@ -110,7 +110,7 @@ const PondTreatmentPage = () => {
           <table className="table table-bordered">
             <thead className="thead-light">
               <tr>
-                <th>Prescription ID </th>
+
                 <th>Prescription Name </th>
                 <th>Note</th>
                 <th>Action</th>
@@ -121,7 +121,7 @@ const PondTreatmentPage = () => {
               {/* Chạy vòng for ở đây */}
               {prescriptions.map((prescription) => (
                 <tr key={prescription.id}>
-                  <td>{prescription.id}</td>
+
                   <td>{prescription.name}</td>
                   <td>{prescription.note}</td>
                   <td>
