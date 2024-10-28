@@ -100,6 +100,7 @@ const Pond = ({ title, selectedPonds, onUpdateTreatment, updateTrigger, isBookin
                             : treatment
                     )
                 );
+                onUpdateTreatment();
             } catch (error) {
                 toast.error('Failed to update prescription');
             }

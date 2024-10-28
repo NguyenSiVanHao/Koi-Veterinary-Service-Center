@@ -41,7 +41,7 @@ const InvoiceList = ({appointment}) => {
             <table>
                 <thead>
                     <tr>
-                        <th>No</th>
+                       
                         <th>Create Date</th>
                         <th>Quantity</th>
                         <th>Status</th>
@@ -53,7 +53,7 @@ const InvoiceList = ({appointment}) => {
                     {
                         invoices?.map((invoice,index) => (
                                 <tr key={invoice?.id}>
-                                    <td>{index + 1}</td>
+                                    
                                     <td>{formatDate(invoice?.createAt)}</td>
                                     <td>{invoice?.quantity}</td>
                                     <td>{invoice?.status}</td>
