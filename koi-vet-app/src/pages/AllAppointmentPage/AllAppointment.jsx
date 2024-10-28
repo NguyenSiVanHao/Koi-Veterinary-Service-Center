@@ -17,7 +17,7 @@ import refund from "../../assets/img/refund logo.svg"
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [status, setStatus] = useState("ALL");
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [totalPage, setTotalPage] = useState(0);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
