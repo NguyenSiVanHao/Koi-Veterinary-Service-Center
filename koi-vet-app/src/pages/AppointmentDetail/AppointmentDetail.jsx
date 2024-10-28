@@ -287,7 +287,7 @@ function AppointmentDetail() {
 
 
         <div className="row mb-3">
-          <div className="col-md-6">
+          <div className="col-md-3">
             <label htmlFor="customerId" className="form-label">
               Customer <i className="fa-solid fa-user" ></i>
             </label>
@@ -297,6 +297,19 @@ function AppointmentDetail() {
               id="customerId"
               name="customerId"
               value={appointment.customerName}
+              disabled
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="customerPhoneNumber" className="form-label">
+              Customer Phone Number <i className="fa-solid fa-phone" ></i>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="customerPhoneNumber"
+              name="customerPhoneNumber"
+              value={appointment.phone}
               disabled
             />
           </div>
@@ -573,7 +586,7 @@ function AppointmentDetail() {
       <Modal
         open={isInvoiceModalOpen}
         onCancel={() => setIsInvoiceModalOpen(false)}
-        width={600}
+        width={500}
       >
         <InvoiceList appointment={appointment} />
       </Modal>

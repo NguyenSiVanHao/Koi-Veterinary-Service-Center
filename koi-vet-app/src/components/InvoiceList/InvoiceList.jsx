@@ -43,7 +43,7 @@ const InvoiceList = ({appointment}) => {
                     <tr>
                        
                         <th>Create Date</th>
-                        <th>Quantity</th>
+                        {/* <th>Quantity</th> */}
                         <th>Status</th>
                         <th>Total(VND)</th>
                         <th className="text-center">Action</th>
@@ -56,7 +56,7 @@ const InvoiceList = ({appointment}) => {
                                     
                                     <td>{formatDate(invoice?.createAt)}</td>
                                     <td>{invoice?.quantity}</td>
-                                    <td>{invoice?.status}</td>
+                                    {/* <td>{invoice?.status}</td> */}
                                     <td>{invoice?.totalPrice.toLocaleString()}</td>
                                     <td>
                                         <button 
