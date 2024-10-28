@@ -1,4 +1,5 @@
 .scrollable-list {
-    max-height: 240px; /* hoặc chiều cao mà bạn mong muốn */
+    max-height: 500px; /* hoặc chiều cao mà bạn mong muốn */
     overflow-y: auto;
   }
+  
