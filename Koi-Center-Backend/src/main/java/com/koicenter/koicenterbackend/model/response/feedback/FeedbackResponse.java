@@ -1,11 +1,13 @@
 package com.koicenter.koicenterbackend.model.response.feedback;
 
+import com.koicenter.koicenterbackend.model.response.user.UserResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,4 +19,5 @@ public class FeedbackResponse {
     String  appointmentId;
     float averageStar ;
     int number ;
+    UserResponse userResponse ;
 }

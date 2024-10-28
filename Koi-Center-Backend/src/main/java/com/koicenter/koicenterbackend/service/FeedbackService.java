@@ -2,6 +2,7 @@ package com.koicenter.koicenterbackend.service;
 
 import com.koicenter.koicenterbackend.exception.AppException;
 import com.koicenter.koicenterbackend.exception.ErrorCode;
+import com.koicenter.koicenterbackend.mapper.UserMapper;
 import com.koicenter.koicenterbackend.mapper.feedback.FeedbackMapper;
 import com.koicenter.koicenterbackend.model.entity.Appointment;
 import com.koicenter.koicenterbackend.model.entity.Feedback;
@@ -35,6 +36,8 @@ public class FeedbackService {
     FeedbackRepository feedbackRepository ;
     AppointmentRepository appointmentRepository ;
     ServicesRepository servicesRepository ;
+    UserRepository userRepository ;
+    UserMapper userMapper;
     public FeedbackResponse createFeebackByAppointmentId(String appointmentId , FeedbackRequest feedbackRequest) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppException(
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
@@ -52,7 +55,7 @@ public class FeedbackService {
                     HttpStatus.BAD_REQUEST);
         }
     }
-    public FeedbackResponse getFeedbackByServiceId(String serviceId) {
+    public FeedbackResponse getTotalRatingByServiceId(String serviceId) {
         com.koicenter.koicenterbackend.model.entity.Service service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(
                 ErrorCode.SERVICE_NOT_EXITS.getCode(),
                 ErrorCode.SERVICE_NOT_EXITS.getMessage(),
@@ -65,7 +68,7 @@ public class FeedbackService {
             for (Appointment appointment : appointments) {
                 log.info(appointment.getAppointmentId());
                 Feedback feedback = feedbackRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
-                if (feedback != null) {
+                if (feedback != null && appointment.getCustomer().getUser().isStatus()) {
                     sumStar += feedback.getStar();
                     count++;
                 }
@@ -84,6 +87,40 @@ public class FeedbackService {
 
     return feedbackResponse ;
     }
+    public List<FeedbackResponse> getFeedbackListByServiceId(String serviceId) {
+        com.koicenter.koicenterbackend.model.entity.Service service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(
+                ErrorCode.SERVICE_NOT_EXITS.getCode(),
+                ErrorCode.SERVICE_NOT_EXITS.getMessage(),
+                HttpStatus.NOT_FOUND ));
+
+        List<FeedbackResponse> feedbackResponses = new ArrayList<>();
+        List<Appointment> appointments = appointmentRepository. findAllByService_ServiceId(service.getServiceId());
+        if (!appointments.isEmpty()) {
+
+            for (Appointment appointment : appointments) {
+                UserResponse userResponse = new UserResponse();
+                User user = userRepository.findById(appointment.getCustomer().getUser().getUserId()).orElseThrow(() -> new AppException(
+                        ErrorCode.USER_ID_NOT_EXITS.getCode(),
+                        ErrorCode.USER_ID_NOT_EXITS.getMessage(),
+                        HttpStatus.NOT_FOUND
+                ));
+                if(user.isStatus()) {
+                    Feedback feedback = feedbackRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
+                FeedbackResponse feedbackResponse = feedbackMapper.toFeedbackResponse(feedback);
+                    feedbackResponse.setUserResponse(userMapper.toUserResponse(user));
+                    feedbackResponses.add(feedbackResponse);
+                }
+            }
+        }else {
+            throw new AppException(
+                    ErrorCode.APPOINTMENT_NOT_FOUND.getCode(),
+                    ErrorCode.APPOINTMENT_NOT_FOUND.getMessage(),
+                    HttpStatus.NOT_FOUND);
+        }
+
+        return feedbackResponses ;
+    }
+
 }
 
 

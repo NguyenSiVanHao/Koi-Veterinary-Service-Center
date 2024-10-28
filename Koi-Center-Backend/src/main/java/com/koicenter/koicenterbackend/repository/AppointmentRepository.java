@@ -83,7 +83,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
     int countAppointmentsByMonth(@Param("month") int month, @Param("year") int year);
 
     @Query(value = "SELECT SUM(i.total_price) FROM appointment a JOIN invoice i ON a.appointment_id = i.appointment_id " +
-            "WHERE YEAR(appointment_date) = :year and MONTH(appointment_date) = :month", nativeQuery = true)
+            "WHERE YEAR(appointment_date) = :year and MONTH(appointment_date) = :month i.status = 'Completed'", nativeQuery = true)
     Double sumTotalPriceByMonth(@Param("month") int month, @Param("year") int year);
     Page<Appointment> findByCustomer_CustomerId(String customer_id,Pageable pageable);
     Page<Appointment> findByVeterinarian_VetId(String veterinarian_id,Pageable pageable);

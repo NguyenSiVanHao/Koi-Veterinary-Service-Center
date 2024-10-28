@@ -36,13 +36,22 @@ public class FeedbackController {
         }
         return ResponseObject.APIRepsonse(201, "CREATE FEEBACK successfully", HttpStatus.CREATED, feedbackResponse);
     }
-    @GetMapping("/{serviceId}")
-    public ResponseEntity<ResponseObject> getFeedbackByServiceId(@PathVariable String serviceId) {
-        FeedbackResponse feedbackResponse = feedbackService.getFeedbackByServiceId(serviceId);
+    @GetMapping("/{serviceId}/feedback/total")
+    public ResponseEntity<ResponseObject> getTotalRatingByServiceId(@PathVariable String serviceId) {
+        FeedbackResponse feedbackResponse = feedbackService.getTotalRatingByServiceId(serviceId);
         if(feedbackResponse == null ){
             return ResponseObject.APIRepsonse(404, "Found can not FEEDBACK BY SERVICE", HttpStatus.NOT_FOUND, null);
         }
         return ResponseObject.APIRepsonse(200, "Found Sum  FEEBACK successfully", HttpStatus.OK, feedbackResponse);
     }
+    @GetMapping("/{serviceId}/feedback")
+    public ResponseEntity<ResponseObject> getFeedbackListByServiceId(@PathVariable String serviceId) {
+        List<FeedbackResponse> feedbackResponse = feedbackService.getFeedbackListByServiceId(serviceId);
+        if(feedbackResponse == null ){
+            return ResponseObject.APIRepsonse(404, "Found can not FEEDBACK BY SERVICE", HttpStatus.NOT_FOUND, null);
+        }
+        return ResponseObject.APIRepsonse(200, "Found Sum  FEEBACK successfully", HttpStatus.OK, feedbackResponse);
+    }
+
 
 }
