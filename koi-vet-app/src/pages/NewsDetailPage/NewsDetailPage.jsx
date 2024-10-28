@@ -90,15 +90,22 @@ function NewsDetailPage() {
                                 className="text-3xl font-bold mb-4"
                                 dangerouslySetInnerHTML={{ __html: newsData.title }}
                             />
+                            <p><strong>Preview:</strong></p>
+                            <div>
+                            <p dangerouslySetInnerHTML={{ __html: newsData.preview }} />
+                            </div>
+                                <div>
+                            <p><strong>Content:</strong></p>
                             <div className="prose max-w-none">
                                 <p dangerouslySetInnerHTML={{ __html: newsData.content }} />
+                            </div>
                             </div>
                         </div>
                     </Col>
                     <Col lg={4}>
                         {/* Sidebar */}
                         <div className="lg:w-1/3">
-                            <Card>
+                            <Card style={{height: "500px"}}>
                                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                                     <h2 className="text-xl font-bold p-4 bg-gray-50">Recent Posts</h2>
                                     <div className="p-4">
@@ -111,7 +118,7 @@ function NewsDetailPage() {
                                             onChange={(e) => handleSearch(e.target.value)}
                                         />
                                     </div>
-                                    <div className="divide-y max-h-96 overflow-y-auto scrollable-list" style={{margin: "0 0 0 20px"}}>
+                                    <div className="divide-y max-h-96 overflow-y-auto scrollable-list" style={{ margin: "0 0 0 20px"}}>
                                         {filteredNews.map(news => (
                                             <div className="card news-card" style={{width: "300px"}}>
                                             <div 
@@ -130,7 +137,7 @@ function NewsDetailPage() {
                                                     height={40}
                                                 />
                                                 <div className="flex-1">
-                                                    <h3 
+                                                    <h7 
                                                         className="text-sm font-medium line-clamp-2"
                                                         dangerouslySetInnerHTML={{ __html: news.title }}
                                                     />
