@@ -18,7 +18,4 @@ public class DashboardResponse {
     int totalAppointment ; // tong so luong Appointment
     Year year ;
     LocalDate date ;
-    List<ServiceCount> serviceCount ;
-
-
 }
