@@ -39,6 +39,7 @@ public enum ErrorCode {
     VETSCHEDULE_NOT_FOUND(404,"Vetschedule not found"),
     VETSCHEDULE_EXISTED(401," VETSCHEDULE already existed"),
     FAQ_ID_NOT_FOUND(404,"Faq ID not found"),
+    FEEDBACK_NOT_FOUND(404,"Feedback not found")
 
     ;
     private int code;

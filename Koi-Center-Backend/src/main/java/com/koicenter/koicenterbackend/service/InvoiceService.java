@@ -10,6 +10,7 @@ import com.koicenter.koicenterbackend.model.request.invoice.InvoiceRequest;
 import com.koicenter.koicenterbackend.model.response.invoice.CheckOutResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.DashboardResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.InvoiceResponse;
+import com.koicenter.koicenterbackend.model.response.invoice.ServiceCount;
 import com.koicenter.koicenterbackend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -152,6 +153,7 @@ public class InvoiceService {
                     countKoi = appointmentRepository.countKoiTreatmentByDate(date.toString());
                     countPond = appointmentRepository.countPondTreatmentByDate(date.toString());
                     totalPrice = appointmentRepository.sumTotalPriceByDate(date.toString());
+//                    ServiceCount serviceCount = appointmentRepository.countAppointmentOfService(date.toString());
                     if (totalPrice == null) {
                         totalPrice = 0.0;
                     }

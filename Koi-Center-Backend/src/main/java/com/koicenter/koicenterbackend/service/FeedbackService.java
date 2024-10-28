@@ -87,7 +87,7 @@ public class FeedbackService {
 
     return feedbackResponse ;
     }
-    public List<FeedbackResponse> getFeedbackListByServiceId(String serviceId) {
+    public List<FeedbackResponse>   getFeedbackListByServiceId(String serviceId) {
         com.koicenter.koicenterbackend.model.entity.Service service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(
                 ErrorCode.SERVICE_NOT_EXITS.getCode(),
                 ErrorCode.SERVICE_NOT_EXITS.getMessage(),
@@ -106,9 +106,22 @@ public class FeedbackService {
                 ));
                 if(user.isStatus()) {
                     Feedback feedback = feedbackRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
-                FeedbackResponse feedbackResponse = feedbackMapper.toFeedbackResponse(feedback);
-                    feedbackResponse.setUserResponse(userMapper.toUserResponse(user));
-                    feedbackResponses.add(feedbackResponse);
+                    if (feedback !=null ) {
+                        FeedbackResponse feedbackResponse = feedbackMapper.toFeedbackResponse(feedback);
+                        feedbackResponse.setUserResponse(userMapper.toUserResponse(user));
+                        feedbackResponses.add(feedbackResponse);
+                    }else{
+                        throw new AppException(
+                                ErrorCode.FEEDBACK_NOT_FOUND.getCode(),
+                                ErrorCode.FEEDBACK_NOT_FOUND.getMessage(),
+                                HttpStatus.NOT_FOUND);
+                    }
+
+                }else{
+                    throw new AppException(
+                            ErrorCode.USER_FALSE.getCode(),
+                            ErrorCode.USER_FALSE.getMessage(),
+                            HttpStatus.NOT_FOUND);
                 }
             }
         }else {
