@@ -92,12 +92,12 @@ public class FeedbackService {
                 ErrorCode.SERVICE_NOT_EXITS.getCode(),
                 ErrorCode.SERVICE_NOT_EXITS.getMessage(),
                 HttpStatus.NOT_FOUND ));
-
         List<FeedbackResponse> feedbackResponses = new ArrayList<>();
         List<Appointment> appointments = appointmentRepository. findAllByService_ServiceId(service.getServiceId());
         if (!appointments.isEmpty()) {
-
             for (Appointment appointment : appointments) {
+                                    log.info("feedback ID : "+ appointment.getAppointmentId());
+
                 UserResponse userResponse = new UserResponse();
                 User user = userRepository.findById(appointment.getCustomer().getUser().getUserId()).orElseThrow(() -> new AppException(
                         ErrorCode.USER_ID_NOT_EXITS.getCode(),
@@ -106,9 +106,17 @@ public class FeedbackService {
                 ));
                 if(user.isStatus()) {
                     Feedback feedback = feedbackRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
-                FeedbackResponse feedbackResponse = feedbackMapper.toFeedbackResponse(feedback);
-                    feedbackResponse.setUserResponse(userMapper.toUserResponse(user));
-                    feedbackResponses.add(feedbackResponse);
+//                    log.info("feedback ID : "+ feedback.getFeedbackId());
+                    if (feedback !=null ) {
+                        FeedbackResponse feedbackResponse = feedbackMapper.toFeedbackResponse(feedback);
+                        feedbackResponse.setUserResponse(userMapper.toUserResponse(user));
+                        feedbackResponses.add(feedbackResponse);
+                    }
+                }else{
+                    throw new AppException(
+                            ErrorCode.USER_FALSE.getCode(),
+                            ErrorCode.USER_FALSE.getMessage(),
+                            HttpStatus.NOT_FOUND);
                 }
             }
         }else {
@@ -117,7 +125,6 @@ public class FeedbackService {
                     ErrorCode.APPOINTMENT_NOT_FOUND.getMessage(),
                     HttpStatus.NOT_FOUND);
         }
-
         return feedbackResponses ;
     }
 

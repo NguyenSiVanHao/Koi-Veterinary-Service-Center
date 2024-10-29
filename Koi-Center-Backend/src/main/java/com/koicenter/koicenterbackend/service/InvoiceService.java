@@ -10,6 +10,7 @@ import com.koicenter.koicenterbackend.model.request.invoice.InvoiceRequest;
 import com.koicenter.koicenterbackend.model.response.invoice.CheckOutResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.DashboardResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.InvoiceResponse;
+import com.koicenter.koicenterbackend.model.response.invoice.ServiceCount;
 import com.koicenter.koicenterbackend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -42,7 +43,7 @@ public class InvoiceService {
     PondTreatmentRepository pondTreatmentRepository;
     private final CreateOrderMoMo createOrderMoMo;
     private final InvoiceMapper invoiceMapper;
-    DeliveryRepository deliveryRepository ;
+    DeliveryRepository deliveryRepository;
 
     public List<InvoiceResponse> getInvoiceByAppointmentId(String appointmentId) {
         List<Invoice> invoices = invoiceRepository.findByAppointment_AppointmentId(appointmentId);
@@ -60,7 +61,6 @@ public class InvoiceService {
         }
         return invoiceResponses;
     }
-
     public InvoiceResponse updateInvoice(String invoiceId, InvoiceRequest invoiceRequest) {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new AppException(
                 ErrorCode.INVOICE_ID_NOT_FOUND.getCode(),
@@ -88,15 +88,14 @@ public class InvoiceService {
                 .unitPrice(invoice.getUnitPrice())
                 .build();
     }
-
     public List<DashboardResponse> getDashBoard(LocalDate starTime, LocalDate endTime, String time) {
         int countAppointment = 0;
         int countKoi = 0;
         int countPond = 0;
         Double totalPrice = 0.0;
+        validationTimeRange(starTime,endTime,time);
         List<DashboardResponse> dashboardResponses = new ArrayList<>();
         if (time.toLowerCase().equals("month")) {
-            if (ChronoUnit.MONTHS.between(starTime, endTime) <= 12) {
                 for (LocalDate month = starTime; !month.isAfter(endTime); month = month.plusMonths(1)) {
                     int year = month.getYear();
                     countAppointment = appointmentRepository.countAppointmentsByMonth(month.getMonthValue(), year);
@@ -116,12 +115,8 @@ public class InvoiceService {
                             .build();
                     dashboardResponses.add(dashboardResponse);
                 }
-            } else {
-                new AppException(401, "Exceeded 12 months", HttpStatus.UNAUTHORIZED);
-            }
         }
         if (time.toLowerCase().equals("year")) {
-            if (ChronoUnit.YEARS.between(starTime, endTime) <= 3) {
                 for (LocalDate year = starTime; !year.isAfter(endTime); year = year.plusYears(1)) {
                     //int year = starTime ; year <= endTime ;year++
                     countAppointment = appointmentRepository.countAppointmentsByYear(year.getYear());
@@ -141,31 +136,27 @@ public class InvoiceService {
                             .build();
                     dashboardResponses.add(dashboardResponse);
                 }
-            } else {
-                new AppException(401, "Exceeded 3 years", HttpStatus.UNAUTHORIZED);
-            }
+
         }
         if (time.toLowerCase().equals("day")) {
-            if (ChronoUnit.DAYS.between(starTime, endTime) <= 30) {
-                for (LocalDate date = starTime; !date.isAfter(endTime); date = date.plusDays(1)) {
-                    countAppointment = appointmentRepository.countAppointmentsByDate(date.toString());
-                    countKoi = appointmentRepository.countKoiTreatmentByDate(date.toString());
-                    countPond = appointmentRepository.countPondTreatmentByDate(date.toString());
-                    totalPrice = appointmentRepository.sumTotalPriceByDate(date.toString());
-                    if (totalPrice == null) {
-                        totalPrice = 0.0;
-                    }
-                    DashboardResponse dashboardResponse = DashboardResponse.builder()
-                            .totalAppointment(countAppointment)
-                            .totalKoi(countKoi)
-                            .totalPond(countPond)
-                            .totalRevenue(totalPrice)
-                            .date(date)
-                            .build();
-                    dashboardResponses.add(dashboardResponse);
+            for (LocalDate date = starTime; !date.isAfter(endTime); date = date.plusDays(1)) {
+                countAppointment = appointmentRepository.countAppointmentsByDate(date.toString());
+                countKoi = appointmentRepository.countKoiTreatmentByDate(date.toString());
+                countPond = appointmentRepository.countPondTreatmentByDate(date.toString());
+                totalPrice = appointmentRepository.sumTotalPriceByDate(date.toString());
+//                    ServiceCount serviceCount = appointmentRepository.countAppointmentOfService(date.toString());
+                if (totalPrice == null) {
+                    totalPrice = 0.0;
                 }
-            } else
-                new AppException(401, "Exceeded 30 days ", HttpStatus.UNAUTHORIZED);
+                DashboardResponse dashboardResponse = DashboardResponse.builder()
+                        .totalAppointment(countAppointment)
+                        .totalKoi(countKoi)
+                        .totalPond(countPond)
+                        .totalRevenue(totalPrice)
+                        .date(date)
+                        .build();
+                dashboardResponses.add(dashboardResponse);
+            }
         }
         return dashboardResponses;
     }
@@ -181,7 +172,7 @@ public class InvoiceService {
                 .appointment(appointment)
                 .createAt(invoiceRequest.getCreateAt())
                 .type(InvoiceType.Second)
-                .quantity(quantityKoi+quantityPond)
+                .quantity(quantityKoi + quantityPond)
                 .unitPrice(invoiceRequest.getUnitPrice())
                 .status(PaymentStatus.Completed)
                 .totalPrice(invoiceRequest.getTotalPrice())
@@ -193,13 +184,11 @@ public class InvoiceService {
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoice);
         return invoiceResponse;
     }
-
     public InvoiceResponse getAppointmentIdAndType(String appointmentId, InvoiceType type) {
         Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, type);
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoice);
         return invoiceResponse;
     }
-
     public int getCode() {
         List<Invoice> invoices = invoiceRepository.findAll();
         return invoices.size();
@@ -212,6 +201,7 @@ public class InvoiceService {
         InvoiceResponse invoiceResponse = invoiceMapper.toInvoiceResponse(invoice);
         return invoiceResponse;
     }
+
     public CheckOutResponse checkOutAppointment(String appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppException(
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
@@ -220,16 +210,16 @@ public class InvoiceService {
         int quantityKoi = koiTreatmentRepository.countKoiTreatmentByAppointment_AppointmentId(appointment.getAppointmentId());
         int quantityPond = pondTreatmentRepository.countPondTreatmentByAppointment_AppointmentId(appointment.getAppointmentId());
         List<Delivery> deliveries = deliveryRepository.findAll();
-        float deliveryPrice = 0 ;
+        float deliveryPrice = 0;
         for (Delivery delivery : deliveries) {
-            if (appointment.getDistance() >= delivery.getFromPlace() && appointment.getDistance() <= delivery.getToPlace() ) {
+            if (appointment.getDistance() >= delivery.getFromPlace() && appointment.getDistance() <= delivery.getToPlace()) {
                 deliveryPrice = delivery.getPrice();
             }
         }
         Invoice invoices = Invoice.builder()
                 .appointment(appointment)
                 .type(InvoiceType.Second)
-                .quantity(quantityKoi+quantityPond)
+                .quantity(quantityKoi + quantityPond)
                 .code(getCode() + 1)
                 .distance(appointment.getDistance())
                 .deliveryPrice(deliveryPrice)
@@ -241,5 +231,68 @@ public class InvoiceService {
                 .invoice(invoiceResponse)
                 .build();
         return checkOutResponse;
+    }
+    public List<ServiceCount> getServiceCount(LocalDate starTime, LocalDate endTime, String time) {
+        List<ServiceCount> serviceCounts = new ArrayList<>();
+        validationTimeRange(starTime,endTime,time);
+        if (time.toLowerCase().equals("month")) {
+            for (LocalDate start = starTime; !start.isAfter(endTime); start = start.plusMonths(1)) {
+                List<Object[]> services = appointmentRepository.countServiceOfAppointmentMonnth(start.getMonthValue(), start.getYear());
+               serviceCounts = calculaterServiceCount(serviceCounts,services);
+            }
+        }else if (time.toLowerCase().equals("year")) {
+            for (LocalDate startYear = starTime ; !startYear.isAfter(endTime); startYear = startYear.plusYears(1)) {
+                List<Object[]> services = appointmentRepository.countServiceOfAppointmentYear(startYear.getYear());
+                serviceCounts = calculaterServiceCount(serviceCounts,services);
+            }
+        } else if (time.toLowerCase().equals("day")) {
+            for (LocalDate startDay = starTime ; !startDay.isAfter(endTime); startDay = startDay.plusDays(1)) {
+                List<Object[]> services = appointmentRepository.countServiceOfAppointmentDay(startDay.toString());
+                serviceCounts = calculaterServiceCount(serviceCounts,services);
+            }
+        }
+        return serviceCounts;
+    }
+    public List<ServiceCount> calculaterServiceCount (List<ServiceCount> serviceCounts , List<Object[]> services){
+        for (Object[] service : services) {
+            ServiceCount serviceCount = ServiceCount.builder()
+                    .serviceName(service[1].toString())
+                    .count((long) service[0])
+                    .serviceId(service[2].toString())
+                    .build();
+            boolean isAdd = false;
+            for (ServiceCount serviceCount1 : serviceCounts) {
+                if (serviceCount1.getServiceId().equals(serviceCount.getServiceId())) {
+                    serviceCount1.setCount(serviceCount1.getCount() + serviceCount.getCount());
+                    isAdd = true;
+                    break;
+                }
+            }
+            if (!isAdd) {
+                serviceCounts.add(serviceCount);
+            }
+        }
+        return  serviceCounts ;
+    }
+    public void validationTimeRange(LocalDate starTime, LocalDate endTime,String time) {
+        long monthsBetween = ChronoUnit.MONTHS.between(starTime, endTime);
+        long yearsBetween = ChronoUnit.YEARS.between(starTime, endTime);
+        long daysBetween = ChronoUnit.DAYS.between(starTime, endTime);
+        if(time.toLowerCase().equals("month") && monthsBetween>12){
+         throw new AppException(
+                 ErrorCode.MONTH_NOT_EXEED.getCode(),
+                 ErrorCode.MONTH_NOT_EXEED.getMessage(),
+                 HttpStatus.BAD_REQUEST);
+        } else if (time.toLowerCase().equals("year") && yearsBetween>3) {
+            throw new AppException(
+                    ErrorCode.YEAR_NOT_EXCEED.getCode(),
+                    ErrorCode.YEAR_NOT_EXCEED.getMessage(),
+                    HttpStatus.BAD_REQUEST);
+        } else if (time.toLowerCase().equals("day") && daysBetween>30) {
+            throw new AppException(
+                    ErrorCode.DAY_NOT_EXCEED.getCode(),
+                    ErrorCode.DAY_NOT_EXCEED.getMessage(),
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 }

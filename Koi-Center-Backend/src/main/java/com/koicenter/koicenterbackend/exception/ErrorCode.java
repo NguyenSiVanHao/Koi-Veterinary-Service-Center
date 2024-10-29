@@ -39,7 +39,10 @@ public enum ErrorCode {
     VETSCHEDULE_NOT_FOUND(404,"Vetschedule not found"),
     VETSCHEDULE_EXISTED(401," VETSCHEDULE already existed"),
     FAQ_ID_NOT_FOUND(404,"Faq ID not found"),
-
+    FEEDBACK_NOT_FOUND(404,"Feedback not found"),
+    MONTH_NOT_EXEED(400,"The Month Time range not exceed 12 months "),
+    YEAR_NOT_EXCEED(400,"The Year Time range not exceed 3 year "),
+    DAY_NOT_EXCEED(400,"The Day Time range not exceed 30 days ")
     ;
     private int code;
     private String message;

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.*;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,6 +18,4 @@ public class DashboardResponse {
     int totalAppointment ; // tong so luong Appointment
     Year year ;
     LocalDate date ;
-
-
 }

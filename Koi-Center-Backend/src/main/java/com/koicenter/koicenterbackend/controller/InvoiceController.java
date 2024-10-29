@@ -6,6 +6,7 @@ import com.koicenter.koicenterbackend.model.response.ResponseObject;
 import com.koicenter.koicenterbackend.model.response.invoice.CheckOutResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.DashboardResponse;
 import com.koicenter.koicenterbackend.model.response.invoice.InvoiceResponse;
+import com.koicenter.koicenterbackend.model.response.invoice.ServiceCount;
 import com.koicenter.koicenterbackend.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -80,5 +81,12 @@ public class InvoiceController {
         }else
             return ResponseObject.APIRepsonse(404, "Check-Out not found By Appointment ID: " , HttpStatus.NOT_FOUND, null);
     }
-
+    @GetMapping("/services/count")
+    public ResponseEntity<ResponseObject> getServiceCount(@RequestParam LocalDate starTime , @RequestParam LocalDate endTime ,@RequestParam String time) {
+        List<ServiceCount> invoiceResponse = invoiceService.getServiceCount(starTime,endTime,time);
+        if (invoiceResponse == null) {
+            return ResponseObject.APIRepsonse(404, "Invoice not found for appointment ID: " , HttpStatus.NOT_FOUND, null);
+        }
+        return ResponseObject.APIRepsonse(200, "Invoice retrieved successfully", HttpStatus.OK, invoiceResponse);
+    }
 }
