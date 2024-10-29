@@ -289,7 +289,7 @@ function AppointmentDetail() {
         <div className="row mb-3">
           <div className="col-md-3">
             <label htmlFor="customerId" className="form-label">
-              Customer <i className="fa-solid fa-user" ></i>
+              Customer Name <i className="fa-solid fa-user" ></i>
             </label>
             <input
               type="text"

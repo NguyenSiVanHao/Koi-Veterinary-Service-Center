@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagementPage.css"
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
-import { createStaffAPI, createVetAPI, fecthAllServicesAPI, fetchAllUsersAPI, updateUserInfoAPI, updateVetByIdAPI } from "../../apis";
+import { createStaffAPI, createVetAPI, deleteUserAPI, fecthAllServicesAPI, fetchAllUsersAPI, updateUserInfoAPI, updateVetByIdAPI } from "../../apis";
 import avatar_default from "../../assets/img/profile_default.png"
 import { Modal } from "antd";
 import StaffForm from "../../components/StaffForm/StaffForm";
@@ -42,6 +42,18 @@ const UserManagementPage = () => {
       default:
         break;
     }
+  }
+  const handleDeleteUser = async (userData) => {
+    Modal.confirm({
+      title: 'Confirm Delete',
+      content: 'Are you sure you want to delete this user?',
+      onOk: async () => {
+        const res = await deleteUserAPI(userData.user_id);
+        if (res.status === 200) {
+          fetchUserData();
+        }
+      },
+    });
   }
   const handleCloseModal = () => {
     console.log("selectedUser", selectedUser);
@@ -218,7 +230,7 @@ const UserManagementPage = () => {
                   <td>{staff.email}</td>
                   <td className="d-flex gap-2" >
                     <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(staff, true)}>Edit</button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button className="btn btn-danger" onClick={() => handleDeleteUser(staff)}>Delete</button>
                   </td>
                 </tr>
               ))}
@@ -254,7 +266,7 @@ const UserManagementPage = () => {
                   <td>{veterinarian.veterinarian.phone}</td>
                   <td className="d-flex gap-2" >
                     <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(veterinarian, true)}>Edit</button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button className="btn btn-danger" onClick={() => handleDeleteUser(veterinarian)}>Delete</button>
                   </td>
                 </tr>
               ))}
@@ -290,7 +302,7 @@ const UserManagementPage = () => {
               <td >{customer.customer.address}</td>
               <td className="d-flex gap-2" >
                 <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(customer)}>Edit</button>
-                <button className="btn btn-danger">Delete</button>
+                <button className="btn btn-danger" onClick={() => handleDeleteUser(customer)}>Delete</button>
               </td>
             </tr>
           ))}
