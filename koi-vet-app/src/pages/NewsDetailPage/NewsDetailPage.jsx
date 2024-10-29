@@ -72,18 +72,17 @@ function NewsDetailPage() {
 
     return (
         <>
-        
+        <h1 style={{margin: "50px 0 0 50px", color: "rgb(31, 43, 108)"}}><strong>News Detail</strong></h1>
         <div className="container mx-auto px-4 py-8" style={{margin: "100px 0 100px 250px"}}>
             <div className="flex flex-col lg:flex-row gap-8">
                 <Row>
                     <Col lg={8}>
                         {/* Main Content */}
-                        <div className="lg:w-2/3 card news-card" style={{ width: "800px"}}>
+                        <div className="lg:w-2/3 card news-card">
                             <img 
                                 src={newsData.img} 
                                 alt={newsData.title} 
                                 className="w-full h-96 object-cover rounded-lg mb-6"
-                                width={800}
                                 height={400}
                             />
                             <h1 

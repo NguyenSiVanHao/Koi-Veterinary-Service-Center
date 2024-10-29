@@ -3,3 +3,6 @@
     overflow-y: auto;
   }
   
+  .news-card {
+    width: 800px;
+  }

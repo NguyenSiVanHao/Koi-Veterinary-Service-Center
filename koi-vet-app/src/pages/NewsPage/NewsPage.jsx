@@ -6,6 +6,8 @@ import ReactQuill from "react-quill";
 import ImgCrop from "antd-img-crop";
 import { toast } from "react-toastify";
 import Modal from "antd/es/modal/Modal";
+import './NewsPage.css';
+
 function NewsPage() {
   const [newsData, setNewsData] = useState([]);
   const [error, setError] = useState(null);
@@ -73,13 +75,19 @@ function NewsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold mb-8" style={{margin: "20px 0 0 0", color: "rgb(31, 43, 108)"}}><strong>News</strong></h1>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{marginTop: "100px"}}>
 
-        <div className="container">
+      <div className="banner-container">
+        <div className="banner-text">
+          Welcome to the Koi & Pond Service News! Have a nice day!
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{marginTop: "50px"}}>
+
+        <div className="container news-container-news-page">
         {newsData.map(newsItem => (
-          <div className="card news-card" style={{width: "800px"}}>
+          <div className="card news-card-news-page " key={newsItem.newId} style={{width: "500px"}}>
           <div 
-            key={newsItem.newId}
             className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition hover:scale-105"
             onClick={() => handleNewsClick(newsItem.newId)}
           >
