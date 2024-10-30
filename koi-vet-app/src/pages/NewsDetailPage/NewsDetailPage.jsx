@@ -78,7 +78,7 @@ function NewsDetailPage() {
                 <Row>
                     <Col lg={8}>
                         {/* Main Content */}
-                        <div className="lg:w-2/3 card news-card">
+                        <div className="lg:w-2/3 card news-card-detail-page">
                             <img 
                                 src={newsData.img} 
                                 alt={newsData.title} 
