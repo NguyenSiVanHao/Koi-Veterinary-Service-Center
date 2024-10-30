@@ -1,23 +1,40 @@
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
-import { Table } from 'antd'
-import { fetchContactAPI, fetchContactDetailAPI } from '../../apis'    
+import { Form, Input, Table } from 'antd'
+import { createContactReplyAPI, fetchContactAPI, fetchContactDetailAPI } from '../../apis'    
 import Modal from '../../components/Modal/Modal';
 
 function ContactManagement() {
     const [dataSource, setDataSource] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [contactDetail, setContactDetail] = useState(null);
-    // const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState(null);
+    const [form] = Form.useForm();
     
     const handleOpenModal = async (id) => {
-        // setSelectedId(id);
+        setSelectedId(id);
         setIsModalOpen(true);
         try {
             const response = await fetchContactDetailAPI(id);
             setContactDetail(response.data);
         } catch (error) {
             console.error('Error fetching contact detail:', error);
+        }
+    }
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        form.resetFields();
+    }
+
+    const handleSendEmail = async (values) => {
+        try {
+            console.log(contactDetail.email);
+            await createContactReplyAPI({recipient: contactDetail.email, subject: values.subject, body: values.body});
+            handleCloseModal();
+            setDataSource(dataSource.filter(item => item.id !== selectedId));
+        } catch (error) {
+            console.error('Error sending email:', error);
         }
     }
 
@@ -31,56 +48,57 @@ function ContactManagement() {
 
     const columns1 = [
         {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+            width: "10%",
+        },
+        {
             title: "Email",
             dataIndex: "email",
             key: "email",
+            width: "20%",
         },
         {
             title: "Subject",
             dataIndex: "subject",
             key: "subject",
+            width: "25%",
+        },
+        {
+            title: "Message",
+            dataIndex: "message",
+            key: "message",
+            width: "35%",
         },
         {
             title: "Action",
             key: "action",
+            width: "10%",
             render: (_, record) => (
                 <button onClick={() => handleOpenModal(record.id)}><i className="bi bi-box-arrow-in-right"></i></button>
             )
         }
     ]
 
-    const columns2 = [
-        {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-        },
-        {
-            title: "Email",
-            dataIndex: "email",
-            key: "email",
-        },
-        {
-            title: "Subject",
-            dataIndex: "subject",
-            key: "subject",
-        },
-        {
-            title: "Message",
-            dataIndex: "message",
-            key: "message",
-        },
-    ]
-
     return (
         <Container>
             <Table dataSource={dataSource} columns={columns1} rowKey="id" pagination={{ pageSize: 7 }}/>
         
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <h3><strong>Contact Detail</strong></h3>
-                {contactDetail && (
-                    <Table dataSource={[contactDetail]} columns={columns2} rowKey="id" pagination={false}/>
-                )}
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+                <h3><strong>Reply Message</strong></h3>
+                <Form onFinish={handleSendEmail} form={form}>
+                    <Form.Item label="Recipient" name="recipient">
+                        {contactDetail && contactDetail.email}
+                    </Form.Item>
+                    <Form.Item label="Subject" name="subject">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Message" name="body">
+                        <Input />
+                    </Form.Item>
+                    <button type="primary" htmlType="submit" className='btn btn-primary'>Send</button>
+                </Form>
             </Modal>
         </Container>
     )
