@@ -3,6 +3,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import "./Contact.css"
 import { Card } from 'antd'
 import { createContactAPI } from '../../apis';
+import BannerTop from '../../components/BannerTop/BannerTop';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -40,7 +41,8 @@ function Contact() {
 
   return (
     <>
-    <Container fluid className="service-detail">
+    <BannerTop title="Contact Us" subTitle="Home / Contact us" />
+    <Container fluid className="service-detail mt-5">
     <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.61001089798!2d106.80501207961838!3d10.84112756175228!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752731176b07b1%3A0xb752b24b379bae5e!2sFPT%20University%20HCMC!5e0!3m2!1sen!2s!4v1729741003391!5m2!1sen!2s" 
             width="100%" 

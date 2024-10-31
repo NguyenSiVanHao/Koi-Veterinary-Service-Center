@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import Modal from "antd/es/modal/Modal";
 import './NewsPage.css';
 
+import BannerTop from "../../components/BannerTop/BannerTop";
 function NewsPage() {
   const [newsData, setNewsData] = useState([]);
   const [error, setError] = useState(null);
@@ -71,6 +72,7 @@ function NewsPage() {
 
   return (
     <>
+    <BannerTop title="News" subTitle="Home / News" />
     <div className="container mx-auto px-4 py-8" style={{ justifyContent: "center", alignItems: "center"}}>
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold mb-8" style={{margin: "20px 0 0 0", color: "rgb(31, 43, 108)"}}><strong>News</strong></h1>

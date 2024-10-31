@@ -43,7 +43,7 @@ const UserManagementPage = () => {
         break;
     }
   }
-  const handleDeleteUser = async (userData) => {
+  const handleChangeUserStatus = async (userData) => {
     Modal.confirm({
       title: 'Confirm Delete',
       content: 'Are you sure you want to delete this user?',
@@ -226,11 +226,13 @@ const UserManagementPage = () => {
                   <td><img src={staff.image || avatar_default} alt="avatar" style={{ width: '50px', height: '50px' }} /></td>
                   <td>{staff.username}</td>
                   <td>{staff.fullName}</td>
-                  <td>{staff.status}</td>
+                  <td>{staff.status ? "Active" : "Inactive"}</td>
                   <td>{staff.email}</td>
                   <td className="d-flex gap-2" >
                     <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(staff, true)}>Edit</button>
-                    <button className="btn btn-danger" onClick={() => handleDeleteUser(staff)}>Delete</button>
+                    {staff.status ? <button className="btn btn-danger" onClick={() => handleChangeUserStatus(staff)}>Deactive</button>
+                      : <button className="btn btn-success" onClick={() => handleChangeUserStatus(staff)}>Active</button>
+                    }
                   </td>
                 </tr>
               ))}
@@ -261,12 +263,14 @@ const UserManagementPage = () => {
                   <td><img src={veterinarian.veterinarian.image || avatar_default} alt="avatar" style={{ width: '50px', height: '50px' }} /></td>
                   <td>{veterinarian.username}</td>
                   <td>{veterinarian.fullName}</td>
-                  <td>{veterinarian.veterinarian.status}</td>
+                  <td>{veterinarian.status ? "Active" : "Inactive"}</td>
                   <td>{veterinarian.email}</td>
                   <td>{veterinarian.veterinarian.phone}</td>
                   <td className="d-flex gap-2" >
                     <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(veterinarian, true)}>Edit</button>
-                    <button className="btn btn-danger" onClick={() => handleDeleteUser(veterinarian)}>Delete</button>
+                    {veterinarian.status ? <button className="btn btn-danger" onClick={() => handleChangeUserStatus(veterinarian)}>Deactive</button>
+                      : <button className="btn btn-success" onClick={() => handleChangeUserStatus(veterinarian)}>Active</button>
+                    }
                   </td>
                 </tr>
               ))}
@@ -295,14 +299,16 @@ const UserManagementPage = () => {
               <td><img src={customer.image || avatar_default} alt="avatar" style={{ width: '50px', height: '50px' }} /></td>
               <td>{customer.username}</td>
               <td>{customer.fullName}</td>
-              <td>{customer.status}</td>
+              <td>{customer.status ? "Active" : "Inactive"}</td>
               <td>{customer.customer.phone}</td>
 
               <td>{customer.email}</td>
               <td >{customer.customer.address}</td>
               <td className="d-flex gap-2" >
                 <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(customer)}>Edit</button>
-                <button className="btn btn-danger" onClick={() => handleDeleteUser(customer)}>Delete</button>
+                {customer.status ? <button className="btn btn-danger" onClick={() => handleChangeUserStatus(customer)}>Deactive</button>
+                  : <button className="btn btn-success" onClick={() => handleChangeUserStatus(customer)}>Active</button>
+                }
               </td>
             </tr>
           ))}

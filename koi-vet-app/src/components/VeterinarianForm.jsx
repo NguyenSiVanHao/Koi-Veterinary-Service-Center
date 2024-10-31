@@ -33,7 +33,7 @@ const VeterinarianForm = ({ selectedUser, setSelectedUser, handleImageChange, im
                 </div>
                 <div className="col-md-6 mt-3">
                     <label className="">Google Meet Link</label>
-                    <input type="text" value={selectedUser?.googleMeet || ''} onChange={(e) => setSelectedUser({ ...selectedUser, googleMeet: e.target.value })} />
+                    <input type="text" value={selectedUser?.veterinarian?.googleMeet || ''} onChange={(e) => setSelectedUser({ ...selectedUser, veterinarian: { ...selectedUser.veterinarian, googleMeet: e.target.value } })} />
                 </div>
                 <div className="col-md-12 mt-3">
                     <label className="">Service</label>
