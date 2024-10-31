@@ -1,8 +1,8 @@
 .scrollable-list {
-    max-height: 500px; /* hoặc chiều cao mà bạn mong muốn */
-    overflow-y: auto;
-  }
-  
-  .news-card {
-    width: 800px;
-  }
+  max-height: 500px; /* hoặc chiều cao mà bạn mong muốn */
+  overflow-y: auto;
+}
+
+.news-card-detail-page {
+  width: 800px;
+}

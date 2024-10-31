@@ -150,7 +150,6 @@ function Header() {
                 <Link to={user?.role === ROLE.MANAGER ? "/admin" : "/admin/appointment"} className="btn btn-outline-light">
                   <i className="fas fa-user"></i>
                 </Link>}
-              
 
             </div>
           </div>

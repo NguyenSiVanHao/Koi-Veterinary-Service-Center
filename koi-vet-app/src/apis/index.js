@@ -612,3 +612,13 @@ export const createStaffAPI = async (data) => {
 
 
 
+//contact send email API
+export const createContactReplyAPI = async (data) => {
+    const response = await api.post(`/mail/sendEmail`, data);
+    return response.data;
+}
+
+
+
+
+
