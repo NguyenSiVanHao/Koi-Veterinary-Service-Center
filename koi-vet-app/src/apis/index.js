@@ -541,10 +541,18 @@ export const createHomeVisitPriceAPI = async (data) => {
 
 
 //dashboard API
-export const fetchDashboardAPI = async (starTime, endTime, time) => {
-    const response = await api.get(`/invoices/dashboard?starTime=${starTime}&endTime=${endTime}&time=${time}`);
+export const fetchDashboardAPI = async (startTime, endTime, time) => {
+    const response = await api.get(`/invoices/dashboard?starTime=${startTime}&endTime=${endTime}&time=${time}`);
     return response.data;
 }
+
+export const fetchDashboardByServiceAPI = async (startTime, endTime, time) => {
+    const response = await api.get(`/invoices/services/count?starTime=${startTime}&endTime=${endTime}&time=${time}`);
+    return response.data;
+}
+
+
+
 
 //Schedual API
 export const updateSchedualAPI = async (schedualId, data) => {
