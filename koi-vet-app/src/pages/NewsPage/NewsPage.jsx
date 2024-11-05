@@ -90,7 +90,7 @@ function NewsPage() {
         {newsData.map(newsItem => (
           <div className="card news-card-news-page " key={newsItem.newId} style={{width: "500px"}}>
           <div 
-            className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition hover:scale-105"
+            className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition hover:scale-105 news-card-content"
             onClick={() => handleNewsClick(newsItem.newId)}
           >
             <img 
