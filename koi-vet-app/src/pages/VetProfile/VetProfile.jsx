@@ -3,7 +3,7 @@ import "./VetProfile.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchVetByVetIdAPI, updateDescriptionByVetIdAPI } from "../../apis";
 import Loading from "../../components/Loading/Loading";
-import { ROLE } from "../../utils/constants";
+import { useSelector } from 'react-redux';
 import Modal from "antd/es/modal/Modal";
 import { Form } from "antd";
 import ReactQuill from "react-quill";
@@ -16,6 +16,7 @@ function VetProfile() {
   const [form] = Form.useForm();
   const [description, setDescription] = useState("");
   const [vets, setVets] = useState(null);
+  const role = useSelector(state => state.user.role);
 
   const fectchVetProfile = async () => {
 
@@ -61,7 +62,7 @@ function VetProfile() {
             <h2>{vets.user?.fullName}</h2>
           </div>
           <br/>
-          {ROLE !== "CUSTOMER" && (
+          {role !== "CUSTOMER" && (
           <div className="vet-profile-left">
               <p>Phone: {vets.phone}</p>
               <p>Email: {vets.user?.email}</p>
@@ -74,7 +75,7 @@ function VetProfile() {
           >
             Previous Step
           </button>
-          {ROLE !== "CUSTOMER" && (
+          {role !== "CUSTOMER" && (
           <button className="vet-profile-edit mt-5" onClick={handleOpen}>Edit</button>
           )}
         </div>

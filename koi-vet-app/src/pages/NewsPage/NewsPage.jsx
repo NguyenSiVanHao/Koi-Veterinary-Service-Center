@@ -7,6 +7,7 @@ import ImgCrop from "antd-img-crop";
 import { toast } from "react-toastify";
 import Modal from "antd/es/modal/Modal";
 import './NewsPage.css';
+import { useSelector } from 'react-redux';
 
 import BannerTop from "../../components/BannerTop/BannerTop";
 function NewsPage() {
@@ -17,6 +18,7 @@ function NewsPage() {
   const [img, setImg] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const role = useSelector(state => state.user.role);
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -178,7 +180,9 @@ function NewsPage() {
           </Form>
         </Modal>
     </div>
+    {role !== "CUSTOMER" && (
     <button onClick={handleOpenModal} className="btn btn-primary" style={{margin: "0 0 0 10px"}}>Create News</button>
+    )}
     </>
   );
 }
