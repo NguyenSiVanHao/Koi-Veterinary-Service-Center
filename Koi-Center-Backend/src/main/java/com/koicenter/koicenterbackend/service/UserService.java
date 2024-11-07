@@ -38,6 +38,8 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -71,6 +73,15 @@ public class UserService {
     }
 
     public void createCustomer(RegisterRequest newUser) {
+        String phone = newUser.getPhone();
+
+        String phoneRegex = "^09\\d{8}$";
+        Pattern pattern = Pattern.compile(phoneRegex);
+        Matcher matcher = pattern.matcher(phone);
+
+        if (!matcher.matches()) {
+            throw new AppException(400, "Phone number is not correct", HttpStatus.BAD_REQUEST);
+        }
         User user = new User();
         user.setUsername(newUser.getUsername());
         user.setPassword(encoder.encode(newUser.getPassword()));
