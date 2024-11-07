@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -100,6 +101,7 @@ public class AppointmentController {
             return ResponseObject.APIRepsonse(404, "UserName not found", HttpStatus.NOT_FOUND,"");
         }
     }
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @GetMapping("/by-vetId/{vetId}")
     public ResponseEntity<ResponseObject> getAppointmentByVetId(@PathVariable String vetId, @RequestParam LocalDate date) {
         List<AppointmentResponse> list =  appointmentService.getAppointmentByVetId(vetId,date);

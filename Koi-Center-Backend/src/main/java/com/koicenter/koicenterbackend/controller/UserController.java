@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,12 +50,14 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/get")
     public ResponseEntity<ResponseObject> getUserByRole(@RequestParam String role) {
         List<UserResponse> userList = userService.getListUserByRole(role);
         return ResponseObject.APIRepsonse(200, "List", HttpStatus.OK, userList);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("")
     public ResponseEntity<ResponseObject> deleteUser(@RequestParam String userId) {
         boolean isDeleted = userService.deleteUser(userId);
@@ -76,7 +79,7 @@ public class UserController {
             return ResponseObject.APIRepsonse(404, "Your current password is incorrect", HttpStatus.BAD_REQUEST, "");
         }
     }
-
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/update")
     public ResponseEntity<ResponseObject> update(@RequestBody UpdateUserRequest updateUserRequest){
         boolean isUpdated = userService.updateUser(updateUserRequest);
