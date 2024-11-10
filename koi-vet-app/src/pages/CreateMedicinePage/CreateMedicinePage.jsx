@@ -14,6 +14,7 @@ function CreateMedicinePage() {
   const [availableMedicines, setAvailableMedicines] = useState([]);
   const [editingMedicine, setEditingMedicine] = useState(null); // State for the medicine being edited
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); // State for create modal
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
   // Fetch medicines on component mount
   useEffect(() => {
@@ -114,6 +115,11 @@ function CreateMedicinePage() {
     }
   };
 
+  // Filter available medicines based on search term
+  const filteredMedicines = availableMedicines.filter(medicine =>
+    medicine.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Columns for the table
   const columns = [
     {
@@ -158,8 +164,17 @@ function CreateMedicinePage() {
     <>
       <Container className='mt-4'>
         <h1>Medicine List</h1>
+        
+        {/* Search Input */}
+        <Input
+          placeholder="Search by medicine name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ marginBottom: 20 }}
+        />
+
         <Table
-          dataSource={availableMedicines}
+          dataSource={filteredMedicines} // Use filtered medicines for the table
           columns={columns}
           pagination={{
             pageSize: 7,
