@@ -1,36 +1,39 @@
-import { Form, Input, message, Select, Table } from 'antd'
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Container, Row } from 'react-bootstrap'
-import { createMedicineAPI, deleteMedicineByIdAPI, fetchMedicinesAPI } from '../../apis';
+import { Form, Input, message, Select, Table, Modal, Popconfirm } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Container } from 'react-bootstrap';
+import { createMedicineAPI, deleteMedicineByIdAPI, fetchMedicinesAPI, updateMedicineByIdAPI } from '../../apis';
 import './CreateMedicinePage.css';
 import TextArea from 'antd/es/input/TextArea';
 
 function CreateMedicinePage() {
-    const [newMedicineData, setNewMedicineData] = useState({
-        name: "",
-        description: "",
-        medUnit: "",
-      });
-      const [availableMedicines, setAvailableMedicines] = useState([]);
-      const [isCreating, setIsCreating] = useState(false);
+  const [newMedicineData, setNewMedicineData] = useState({
+    name: "",
+    description: "",
+    medUnit: "",
+  });
+  const [availableMedicines, setAvailableMedicines] = useState([]);
+  const [editingMedicine, setEditingMedicine] = useState(null); // State for the medicine being edited
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); // State for create modal
 
+  // Fetch medicines on component mount
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      try {
+        const response = await fetchMedicinesAPI();
+        setAvailableMedicines(response.data || []);
+      } catch (error) {
+        message.error("Failed to fetch medicines.");
+      }
+    };
+    fetchMedicines();
+  }, []);
 
-  // Mở form tạo thuốc
-  const handleOpenCreateMedicineForm = () => {
-    setIsCreating(true);
-  };
-    
-      const handleCloseCreateMedicineForm = () => {
-        setIsCreating(false);
-        setNewMedicineData({ name: "", description: "", medUnit: "" });
-      };
-
-  // Xử lý thay đổi dữ liệu trong form
+  // Handle input changes for new medicine
   const handleNewMedicineInputChange = (field, value) => {
     setNewMedicineData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Gọi API để tạo thuốc mới
+  // Create new medicine
   const handleCreateMedicine = async () => {
     const { name, description, medUnit } = newMedicineData;
 
@@ -40,165 +43,210 @@ function CreateMedicinePage() {
     }
 
     try {
-      await createMedicineAPI(newMedicineData); // Gọi API để tạo thuốc
+      await createMedicineAPI(newMedicineData);
       message.success("Medicine created successfully.");
-
-      // Cập nhật lại danh sách thuốc
       const updatedMedicines = await fetchMedicinesAPI();
       setAvailableMedicines(updatedMedicines.data || []);
-
-      handleCloseCreateMedicineForm(); // Đóng form sau khi tạo thành công
+      setNewMedicineData({ name: "", description: "", medUnit: "" }); // Reset new medicine data
     } catch (error) {
       message.error("Failed to create medicine.");
     }
   };
 
-  useEffect(() => {
-  const fetchMedicines = async () => {
-      const response = await fetchMedicinesAPI();
-      setAvailableMedicines(response.data || []);
-    };
-    fetchMedicines();
-  }, []);
-
+  // Handle delete medicine
   const handleDeleteMedicine = async (medicineId) => {
-    await deleteMedicineByIdAPI(medicineId);
-    const updatedMedicines = await fetchMedicinesAPI();
-    setAvailableMedicines(updatedMedicines.data || []);
+    try {
+      await deleteMedicineByIdAPI(medicineId);
+      const updatedMedicines = await fetchMedicinesAPI();
+      setAvailableMedicines(updatedMedicines.data || []);
+      message.success("Medicine deleted successfully.");
+    } catch (error) {
+      message.error("Failed to delete medicine.");
+    }
   };
 
+  // Open edit modal
+  const handleEditMedicine = (medicine) => {
+    setEditingMedicine(medicine);
+  };
+
+  // Save edited medicine
+  const handleSaveEdit = async () => {
+    if (!editingMedicine.name || !editingMedicine.description || !editingMedicine.medUnit) {
+      message.error("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      await updateMedicineByIdAPI(editingMedicine.medicineId, editingMedicine);
+      message.success("Medicine updated successfully.");
+      const updatedMedicines = await fetchMedicinesAPI();
+      setAvailableMedicines(updatedMedicines.data || []);
+      setEditingMedicine(null); // Close the modal
+    } catch (error) {
+      message.error("Failed to update medicine.");
+    }
+  };
+
+  // Open create modal
+  const handleOpenCreateModal = () => {
+    setNewMedicineData({ name: "", description: "", medUnit: "" }); // Reset new medicine data
+    setIsCreateModalVisible(true);
+  };
+
+  // Save new medicine
+  const handleSaveNewMedicine = async () => {
+    const { name, description, medUnit } = newMedicineData;
+
+    if (!name || !description || !medUnit) {
+      message.error("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      await createMedicineAPI(newMedicineData);
+      message.success("Medicine created successfully.");
+      const updatedMedicines = await fetchMedicinesAPI();
+      setAvailableMedicines(updatedMedicines.data || []);
+      setIsCreateModalVisible(false); // Close the modal
+    } catch (error) {
+      message.error("Failed to create medicine.");
+    }
+  };
+
+  // Columns for the table
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: '200',
+      width: "30%",
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      width: '300',
-      ellipsis: true,
+      width: "35%",
     },
     {
       title: "Unit",
       dataIndex: "medUnit",
       key: "medUnit",
-      width: '100',
+      wwidth: "15%",
     },
     {
       title: "Action",
       key: "action",
+      width: "20%",
       render: (_, record) => (
-        <button onClick={() => handleDeleteMedicine(record.medicineId)} className="btn btn-sm btn-outline-danger">Delete</button>
-      )
-    }
+        <>
+          <Button onClick={() => handleEditMedicine(record)}>Edit</Button>
+          <Popconfirm
+            title="Are you sure to delete this medicine?"
+            onConfirm={() => handleDeleteMedicine(record.medicineId)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button style={{ marginLeft: 8 }} className='btn btn-danger'>Delete</button>
+          </Popconfirm>
+        </>
+      ),
+    },
   ];
+
   return (
     <>
-    <Container className='mt-4'>
-    <h1 >Medicine List</h1>
-    <div className="row">
-        <div className="col">
-          <div className="card border-0 shadow-sm">
-            <div className="card-body">
-              <div className="table-responsive">
-    <Table dataSource={availableMedicines} columns={columns} 
-        pagination={{
-        pageSize: 7,
-        showSizeChanger: false, // Ẩn tùy chọn thay đổi số lượng trên mỗi trang
-      }} />
-      </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Container className='mt-4'>
+        <h1>Medicine List</h1>
+        <Table
+          dataSource={availableMedicines}
+          columns={columns}
+          pagination={{
+            pageSize: 7,
+            showSizeChanger: false,
+          }}
+          rowKey="medicineId"
+        />
 
-<div className="card p-4" style={{borderRadius: '10px', width: '70%'}}> 
-<div className="row mb-4">
-        <div className="col">
-          <div className="card bg-light border-0 shadow-sm">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                
-                <p className="text-muted mb-0">Create new medicine to add to the list</p>
-              </div>
-              <button 
-                className="btn btn-primary d-flex align-items-center gap-2"
-                onClick={() => setIsCreating(true)}
-                style={{ display: isCreating ? 'none' : 'flex' }}
-              >
-                <i className="bi bi-plus-circle"></i>
-                Add Medicine
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-        {isCreating && (
-        <Row className="mt-4">
-          <Col md={12}>
-          <div className="card border-0 shadow-sm">
-              <div className="card-body">
-          <h5 className="card-title mb-4">Create New Medicine</h5>
+        {/* Modal for editing medicine */}
+        <Modal
+          title="Edit Medicine"
+          visible={!!editingMedicine}
+          onOk={handleSaveEdit}
+          onCancel={() => setEditingMedicine(null)}
+        >
+          {editingMedicine && (
             <Form>
               <Form.Item label="Medicine Name" required>
                 <Input
                   placeholder="Enter medicine name"
-                  value={newMedicineData.name}
-                  onChange={(e) =>
-                    handleNewMedicineInputChange("name", e.target.value)
-                  }
+                  value={editingMedicine.name}
+                  onChange={(e) => setEditingMedicine({ ...editingMedicine, name: e.target.value })}
                 />
               </Form.Item>
-
               <Form.Item label="Description" required>
-              <TextArea
-                    className="custom-textarea"
-                    placeholder="Enter description"
-                    value={newMedicineData.description}
-                    onChange={(e) =>
-                        handleNewMedicineInputChange("description", e.target.value)
-                    }
-                    autoSize={{ minRows: 3, maxRows: 6 }} 
+                <TextArea
+                  placeholder="Enter description"
+                  value={editingMedicine.description}
+                  onChange={(e) => setEditingMedicine({ ...editingMedicine, description: e.target.value })}
+                  autoSize={{ minRows: 3, maxRows: 6 }}
                 />
               </Form.Item>
-
               <Form.Item label="Unit" required>
                 <Select
                   placeholder="Select unit"
-                  value={newMedicineData.medUnit}
-                  onChange={(value) =>
-                    handleNewMedicineInputChange("medUnit", value)
-                  }
-                  style={{ width: "100%" }}
+                  value={editingMedicine.medUnit}
+                  onChange={(value) => setEditingMedicine({ ...editingMedicine, medUnit: value })}
                 >
                   <Select.Option value="PACKAGE">PACKAGE</Select.Option>
                   <Select.Option value="PILL">PILL</Select.Option>
                   <Select.Option value="BOTTLE">BOTTLE</Select.Option>
                 </Select>
               </Form.Item>
-
-              <div style={{ display: "flex", gap: "8px" }}>
-                <Button onClick={handleCreateMedicine} type="primary">
-                  Create Medicine
-                </Button>
-                <Button onClick={handleCloseCreateMedicineForm}>Cancel</Button>
-                
-              </div>
             </Form>
-            </div>
-            </div>
-            </Col>
-            </Row>
-        )}
-        </div>
-       </Container>
+          )}
+        </Modal>
+
+        <Modal
+          title="Create New Medicine"
+          visible={isCreateModalVisible}
+          onOk={handleSaveNewMedicine}
+          onCancel={() => setIsCreateModalVisible(false)}
+        >
+          <Form>
+            <Form.Item label="Medicine Name" required>
+              <Input
+                placeholder="Enter medicine name"
+                value={newMedicineData.name}
+                onChange={(e) => handleNewMedicineInputChange('name', e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Description" required>
+              <TextArea
+                placeholder="Enter description"
+                value={newMedicineData.description}
+                onChange={(e) => handleNewMedicineInputChange('description', e.target.value)}
+                autoSize={{ minRows: 3, maxRows: 6 }}
+              />
+            </Form.Item>
+            <Form.Item label="Unit" required>
+              <Select
+                placeholder="Select unit"
+                value={newMedicineData.medUnit}
+                onChange={(value) => handleNewMedicineInputChange('medUnit', value)}
+              >
+                <Select.Option value="PACKAGE">PACKAGE</Select.Option>
+                <Select.Option value="PILL">PILL</Select.Option>
+                <Select.Option value="BOTTLE">BOTTLE</Select.Option>
+              </Select>
+            </Form.Item>
+          </Form>
+        </Modal>
+
+        <Button onClick={handleOpenCreateModal}>Create New Medicine</Button> {/* Button to open create modal */}
+      </Container>
     </>
-  )
+  );
 }
 
-export default CreateMedicinePage
+export default CreateMedicinePage;
