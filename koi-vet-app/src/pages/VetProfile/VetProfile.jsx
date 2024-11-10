@@ -64,6 +64,7 @@ function VetProfile() {
           <br/>
           {role !== "CUSTOMER" && (
           <div className="vet-profile-left">
+              <p>User name: {vets.user?.username}</p>
               <p>Phone: {vets.phone}</p>
               <p>Email: {vets.user?.email}</p>
               <p>Google meet link: {vets.googleMeet}</p>
@@ -82,11 +83,11 @@ function VetProfile() {
 
         <div className="col-md-6">
           <div className="vet-profile-right">
-            <h5>User name: {vets.user?.username}</h5>
             <div 
               className="service-description" 
               dangerouslySetInnerHTML={{ __html: vets.description }}
             />
+            <p><strong>Services: {Array.isArray(vets.serviceNames) ? vets.serviceNames.join(', ') : vets.serviceNames}</strong></p>
           </div>
         </div>
       </div>
