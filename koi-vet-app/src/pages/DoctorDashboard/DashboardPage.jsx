@@ -41,7 +41,16 @@ function DashboardPage() {
         const data = await fetchDashboardAPI(start, end, timeType);
         if (data && data.data) {
           setDataSource(data.data);
-          const dateLabels = data.data.map(item => item.date);
+          
+          // Cập nhật labels dựa trên loại thời gian
+          let dateLabels;
+          if (timeType === 'day') {
+            dateLabels = data.data.map(item => item.date); // Giữ nguyên định dạng yyyy-mm-dd
+          } else if (timeType === 'month') {
+            dateLabels = data.data.map(item => item.date.substring(0, 7)); // Lấy yyyy-mm
+          } else if (timeType === 'year') {
+            dateLabels = data.data.map(item => item.date.substring(0, 4)); // Lấy yyyy
+          }
           setLabels(dateLabels);
           
           const revenueData = data.data.map(item => item.totalRevenue);
@@ -69,24 +78,28 @@ function DashboardPage() {
   const totalPondcard = dataSource?.reduce((sum, item) => sum + (item.totalPond || 0), 0) || 0;
   const totalRevenuecard = dataSource?.reduce((sum, item) => sum + (item.totalRevenue || 0), 0) || 0;
 
+  // Định dạng số tiền với dấu chấm ngăn cách
+  const formattedTotalRevenueCard = totalRevenuecard.toLocaleString('vi-VN', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+
+  
   // Add this function to set default date ranges
   const getDefaultDateRange = (timeType) => {
-    // Tạo date với múi giờ Việt Nam
-    const end = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-    const start = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-    
+    const end = new Date();
+    const start = new Date(end);
+
     switch (timeType) {
       case 'day':
-        start.setDate(end.getDate() - 7);
+        start.setDate(end.getDate() - 6);
         break;
       case 'month':
-        start.setMonth(end.getMonth() - 6);
+        start.setMonth(end.getMonth() - 5);
         break;
       case 'year':
-        start.setFullYear(end.getFullYear() - 3);
+        start.setFullYear(end.getFullYear() - 2);
         break;
       default:
-        start.setDate(end.getDate() - 7);
+        start.setDate(end.getDate() - 6);
     }
     
     // Format dates to YYYY-MM-DD using Vietnam timezone
@@ -123,22 +136,49 @@ function DashboardPage() {
   // Add date range handler
   const handleDateChange = (dates) => {
     if (dates) {
-      setStartTime(dates[0].format('YYYY-MM-DD'));
-      setEndTime(dates[1].format('YYYY-MM-DD'));
+        const selectedStartTime = dates[0].toDate(); // Chuyển đổi sang đối tượng Date
+        const selectedEndTime = dates[1].toDate(); // Chuyển đổi sang đối tượng Date
+        const timeDiff = selectedEndTime - selectedStartTime; // Tính khoảng cách thời gian
+
+        // Kiểm tra khoảng thời gian cho từng loại
+        if (time === 'day' && timeDiff > 30 * 24 * 60 * 60 * 1000) { // 30 ngày
+            alert("Error: The selected date range for 'Day' cannot exceed 30 days.");
+            const defaultRange = getDefaultDateRange('day');
+            setStartTime(defaultRange.start);
+            setEndTime(defaultRange.end);
+        } else if (time === 'month' && timeDiff > 12 * 30 * 24 * 60 * 60 * 1000) { // 12 tháng
+            alert("Error: The selected date range for 'Month' cannot exceed 12 months.");
+            const defaultRange = getDefaultDateRange('month');
+            setStartTime(defaultRange.start);
+            setEndTime(defaultRange.end);
+        } else if (time === 'year' && timeDiff > 3 * 365 * 24 * 60 * 60 * 1000) { // 3 năm
+            alert("Error: The selected date range for 'Year' cannot exceed 3 years.");
+            const defaultRange = getDefaultDateRange('year');
+            setStartTime(defaultRange.start);
+            setEndTime(defaultRange.end);
+        } else {
+            // Nếu không có lỗi, cập nhật giá trị
+            setStartTime(dates[0].format('YYYY-MM-DD'));
+            setEndTime(dates[1].format('YYYY-MM-DD'));
+        }
     } else {
-      setStartTime('');
-      setEndTime('');
+        const defaultRange = getDefaultDateRange(time);
+        setStartTime(defaultRange.start);
+        setEndTime(defaultRange.end);
     }
-  };
+};
 
   const serviceNamesPopular = () => {
-   for(let i = 0; i < serviceData.length; i++) {
-    for(let j = i + 1; j < serviceData.length; j++) {
-      if (serviceData[i].count > serviceData[j].count) {
-        return serviceData[i].serviceName;
-      }
-    }
-   }
+    if (serviceData.length === 0) return "No services available";
+    
+    // Tìm giá trị cao nhất
+    const maxCount = Math.max(...serviceData.map(service => service.count));
+    
+    // Lọc các dịch vụ có số lượng bằng với giá trị cao nhất
+    const popularServices = serviceData.filter(service => service.count === maxCount);
+    
+    // Trả về tên dịch vụ, nối chúng lại với nhau
+    return popularServices.map(service => service.serviceName).join(', ');
   }
 
   return (
@@ -167,7 +207,7 @@ function DashboardPage() {
       <div className='col-md'>
         <div className='card total' 
             style={{
-              height: "100px",
+              height: "120px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -176,15 +216,15 @@ function DashboardPage() {
               color: "white",
             }}>
           <div className='card-body total-body'>
-            <h5 className='card-title'><i class="bi bi-coin icons"></i> Total Revenue</h5>
-            <p className='card-text'>{totalRevenuecard}</p>
+            <p className='card-title title-dashboard'><i class="bi bi-coin icons"></i> Total Revenue</p>
+            <p className='card-text'>{formattedTotalRevenueCard} VND</p>
           </div>
         </div>
       </div>  
       <div className='col-md'>
         <div className='card total' 
             style={{
-              height: "100px",
+              height: "120px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -193,7 +233,7 @@ function DashboardPage() {
               color: "white",
             }}>
           <div className='card-body total-body'>
-            <h5 className='card-title'><i class="bi bi-calendar-check"></i> Total Appointments</h5>
+            <p className='card-title title-dashboard'><i class="bi bi-calendar-check"></i> Total Appointments</p>
             <p className='card-text'>{totalAppointmentcard}</p>
           </div>
         </div>
@@ -201,7 +241,7 @@ function DashboardPage() {
       <div className='col-md'>
         <div className='card total' 
             style={{
-              height: "100px",
+              height: "120px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -211,7 +251,7 @@ function DashboardPage() {
             }}
               >
           <div className='card-body total-body'>
-            <h5 className='card-title'><i class="bi bi-fire"></i> Popular Services</h5>
+            <p className='card-title title-dashboard'><i class="bi bi-fire"></i> Popular Services</p>
             <p className='card-text'>{serviceNamesPopular()}</p>
           </div>
         </div>
@@ -219,7 +259,7 @@ function DashboardPage() {
       <div className='col-md'>
         <div className='card total'  
             style={{
-              height: "100px",
+              height: "120px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -228,7 +268,7 @@ function DashboardPage() {
               color: "white",
             }}>
           <div className='card-body total-body'>
-            <h5 className='card-title'><i class="fas fa-fish"></i> Total Koi</h5>
+            <p className='card-title title-dashboard'><i class="fas fa-fish"></i> Total Koi</p>
             <p className='card-text'>{totalKoicard}</p>
           </div>
         </div>
@@ -236,7 +276,7 @@ function DashboardPage() {
       <div className='col-md'>
         <div className='card total' 
             style={{
-              height: "100px",
+              height: "120px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -245,7 +285,7 @@ function DashboardPage() {
               color: "white",
             }}>
           <div className='card-body total-body'>
-            <h5 className='card-title'><i class="fas fa-water"></i> Total Pond</h5>
+            <p className='card-title title-dashboard'><i class="fas fa-water"></i> Total Pond</p>
             <p className='card-text'>{totalPondcard}</p>
           </div>
         </div>

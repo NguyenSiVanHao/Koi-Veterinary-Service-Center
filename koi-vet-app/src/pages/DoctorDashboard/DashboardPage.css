@@ -52,3 +52,7 @@
   flex-direction: column;
   align-items: center;
 }
+
+.title-dashboard{
+  font-size: 0.875rem;
+}

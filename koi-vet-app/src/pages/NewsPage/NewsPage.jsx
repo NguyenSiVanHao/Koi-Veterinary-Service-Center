@@ -180,7 +180,7 @@ function NewsPage() {
           </Form>
         </Modal>
     </div>
-    {role !== "CUSTOMER" && (
+    {role === "MANAGER" && (
     <button onClick={handleOpenModal} className="btn btn-primary" style={{margin: "0 0 0 10px"}}>Create News</button>
     )}
     </>
