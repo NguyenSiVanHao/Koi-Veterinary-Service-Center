@@ -108,12 +108,6 @@ function SideBar() {
             </Link>
           </li>
         )}
-
-        <li className="nav-item">
-          <Link to="#" className="nav-link">
-            <i className="fas fa-cog"></i> Setting
-          </Link>
-        </li>
       </ul>
       {isAuthorized && (
         <div className="sidebar-logout">

@@ -116,13 +116,13 @@ function GGM() {
                                 readonly
                             />
                         </div>
-                        <div className="mb-3">
+                        {/* <div className="mb-3">
                             <label className="form-label">Link:</label>
                             <Link
                                 to={`https://${veterinarian?.googleMeet}`}
                                 className="btn btn-primary"
                             >{`https://${veterinarian?.googleMeet}`}</Link>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
