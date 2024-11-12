@@ -103,7 +103,7 @@ function AllAppointment() {
     if (role === ROLE.VETERINARIAN) {
       fetchAppointmentForVet(vetId, status, pageSize, debouncedSearch, offSet);
       setTitle("All My Appointments");
-    } else if (role === ROLE.STAFF) {
+    } else if (role === ROLE.STAFF || role === ROLE.MANAGER) {
       fetchAppointmentForStaff(debouncedSearch);
       setTitle("All Veterinarian Appointments");
     } else if (role === ROLE.CUSTOMER) {
