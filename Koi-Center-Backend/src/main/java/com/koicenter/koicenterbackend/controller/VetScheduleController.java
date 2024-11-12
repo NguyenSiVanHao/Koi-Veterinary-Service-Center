@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -69,6 +70,7 @@ public class VetScheduleController {
             return ResponseObject.APIRepsonse(404, "Veterinarians schedule not found", HttpStatus.NOT_FOUND,"");
         }
     }
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createVetSchedule(@RequestBody VetScheduleRequest vetScheduleRequest) {
         List<VetScheduleResponse> list = vetScheduleService.createVetScheduleByDate(vetScheduleRequest.getDates(), vetScheduleRequest.getVet_id());
@@ -115,7 +117,7 @@ public class VetScheduleController {
             return ResponseObject.APIRepsonse(404, "Veterinarians schedule not found By VetID and Date ", HttpStatus.NOT_FOUND,"");
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @GetMapping("/{vetId}/schedules")
     public ResponseEntity<ResponseObject> getScheduleByVetId(@PathVariable String vetId) {
         List<VetScheduleResponse> list = vetScheduleService.getScheduleByVetId(vetId);

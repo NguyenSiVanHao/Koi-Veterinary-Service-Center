@@ -11,6 +11,7 @@ import com.koicenter.koicenterbackend.service.MedicineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class MedicineController {
             return ResponseObject.APIRepsonse(404, e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @PostMapping()
     public ResponseEntity<ResponseObject> createMedicine(@RequestBody MedicineRequest medicineRequest){
         try{
@@ -51,7 +52,7 @@ public class MedicineController {
             return ResponseObject.APIRepsonse(500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @PutMapping("/{medicineId}")
     public ResponseEntity<ResponseObject> updateMedicine(@PathVariable("medicineId") String medicineId, @RequestBody MedicineRequest medicineRequest) {
         try {
@@ -64,7 +65,7 @@ public class MedicineController {
         }
     }
 
-
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @DeleteMapping("/{medicineId}")
     public ResponseEntity<ResponseObject> deleteMedicine(@PathVariable("medicineId") String medicineId) {
         try {

@@ -12,6 +12,7 @@ import com.koicenter.koicenterbackend.service.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
 public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
-
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @PutMapping("/{deliveryId}")
     public ResponseEntity<ResponseObject> updateDelivery(@PathVariable("deliveryId") String deliveryId, @RequestBody DeliveryRequest deliveryRequest) {
         try {
@@ -33,7 +34,6 @@ public class DeliveryController {
             return ResponseObject.APIRepsonse(500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
-
     @GetMapping()
     public ResponseEntity<ResponseObject> getAllDelivery() {
         try {
@@ -44,7 +44,6 @@ public class DeliveryController {
         }
     }
 
-
     @GetMapping("/{deliveryId}")
     public ResponseEntity<ResponseObject> getDeliveryById(@PathVariable("deliveryId") String deliveryId) {
         try {
@@ -54,7 +53,7 @@ public class DeliveryController {
             return ResponseObject.APIRepsonse(404, "Delivery do not exist", HttpStatus.NOT_FOUND, null);
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @PostMapping()
     public ResponseEntity<ResponseObject> createDelivery (@RequestBody DeliveryRequest deliveryRequest){
         if(deliveryRequest != null ){
@@ -65,8 +64,9 @@ public class DeliveryController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @DeleteMapping("/{deliveryId}")
-    public ResponseEntity<ResponseObject> deleteKoi(@PathVariable("deliveryId") String deliveryId) {
+    public ResponseEntity<ResponseObject> deleteDelivery(@PathVariable("deliveryId") String deliveryId) {
         try {
             deliveryService.deleteDelivery(deliveryId);
             return ResponseObject.APIRepsonse(200, "Deleted delivery successfully", HttpStatus.OK, null);

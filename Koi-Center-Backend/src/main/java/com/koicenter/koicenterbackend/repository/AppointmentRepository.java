@@ -104,4 +104,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
     @Query(value = "SELECT COUNT(a.appointment_id),s.service_name , a.service_id FROM appointment a JOIN service s ON a.service_id = s.service_id " +
             "WHERE appointment_date = :appointmentDate AND a.status != 'REFUND' GROUP BY a.service_id", nativeQuery = true)
     List<Object[]> countServiceOfAppointmentDay(@Param("appointmentDate") String appointmentDate);
+    List<Appointment> findByAppointmentDate(LocalDate appointmentDate);
 }

@@ -50,7 +50,7 @@ function Footer() {
         </div>
         <hr />
         <p className="mt-4 align-content-center mb-0 pb-4">
-          © 2021 Hospital's Name All Rights Reserved by PNTEC-LTD
+          © 2024 Hospital's Name All Rights Reserved by PNTEC-LTD
         </p>
         
       </footer>

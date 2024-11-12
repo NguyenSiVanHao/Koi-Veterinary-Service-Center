@@ -9,6 +9,7 @@ import com.koicenter.koicenterbackend.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ServiceController {
     }
 
 
-        @GetMapping("/appointmentType/{serviceFor}")//Appoinment type de lay ra tung servicefor
+    @GetMapping("/appointmentType/{serviceFor}")//Appoinment type de lay ra tung servicefor
     public ResponseEntity<ResponseObject> getServiceFor(@PathVariable String serviceFor) {
         if (serviceFor.toLowerCase().equals("CENTER".toLowerCase()) || serviceFor.toLowerCase().equals("HOME".toLowerCase()) || serviceFor.toLowerCase().equals("ONLINE".toLowerCase())) {
             return ResponseObject.APIRepsonse(200, "GET Appointment_Type Successfully", HttpStatus.OK, serviceService.getServiceFor(serviceFor));
@@ -49,6 +50,7 @@ public class ServiceController {
     /**
      * create new service by staff
      */
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createService(@RequestBody ServiceRequest serviceRequest) {
         boolean isCreated = serviceService.createService(serviceRequest);
@@ -58,7 +60,7 @@ public class ServiceController {
             return ResponseObject.APIRepsonse(409, "Service name already exists", HttpStatus.CONFLICT, null);
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @PutMapping("/{serviceId}")
     public ResponseEntity<ResponseObject> updateService(@RequestBody ServiceRequest serviceRequest, @PathVariable("serviceId") String serviceId) {
         boolean isUpdated = serviceService.updateService(serviceRequest, serviceId);
@@ -68,7 +70,7 @@ public class ServiceController {
             return ResponseObject.APIRepsonse(400, "Failed to update service", HttpStatus.BAD_REQUEST, null);
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseObject> deleteService(@RequestParam String serviceId) {
         boolean isDeleted = serviceService.deleteService(serviceId);

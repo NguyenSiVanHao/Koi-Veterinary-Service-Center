@@ -20,11 +20,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Async;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -378,6 +381,19 @@ public class AppointmentService {
         }
         appointmentResponses = appointmentResponses.subList(start, end);
         return new PageResponse<>(appointmentResponses,totalPages,offSet,totalItems,totalElements);
+    }
+
+    @Scheduled(fixedRate = 300000)
+    private void checkAppointments() {
+        LocalDate day = LocalDate.now();
+        List<Appointment> appointmentsList = appointmentRepository.findByAppointmentDate(day);
+        LocalTime endTime = LocalTime.now();
+        for (Appointment appointment : appointmentsList){
+            if (endTime.isAfter(appointment.getEndTime()) && appointment.getStatus().equals(AppointmentStatus.BOOKING_COMPLETE)) {
+                appointment.setStatus(AppointmentStatus.CANCEL);
+                appointmentRepository.save(appointment);
+            }
+        }
     }
 }
 

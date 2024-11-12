@@ -8,6 +8,7 @@ import com.koicenter.koicenterbackend.model.response.medicine.MedicineResponse;
 import com.koicenter.koicenterbackend.repository.MedicineRepository;
 import com.koicenter.koicenterbackend.repository.PrescriptionMedicineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +29,7 @@ public class MedicineService {
 
     //hien thi all thuoc
     public List<MedicineResponse> getAllMedicines() {
-        List<Medicine> medicines = medicineRepository.findAll();
+        List<Medicine> medicines = medicineRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         List<MedicineResponse> medicinesResponse = new ArrayList<>();
         for (Medicine medicine : medicines){
             MedicineResponse response = new MedicineResponse();
@@ -57,6 +59,11 @@ public class MedicineService {
 
     //c thuoc
     public MedicineResponse createMedicine(MedicineRequest medicineRequest) {
+
+        Medicine med = medicineRepository.findByName(medicineRequest.getName());
+        if(med != null){
+            throw new AppException(ErrorCode.MEDICINE_EXITED.getCode(), ErrorCode.MEDICINE_EXITED.getMessage(), HttpStatus.CONFLICT);
+        }
         Medicine medicine = new Medicine();
         medicine.setName(medicineRequest.getName());
         medicine.setDescription(medicineRequest.getDescription());
