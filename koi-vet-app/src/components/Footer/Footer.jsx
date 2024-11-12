@@ -17,8 +17,9 @@ function Footer() {
           <div className="col-md-3 text-start">
             <h4>Contact Us</h4>
             <p>
-              Call: 0987654321 <br/>Email: grouptoo@gmail.com 
-              Address: Thu Duc City
+              Call: (0123) 456789 <br/>Email: koicenter.swp@gmail.com
+              <br/>
+              Address: FPT University 
             </p>
           </div>
           <div className="col-md-3 text-start">
@@ -49,7 +50,7 @@ function Footer() {
         </div>
         <hr />
         <p className="mt-4 align-content-center mb-0 pb-4">
-          © 2021 Hospital's Name All Rights Reserved by PNTEC-LTD
+          © 2024 Hospital's Name All Rights Reserved by PNTEC-LTD
         </p>
         
       </footer>
