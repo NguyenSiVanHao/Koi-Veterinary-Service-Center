@@ -15,6 +15,7 @@ import com.koicenter.koicenterbackend.model.response.appointment.AppointmentResp
 import com.koicenter.koicenterbackend.model.response.veterinarian.VetScheduleResponse;
 import com.koicenter.koicenterbackend.model.response.veterinarian.VeterinarianResponse;
 import com.koicenter.koicenterbackend.repository.*;
+import com.koicenter.koicenterbackend.util.JWTUtilHelper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +31,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -51,6 +53,10 @@ public class AppointmentService {
     VetScheduleService vetScheduleService;
     UserRepository userRepository;
     InvoiceRepository invoiceRepository;
+    JWTUtilHelper jwtUtilHelper ;
+    LoggedOutTokenRepository loggedOutTokenRepository ;
+    @Autowired
+    private JWTUtilHelper jWTUtilHelper;
 
     public PageResponse<AppointmentResponse> getAllAppointmentsByCustomerId(String customerId, String status, int offset, int pageSize,String search) {
         List<Appointment> appointments = appointmentRepository.findByCustomer_CustomerIdOrderByCreatedAtDesc(customerId);
@@ -190,6 +196,7 @@ public class AppointmentService {
                         .appointmentType(appointment.getType())
                         .build();
                 List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest, "less");
+
                 VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
                         .vet_id(appointmentRequest.getVetId())
                         .startTime(appointmentRequest.getStartTime())
@@ -199,6 +206,20 @@ public class AppointmentService {
                         .build();
                 vetScheduleService.slotDateTime(vetScheduleRequest1, "add");
             }
+//            else if (appointmentRequest.getType().equals(AppointmentStatus.CREATED) || !appointment.getAppointmentDate().equals(date) && appointmentRequest.getVetId() != null &&  vetId == null   || !appointment.getStartTime().equals(startTime)  &&  appointmentRequest.getVetId() != null &&  vetId == null|| !appointment.getEndTime().equals(endTime) && appointmentRequest.getVetId() != null &&  vetId == null) {
+//                log.info("If5 ");
+//                if (appointment.getVeterinarian() != null) {
+//                    VetScheduleRequest vetScheduleRequest = VetScheduleRequest.builder()
+//                            .vet_id(appointment.getVeterinarian().getVetId())
+//                            .endTime(appointment.getEndTime())
+//                            .startTime(appointment.getStartTime())
+//                            .date(appointment.getAppointmentDate())
+//                            .appointmentType(appointment.getType())
+//                            .build();
+//                    List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest, "less");
+//                    appointmentRequest.setStatus(AppointmentStatus.);
+//                }
+//            }
 
             appointment = appointmentMapper.toAppointment(appointmentRequest);
             if (appointmentRequest.getVetId() != null) {
@@ -386,15 +407,36 @@ public class AppointmentService {
     @Scheduled(fixedRate = 300000)
     private void checkAppointments() {
         LocalDate day = LocalDate.now();
+        LocalDateTime currentTime = LocalDateTime.now();
         List<Appointment> appointmentsList = appointmentRepository.findByAppointmentDate(day);
         LocalTime endTime = LocalTime.now();
+
         for (Appointment appointment : appointmentsList){
-            if (endTime.isAfter(appointment.getEndTime()) && appointment.getStatus().equals(AppointmentStatus.BOOKING_COMPLETE)) {
+            if (endTime.isAfter(appointment.getEndTime()) && appointment.getStatus().equals(AppointmentStatus.BOOKING_COMPLETE ) ) {
                 appointment.setStatus(AppointmentStatus.CANCEL);
                 appointmentRepository.save(appointment);
             }
         }
     }
+    @Scheduled(fixedRate = 00)
+    private void checkToken (){
+       LocalDateTime currentTime = LocalDateTime.now();
+       List<LoggedOutToken> tokens = loggedOutTokenRepository.findAll();
+
+       tokens.parallelStream().forEach(loggedOutToken -> {
+           String token = loggedOutToken.getToken();
+           try {
+               LocalDateTime tokenExpirationTime = jwtUtilHelper.getExpFromToken(token);
+               if(tokenExpirationTime.isBefore(currentTime)){
+                   loggedOutTokenRepository.delete(loggedOutToken);
+               }
+           }catch (Exception e){
+               System.out.println("Error decoding token:"+ e.getMessage());
+           }
+       });
+    }
+
+
 }
 
 
