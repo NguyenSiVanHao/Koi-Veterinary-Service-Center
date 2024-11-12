@@ -52,7 +52,7 @@ const InvoiceList = ({appointment}) => {
                         invoices?.map((invoice,index) => (
                                 <tr key={invoice?.id}>
                                     <td>{formatDate(invoice?.createAt)}</td>
-                                    <td>{invoice?.status}</td>
+                                    <td>{invoice?.status === "Completed" ? "Paid" : "Refunded"}</td>
                                     <td>{invoice?.totalPrice.toLocaleString()}</td>
                                     <td>
                                         <button 
