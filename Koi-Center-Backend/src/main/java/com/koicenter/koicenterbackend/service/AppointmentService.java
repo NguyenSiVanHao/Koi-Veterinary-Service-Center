@@ -334,46 +334,77 @@ public class AppointmentService {
         }
         return appointmentResponses;
     }
+    // huy lich dung gio
+    public AppointmentResponse updateAppointmentBecomeRefundable(String appointmentId) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime oneDayAgo = currentDateTime.minusDays(1);
 
-    public AppointmentResponse updateAppointmentBecomeCannel(String appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
                 HttpStatus.NOT_FOUND)));
-        appointment.setStatus(AppointmentStatus.CANCEL);
-        appointmentRepository.save(appointment);
-        Veterinarian veterinarian = veterinarianRepository.findById(appointment.getVeterinarian().getVetId()).orElseThrow((() -> new AppException(
-                ErrorCode.VETSCHEDULE_NOT_FOUND.getCode(),
-                ErrorCode.VETSCHEDULE_NOT_FOUND.getMessage(),
-                HttpStatus.NOT_FOUND
-        )));
-        if (veterinarian != null) {
-            VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
-                    .vet_id(appointment.getVeterinarian().getVetId())
-                    .startTime(appointment.getStartTime())
-                    .endTime(appointment.getEndTime())
-                    .date(appointment.getAppointmentDate())
-                    .appointmentType(appointment.getType())
-                    .build();
-            vetScheduleService.slotDateTime(vetScheduleRequest1, "less");
+
+        if (appointment.getAppointmentDate().atStartOfDay().isAfter(oneDayAgo)) {
+            appointment.setStatus(AppointmentStatus.REFUNDABLE);
+            appointmentRepository.save(appointment);
+
+            Veterinarian veterinarian = veterinarianRepository.findById(appointment.getVeterinarian().getVetId()).orElseThrow((() -> new AppException(
+                    ErrorCode.VETSCHEDULE_NOT_FOUND.getCode(),
+                    ErrorCode.VETSCHEDULE_NOT_FOUND.getMessage(),
+                    HttpStatus.NOT_FOUND
+            )));
+            if (veterinarian != null) {
+                VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
+                        .vet_id(appointment.getVeterinarian().getVetId())
+                        .startTime(appointment.getStartTime())
+                        .endTime(appointment.getEndTime())
+                        .date(appointment.getAppointmentDate())
+                        .appointmentType(appointment.getType())
+                        .build();
+                vetScheduleService.slotDateTime(vetScheduleRequest1, "less"); // tra lại gio
+            }
+        }else {//qua gio
+            appointment.setStatus(AppointmentStatus.CANCEL);
+            appointmentRepository.save(appointment);
         }
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
         return appointmentResponse;
     }
-
-    public AppointmentResponse updateAppointmentBecomeRefund(String appointmentId) {
+// tra tiên thanh cong
+    public AppointmentResponse updateAppointmentFromRefundableBecomeRefund(String appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
                 ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
                 HttpStatus.NOT_FOUND)));
-        appointment.setStatus(AppointmentStatus.REFUND);
-        appointmentRepository.save(appointment);
-        Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, InvoiceType.First);
-        invoice.setStatus(PaymentStatus.Refund);
-        invoiceRepository.save(invoice);
+        AppointmentResponse appointmentResponse = null ;
+        if (appointment.getStatus().equals(AppointmentStatus.REFUNDABLE)){
+            appointment.setStatus(AppointmentStatus.REFUND);
+            appointmentRepository.save(appointment);
+            Invoice invoice = invoiceRepository.findByAppointment_AppointmentIdAndType(appointmentId, InvoiceType.First);
+            invoice.setStatus(PaymentStatus.Refund);
+            invoiceRepository.save(invoice);
+             appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
+        }else {
+        throw new AppException(ErrorCode.INVALID_APPOINTMENT_STATUS_FOR_REFUND.getCode(),
+        ErrorCode.INVALID_APPOINTMENT_STATUS_FOR_REFUND.getMessage(),
+        HttpStatus.BAD_REQUEST);
+        }
+        return appointmentResponse;
+    }
+
+    //dung gio ma do Benh vien huy lich
+    public AppointmentResponse updateAppointmentCompletedWithRefund(String appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow((() -> new AppException(
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getCode(),
+                ErrorCode.APPOINTMENT_ID_NOT_FOUND.getMessage(),
+                HttpStatus.NOT_FOUND)));
+            appointment.setStatus(AppointmentStatus.REFUNDABLE);
+            appointmentRepository.save(appointment);
         AppointmentResponse appointmentResponse = appointmentMapper.toAppointmentResponse(appointment);
         return appointmentResponse;
     }
+
+
     private List<AppointmentResponse> filterBySearch(List<AppointmentResponse> appointments, String search , Function<AppointmentResponse,String> getNameFunction){
         List<AppointmentResponse> appointmentResponses = new ArrayList<>();
 
