@@ -21,11 +21,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'microsoft'
-          name: Move on into project directory 
-          run : cd/anhtu2808/Koi-Veterinary-Service-Center/tree/front-end/Koi-Center-Backend
 
       - name: Build with Maven
         run: mvn clean install
+        working-directory: Koi-Center-Backend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -53,4 +52,4 @@ jobs:
           app-name: 'koicenter'
           slot-name: 'Production'
           package: '*.jar'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_11c2c599c2e442d49a2f6494b276cbb0 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F2F9AE3C301945F480F66A1A9C74B7C3 }}
