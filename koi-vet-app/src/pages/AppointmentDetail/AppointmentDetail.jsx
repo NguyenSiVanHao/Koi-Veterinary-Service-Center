@@ -376,7 +376,7 @@ function AppointmentDetail() {
             <label htmlFor="appointmentDate" className="form-label">
               Appointment Date <i className="fa-solid fa-calendar" ></i>
             </label>
-            <input type="date" className="form-control" id="appointmentDate" name="appointmentDate" value={appointment.appointmentDate} onChange={handleInputChange} disabled={!isEditing} />
+            <input type="date" className="form-control" id="appointmentDate" name="appointmentDate" value={appointment.appointmentDate} min={new Date().toISOString().split("T")[0]} onChange={handleInputChange} disabled={!isEditing} />
           </div>
           <div className="col-md-3">
             <label htmlFor="startTime" className="form-label">
