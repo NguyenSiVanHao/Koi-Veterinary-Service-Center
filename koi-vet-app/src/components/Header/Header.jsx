@@ -53,17 +53,17 @@ function Header() {
               <div className="col-md-3 text-center">
                 <i className="fas fa-phone-alt"></i>
                 <div className="text">EMERGENCY</div>
-                <div className="contact-info">(237) 681-812-255</div>
+                <div className="contact-info">(+84) 975-652-978</div>
               </div>
               <div className="col-md-3 text-center">
                 <i className="fas fa-clock"></i>
                 <div className="text">WORK HOUR</div>
-                <div className="contact-info">09:00 - 20:00 Everyday</div>
+                <div className="contact-info">7:00-11:00 && 13:00-17:00</div>
               </div>
               <div className="col-md-3 text-center">
                 <i className="fas fa-map-marker-alt"></i>
                 <div className="text">LOCATION</div>
-                <div className="contact-info">0123 Some Place</div>
+                <div className="contact-info">FPT University HCM</div>
               </div>
             </div>
           </div>

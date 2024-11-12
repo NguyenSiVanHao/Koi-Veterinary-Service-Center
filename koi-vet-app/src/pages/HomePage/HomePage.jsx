@@ -194,8 +194,8 @@ function HomePage() {
                                 <div className="card-body">
                                     <div className="display-4 mb-4"><i className="fa-solid fa-phone"></i></div>
                                     <h3 className="card-title">Phone </h3>
-                                    <p className="card-text">(237) 666-331-894</p>
-                                    <p className="card-text">(237) 681-812-255</p>
+                                    <p className="card-text">(+84) 975-652-978</p>
+                                    <p className="card-text">(+84) 5599-136-901</p>
                                 </div>
                             </div>
                         </div>
@@ -204,8 +204,7 @@ function HomePage() {
                                 <div className="card-body">
                                     <div className="display-4 mb-4"><i className="fa-solid fa-location-dot"></i></div>
                                     <h3 className="card-title">Location</h3>
-                                    <p className="card-text">HO CHI MINH  CITY </p>
-                                    <p className="card-text">HA NOI CITY </p>
+                                    <p className="card-text">FPT University HCM</p>
                                 </div>
                             </div>
                         </div>
@@ -214,8 +213,7 @@ function HomePage() {
                                 <div className="card-body">
                                     <div className="display-4 mb-4"><i className="fa-regular fa-envelope"></i></div>
                                     <h3 className="card-title">EMAIL</h3>
-                                    <p className="card-text">fildineeesoe@gmil.com</p>
-                                    <p className="card-text">myebstudios@gmail.com</p>
+                                    <p className="card-text">koicenter.swp@gmail.com</p>
                                 </div>
                             </div>
                         </div>
@@ -224,8 +222,8 @@ function HomePage() {
                                 <div className="card-body">
                                     <div className="display-4 mb-4"><i className="fa-regular fa-clock"></i></div>
                                     <h3 className="card-title">Working Hours</h3>
-                                    <p className="card-text">Mon-Sat 09:00-20:00</p>
-                                    <p className="card-text">Sunday Emergency only</p>
+                                    <p className="card-text">7:00-11:00 AM</p>
+                                    <p className="card-text">13:00-17:00 PM</p>
 
                                 </div>
                             </div>

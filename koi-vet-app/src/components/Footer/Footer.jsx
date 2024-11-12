@@ -17,8 +17,9 @@ function Footer() {
           <div className="col-md-3 text-start">
             <h4>Contact Us</h4>
             <p>
-              Call: 0987654321 <br/>Email: grouptoo@gmail.com 
-              Address: Thu Duc City
+              Call: (+84) 975-652-978 <br/>Email: 
+              koicenter.swp@gmail.com <br/> 
+              Address: FPT University HCM
             </p>
           </div>
           <div className="col-md-3 text-start">
