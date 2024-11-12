@@ -41,7 +41,7 @@ api.interceptors.response.use((response) => {
     // Do something with response error
 
     if (error.response?.status !== 410) {
-        // toast.error(error.response?.data.message  || 'Có lỗi xảy ra');
+         toast.error(error.response?.data.message  || 'Something went wrong check your internet connection');
         
        
     }

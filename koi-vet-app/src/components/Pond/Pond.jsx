@@ -8,7 +8,7 @@ import pond_default from '../../assets/img/pond_default.jpg'
 import { Modal as AntdModal } from 'antd';
 import Treatment from '../Treatment/Treatment';
 import Modal from '../Modal/Modal';
-import Select from 'react-select';
+
 
 const Pond = ({ title, selectedPonds, onUpdateTreatment, updateTrigger, isBooking, handleAddPondToBooking, isAppointment, appointmentId }) => {
     const navigate = useNavigate();
