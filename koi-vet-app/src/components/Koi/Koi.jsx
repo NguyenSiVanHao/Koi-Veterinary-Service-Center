@@ -74,8 +74,10 @@ const Koi = ({ isAppointment, isBooking, title, onUpdateTreatment, updateTrigger
             }
         };
         const fetchPrescriptions = async () => {
+            if(isAppointment){
             const response = await fetchPrescriptionByAppointmentIdAPI(appointmentId)
-            setPrescriptions(response.data)
+                setPrescriptions(response.data)
+            }
         }
         fetchKois();
         fetchPrescriptions();
