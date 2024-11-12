@@ -51,4 +51,4 @@ jobs:
           app-name: 'koicenter'
           slot-name: 'Production'
           package: '*.jar'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BB942B5BE1914FD89CE8C53F0BABCF97 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F2F9AE3C301945F480F66A1A9C74B7C3 }}
