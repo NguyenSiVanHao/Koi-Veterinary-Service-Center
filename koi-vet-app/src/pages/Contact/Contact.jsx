@@ -136,7 +136,7 @@ function Contact() {
                     <i class="bi bi-telephone contact-icons"></i>
                     <h2>EMERGENCY</h2>
                     <p>(+84) 975-652-978</p>
-                    <p>(+84) 123-456-789</p>
+                    <p>(+84) 5599-136-901</p>
                     </Card>
                 </Col>
 
@@ -144,7 +144,7 @@ function Contact() {
                     <Card className='contact-card'>
                     <i class="bi bi-geo-alt contact-icons"></i>
                     <h2>LOCATION</h2>
-                    <p>FPT University HCMC</p>
+                    <p>FPT University HCM</p>
                     </Card>
                 </Col>
                     </Row>  
@@ -153,7 +153,8 @@ function Contact() {
                     <Card className='contact-card'>
                     <i class="bi bi-envelope contact-icons"></i>
                     <h2>EMAIL</h2>
-                    <p>HaoNSVSE172181@fpt.edu.vn</p>
+                    <p>
+                    koicenter.swp@gmail.com</p>
                     </Card>
                 </Col>
 
@@ -161,8 +162,8 @@ function Contact() {
                 <Card className='contact-card'>
                 <i class="bi bi-clock contact-icons"></i>
                 <h2>WORKING HOURS</h2>
-                <p>Monday-Friday 7:00-11:00 AM</p>
-                <p>Monday-Friday 13:00-16:00 PM</p>
+                <p>7:00-11:00 AM</p>
+                <p>13:00-17:00 PM</p>
                 </Card>
                 </Col>
             </Row>
