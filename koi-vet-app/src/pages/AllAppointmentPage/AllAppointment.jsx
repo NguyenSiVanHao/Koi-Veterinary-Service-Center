@@ -108,7 +108,6 @@ function AllAppointment() {
 
   const handleChangeStatus = (status) => {
     setStatus(status);
-    setAppointments([]);
     setSearch("");
     setOffSet(1);
     console.log("status", status)
@@ -153,10 +152,10 @@ function AllAppointment() {
             <button className="nav-link active custom-text-color" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onClick={() => handleChangeStatus("ALL")}>
               <i className="fas fa-list-ul me-2"></i>All
             </button>
-            {role !== ROLE.VETERINARIAN && <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
+            {role !== ROLE.VETERINARIAN && <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab"  type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
               <i className="fa-solid fa-hourglass-start "></i> Waiting Confirm
             </button>}
-            <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
+            <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab"  type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <i className="fas fa-user-md me-2"></i>Veterinarian Assigned
             </button>
             <button className="nav-link custom-text-color" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.PROCESS)}>
@@ -180,7 +179,7 @@ function AllAppointment() {
 
       </div>
       <div className="table-responsive">
-        <table className="table table-striped table-sm tableleft">
+        <table className="table table-striped table-md tableleft">
           <thead>
             <tr>
               <th>Code</th> <th>Customer</th> <th>Service</th><th>Create Date</th> <th>Type</th> <th>Time</th><th>Date</th><th>Status</th><th>Action</th>
