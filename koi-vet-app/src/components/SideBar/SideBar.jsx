@@ -59,7 +59,7 @@ function SideBar() {
             </li>
           </>
         )}
-        {(role === ROLE.VETERINARIAN || role === ROLE.STAFF) && (
+        {(role === ROLE.VETERINARIAN || role === ROLE.STAFF || role === ROLE.MANAGER) && (
           <li className="nav-item">
             <Link to="/admin/appointment" className={`nav-link ${location.pathname === '/admin/appointment' ? 'active' : ''}`}>
               <i className="far fa-calendar-alt"></i> All Appointments
