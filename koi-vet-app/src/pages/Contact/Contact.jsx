@@ -23,19 +23,27 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Kiểm tra định dạng email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+        alert("Vui lòng nhập email hợp lệ.");
+        return;
+    }
+
     try {
-      await createContactAPI(formData);
-      // Reset form after successful submission
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      });
-      alert("Message sent successfully!");
+        await createContactAPI(formData);
+        // Reset form after successful submission
+        setFormData({
+            name: "",
+            email: "",
+            subject: "",
+            message: "",
+        });
+        alert("Message sent successfully!");
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Failed to send message. Please try again.");
+        console.error("Error submitting form:", error);
+        alert("Failed to send message. Please try again.");
     }
   };
 
