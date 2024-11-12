@@ -82,7 +82,9 @@ const Schedual = () => {
         setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
     };
     useEffect(() => {
-        fetchSchedual()
+        if (selectedVetId) {
+            fetchSchedual()
+        }
     }, [selectedVetId, selectDateTrigger])
     const getVeterinarian = async () => {
         const response = await fetchVetsAPI()

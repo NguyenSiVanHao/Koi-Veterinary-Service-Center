@@ -25,6 +25,7 @@ function AppointmentDetail() {
   const [service, setService] = useState({});
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);  // Rating Modal
+  const [isLoadingVet, setIsLoadingVet] = useState(true);
   const [navigateLink, setNavigateLink] = useState({
     link: null,
     title: null
@@ -72,14 +73,20 @@ function AppointmentDetail() {
   useEffect(() => {
     const fetchVetList = async () => {
 
-      const responseVet = await fetchVetForAssignAPI({
-        type: appointment.type,
+      try {
+        const responseVet = await fetchVetForAssignAPI({
+          type: appointment.type,
         serviceId: appointment.serviceId,
         date: appointment.appointmentDate,
         startTime: appointment.startTime,
         endTime: appointment.endTime
       });
-      setVetList(responseVet.data);
+        setVetList(responseVet.data);
+      } catch (error) {
+        console.error("Error fetching veterinarian list:", error);
+      } finally {
+        setIsLoadingVet(false);
+      }
     }
     if (appointment.type && appointment.serviceId && appointment.appointmentDate && appointment.startTime && appointment.endTime) {
       fetchVetList();
@@ -234,7 +241,7 @@ function AppointmentDetail() {
   // Check if the appointment is more than one day away
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-  if (isLoading) return <PreLoader />
+  if (isLoading && isLoadingVet) return <PreLoader />
 
 
 
@@ -425,7 +432,14 @@ function AppointmentDetail() {
 
               )}
               {
-                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && !isEditing && (
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && role !== ROLE.CUSTOMER && !isEditing && (
+                  <button type="button" className="btn btn-danger" onClick={() => handleCancelAppointment()}>
+                    Cancel Appointment
+                  </button>
+                )
+              }
+              {
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && role === ROLE.CUSTOMER && isCancelable && !isEditing && (
                   <button type="button" className="btn btn-danger" onClick={() => handleCancelAppointment()}>
                     Cancel Appointment
                   </button>
