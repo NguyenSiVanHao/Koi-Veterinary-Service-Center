@@ -352,7 +352,7 @@ public class VetScheduleService {
         if (vetSchedule != null) {
             throw new AppException(ErrorCode.VETSCHEDULE_EXISTED.getCode(),
                     ErrorCode.VETSCHEDULE_EXISTED.getMessage(),
-                    HttpStatus.CONFLICT);
+                    HttpStatus.CREATED);
         }else  {
             Veterinarian veterinarian = veterinarianRepository.findById(vetScheduleRequest.getVet_id()).orElseThrow((() -> new AppException(
                     ErrorCode.VETERINARIAN_ID_NOT_EXITS.getCode(),
