@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap'
 import { Form, Input, Table } from 'antd'
 import { createContactReplyAPI, fetchContactAPI, fetchContactDetailAPI } from '../../apis'    
 import Modal from '../../components/Modal/Modal';
+import AdminHeader from '../../components/AdminHeader/AdminHeader';
 
 function ContactManagement() {
     const [dataSource, setDataSource] = useState([]);
@@ -83,6 +84,7 @@ function ContactManagement() {
 
     return (
         <Container>
+            <AdminHeader title="Contact Management" />
             <Table dataSource={dataSource} columns={columns1} rowKey="id" pagination={{ pageSize: 7 }}/>
         
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>

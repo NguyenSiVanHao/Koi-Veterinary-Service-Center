@@ -61,8 +61,8 @@ public class NewsController {
         }
     }
     @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
-    @DeleteMapping("")
-    public ResponseEntity<ResponseObject> deleteNews(@RequestParam String newsId) {
+    @DeleteMapping("/{newsId}")
+    public ResponseEntity<ResponseObject> deleteNews(@PathVariable String newsId) {
         try {
             boolean isDeleted = newsService.deleteNews(newsId);
             if (isDeleted) {
