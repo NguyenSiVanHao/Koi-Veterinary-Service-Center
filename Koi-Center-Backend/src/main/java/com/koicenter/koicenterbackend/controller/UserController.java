@@ -79,7 +79,7 @@ public class UserController {
             return ResponseObject.APIRepsonse(404, "Your current password is incorrect", HttpStatus.BAD_REQUEST, "");
         }
     }
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
     @PutMapping("/update")
     public ResponseEntity<ResponseObject> update(@RequestBody UpdateUserRequest updateUserRequest){
         boolean isUpdated = userService.updateUser(updateUserRequest);
