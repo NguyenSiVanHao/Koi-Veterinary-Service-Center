@@ -99,5 +99,24 @@ public class JWTUtilHelper {
                 .compact();
     }
 
+    public String getRoleFromToken(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKey));
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
+    }
+
+    public String getUsernameFromToken(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKey));
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject(); // Lấy "subject" từ payload của token
+    }
 
 }

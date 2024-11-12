@@ -7,6 +7,8 @@ import com.koicenter.koicenterbackend.model.request.news.NewsRequest;
 import com.koicenter.koicenterbackend.repository.NewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

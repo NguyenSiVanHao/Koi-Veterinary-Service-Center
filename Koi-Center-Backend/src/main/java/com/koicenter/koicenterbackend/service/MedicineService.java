@@ -8,6 +8,7 @@ import com.koicenter.koicenterbackend.model.response.medicine.MedicineResponse;
 import com.koicenter.koicenterbackend.repository.MedicineRepository;
 import com.koicenter.koicenterbackend.repository.PrescriptionMedicineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class MedicineService {
 
     //hien thi all thuoc
     public List<MedicineResponse> getAllMedicines() {
-        List<Medicine> medicines = medicineRepository.findAll();
+        List<Medicine> medicines = medicineRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         List<MedicineResponse> medicinesResponse = new ArrayList<>();
         for (Medicine medicine : medicines){
             MedicineResponse response = new MedicineResponse();

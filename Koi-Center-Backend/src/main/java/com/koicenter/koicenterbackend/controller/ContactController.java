@@ -7,6 +7,7 @@ import com.koicenter.koicenterbackend.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class ContactController {
             return ResponseObject.APIRepsonse(500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
-
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @GetMapping
     public ResponseEntity<ResponseObject> getAllContacts() {
         try {

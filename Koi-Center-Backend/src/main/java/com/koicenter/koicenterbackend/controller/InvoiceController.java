@@ -11,6 +11,7 @@ import com.koicenter.koicenterbackend.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ public class InvoiceController {
         }
         return ResponseObject.APIRepsonse(200, "Invoice retrieved successfully", HttpStatus.OK, invoiceResponse);
     }
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/dashboard")
     public ResponseEntity<ResponseObject> getInvoiceDashboard(@RequestParam LocalDate starTime , @RequestParam LocalDate endTime ,@RequestParam String time) {
         List<DashboardResponse> invoiceResponse = invoiceService.getDashBoard(starTime,endTime,time);
