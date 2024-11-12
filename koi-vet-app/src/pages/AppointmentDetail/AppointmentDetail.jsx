@@ -241,7 +241,7 @@ function AppointmentDetail() {
   // Check if the appointment is more than one day away
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-  if (isLoading && isLoadingVet) return <PreLoader />
+  if (isLoading || isLoadingVet) return <PreLoader />
 
 
 
@@ -325,7 +325,7 @@ function AppointmentDetail() {
 
             <select className="form-select" id="vetId" name="vetId" value={appointment.vetId} onChange={(e) => handleAssignVet(e)} disabled={role === ROLE.VETERINARIAN || !isEditing || (appointment.status !== APPOINTMENT_STATUS.CREATED && appointment.status !== APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <option value={"SKIP"}>Not assigned</option>
-              {appointment.vetId && <option value={appointment.vetId}>
+              {appointment.vetId && !vetList.find((vet) => vet.vetId === appointment.vetId) && <option value={appointment.vetId}>
                 {appointment.vetName}
               </option>}
               {vetList.map((vet) => (
