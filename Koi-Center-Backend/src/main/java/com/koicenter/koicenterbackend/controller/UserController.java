@@ -50,7 +50,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @GetMapping("/get")
     public ResponseEntity<ResponseObject> getUserByRole(@RequestParam String role) {
         List<UserResponse> userList = userService.getListUserByRole(role);
