@@ -207,7 +207,7 @@ const UserManagementPage = () => {
       <div className="row mb-3 justify-content-center">
         <nav className="w-100">
           <div className="nav nav-tabs " id="nav-tab" role="tablist">
-            <button className="nav-link custom-text-color active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => setTab("VETERINARIAN")} >
+            <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => setTab("VETERINARIAN")} >
               <i className="fas fa-user-md me-2"></i>Veterinarian
             </button>
             {role === ROLE.MANAGER && <button className="nav-link active custom-text-color" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onClick={() => setTab("STAFF")} >

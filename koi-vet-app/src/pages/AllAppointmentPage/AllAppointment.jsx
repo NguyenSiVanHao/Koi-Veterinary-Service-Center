@@ -188,15 +188,6 @@ function AllAppointment() {
           </thead>
           <tbody>
 
-
-
-            {/* {isLoading ?
-
-              <td colSpan="7" className="text-center">
-                <Loading />
-              </td>
-
-              : */}
             {
               appointments?.length === 0 ?
                 <tr>
@@ -250,11 +241,6 @@ function AllAppointment() {
                           <i className="fas fa-edit"></i>
                         </Link>
                       }
-                      {role === ROLE.STAFF && (
-                        <button className="btn btn-sm btn-outline-dark">
-                          <i className="fas fa-user-md"></i>
-                        </button>
-                      )}
                     </td>
                   </tr>
                 ))

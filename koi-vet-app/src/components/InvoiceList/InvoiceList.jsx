@@ -36,14 +36,12 @@ const InvoiceList = ({appointment}) => {
 
     return (
         <div className="d-flex align-items-center justify-content-between flex-column">
-            <h3>Invoice List</h3>
+            <h3 className="booking-title">Invoice List</h3>
 
             <table>
                 <thead>
                     <tr>
-                       
                         <th>Create Date</th>
-                        {/* <th>Quantity</th> */}
                         <th>Status</th>
                         <th>Total(VND)</th>
                         <th className="text-center">Action</th>
@@ -53,10 +51,8 @@ const InvoiceList = ({appointment}) => {
                     {
                         invoices?.map((invoice,index) => (
                                 <tr key={invoice?.id}>
-                                    
                                     <td>{formatDate(invoice?.createAt)}</td>
-                                    <td>{invoice?.quantity}</td>
-                                    {/* <td>{invoice?.status}</td> */}
+                                    <td>{invoice?.status}</td>
                                     <td>{invoice?.totalPrice.toLocaleString()}</td>
                                     <td>
                                         <button 
