@@ -43,8 +43,9 @@ public enum ErrorCode {
     MONTH_NOT_EXEED(400,"The Month Time range not exceed 12 months "),
     YEAR_NOT_EXCEED(400,"The Year Time range not exceed 3 year "),
     DAY_NOT_EXCEED(400,"The Day Time range not exceed 30 days "),
+    USER_NAME_EXISTED(401,"User name already existed"),
+        MEDICINE_EXITED(401,"Medicine not exits")
 
-    MEDICINE_EXITED(401,"Medicine not exits"),
     ;
     private int code;
     private String message;

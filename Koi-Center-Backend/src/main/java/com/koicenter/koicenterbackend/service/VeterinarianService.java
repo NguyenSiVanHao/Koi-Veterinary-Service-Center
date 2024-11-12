@@ -204,7 +204,14 @@ public class VeterinarianService {
                 ErrorCode.VETERINARIAN_ID_NOT_EXITS.getCode(),
                 ErrorCode.VETERINARIAN_ID_NOT_EXITS.getMessage(),
                 HttpStatus.NOT_FOUND));
-
+        User userName = userRepository.findByUsername(request.getUser().getUsername());
+        if (userName != null ){
+            throw new AppException(
+                    ErrorCode.USER_NAME_EXISTED.getCode(),
+                    ErrorCode.USER_NAME_EXISTED.getMessage(),
+                    HttpStatus.CREATED
+                    );
+        }
         veterinarian.setStatus(request.getStatus());
         veterinarian.setDescription(request.getDescription());
         veterinarian.setGoogleMeet(request.getGoogle_meet());
