@@ -9,8 +9,9 @@ import {
 } from "../../apis";
 import { toast } from "react-toastify";
 import { APPOINTMENT_STATUS } from "../../utils/constants";
-import { setUser, updateUser, updateUserInfo } from "../../store/userSlice";
+import { setUser, updateUserInfo } from "../../store/userSlice";
 import HomeVisitPriceTable from "../../components/HomeVisitPriceTable/HomeVisitPriceTable";
+import { Modal } from "antd";
 
 function Payment() {
     const userInfo = useSelector((state) => state.user);
@@ -19,11 +20,8 @@ function Payment() {
     const [serviceInfo, setServiceInfo] = useState({});
     const [vetInfo, setVetInfo] = useState({});
     const [paymentOption, setPaymentOption] = useState(null);
-    const [error, setError] = useState(false);
     const dispatch = useDispatch();
-    const [appointmentCreateRequest, setAppointmentCreateRequest] = useState(
-        {}
-    );
+    const [appointmentCreateRequest, setAppointmentCreateRequest] = useState({});
 
     useEffect(() => {
         setAppointmentCreateRequest({
@@ -51,37 +49,48 @@ function Payment() {
     }, [customerInfo, vetInfo, serviceInfo, bookingData]);
 
     const handlePayment = async (appointmentCreateRequest) => {
+        const confirmPayment = await new Promise((resolve) => {
+            Modal.confirm({
+                title: 'Confirm Payment',
+                content: 'Are you sure you want to proceed with the payment?. By clicking "Proceed" you agree to the terms and conditions and confirm your payment.',
+                onOk: () => resolve(true),
+                onCancel: () => resolve(false),
+            });
+        });
+    
+        // Nếu người dùng hủy xác nhận, thoát hàm
+        if (!confirmPayment) return;
+        //Kiểm tra thông tin khách hàng
         if (!customerInfo.phone || !customerInfo.address) {
-            toast.error(
-                "Please fill in your address and phone number to continue."
-            );
+            toast.error("Please fill in your address and phone number to continue.");
             return;
+        } 
+        // Cập nhật thông tin người dùng
+        await updateUserInfoAPI(
+            {
+                userId: userInfo.user_id,
+                fullName: userInfo.fullName,
+                email: userInfo.email,
+                phoneNumber: customerInfo.phone,
+                address: customerInfo.address,
+                image: userInfo.image,
+            },
+            null
+        );
+        // Gọi API để lấy link redirect thanh toán
+        const response = await fetchRedirectPaymentAPI(
+            serviceInfo?.basePrice,
+            "NCB",
+            appointmentCreateRequest,
+            paymentOption
+        );
+        if (response.status === 200) {
+            window.location.href = response.data;
         } else {
-            await updateUserInfoAPI(
-                {
-                    userId: userInfo.user_id,
-                    fullName: userInfo.fullName,
-                    email: userInfo.email,
-                    phoneNumber: customerInfo.phone,
-                    address: customerInfo.address,
-                    image: userInfo.image,
-                },
-                null
-            );
-            const response = await fetchRedirectPaymentAPI(
-                serviceInfo?.basePrice,
-                "NCB",
-                appointmentCreateRequest,
-                paymentOption
-            );
-            console.log(response);
-            if (response.status === 200) {
-                window.location.href = response.data;
-            } else {
-                toast.error(response.data.message);
-            }
+            toast.error(response.data.message);
         }
     };
+    
     const handleChangeInfo = (event) => {
         const { name, value } = event.target;
         dispatch(updateUserInfo({ [name]: value }));
@@ -201,7 +210,7 @@ function Payment() {
                                         value={
                                             bookingData?.type === "HOME"
                                                 ? customerInfo?.address
-                                                : "At Clinic"
+                                                : "At Center"
                                         }
                                     ></textarea>
                                 </div>
@@ -209,7 +218,7 @@ function Payment() {
                         </div>
                     </div>
 
-                    <div className="payment-card">
+                    {bookingData?.type === "HOME" && <div className="payment-card">
                         <div className="payment-card-header">
                             <i className="fas fa-money-bill-alt me-2"></i>{" "}
                             Another Fee will be charged later
@@ -219,7 +228,7 @@ function Payment() {
                                 <HomeVisitPriceTable />
                             </div>
                         </div>
-                    </div>
+                    </div>}
                 </div>
 
                 <div className="col-lg-6">
@@ -333,6 +342,7 @@ function Payment() {
                                     />
                                     <label
                                         className="form-check-label payment-form-check-label"
+                                        style={{marginBottom: "0", marginTop: "6px",marginLeft: "17px"}}
                                         htmlFor="momo"
                                     >
                                         <i className="fas fa-mobile-alt me-2"></i>{" "}
@@ -351,7 +361,8 @@ function Payment() {
                                         }
                                     />
                                     <label
-                                        className="form-check-label payment-form-check-label d-flex align-items-center align-items-center gap-2"
+                                         className="form-check-label payment-form-check-label"
+                                        style={{marginBottom: "0", marginTop: "6px",marginLeft: "10px"}}
                                         htmlFor="vnpay"
                                     >
                                         <i className="fas fa-credit-card me-2 ml-1"></i>{" "}
@@ -359,15 +370,8 @@ function Payment() {
                                     </label>
                                 </div>
                             </div>
-                            <button
-                                className="btn payment-btn w-100"
-                                id="checkoutBtn"
-                                onClick={() =>
-                                    handlePayment(appointmentCreateRequest)
-                                }
-                            >
-                                <i className="fas fa-lock me-2"></i> Proceed to
-                                Secure Checkout
+                            <button className="btn payment-btn w-100" id="checkoutBtn" onClick={() => handlePayment(appointmentCreateRequest)} disabled={!paymentOption}>
+                                <i className="fas fa-lock me-2"></i> Proceed to Secure Checkout
                             </button>
                         </div>
                     </div>
