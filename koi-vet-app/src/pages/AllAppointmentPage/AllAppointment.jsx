@@ -17,7 +17,7 @@ import refund from "../../assets/img/refund logo.svg"
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [status, setStatus] = useState("ALL");
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [totalPage, setTotalPage] = useState(0);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
@@ -36,7 +36,9 @@ function AllAppointment() {
 
   // Create a debounced function
   const debouncedSetSearch = useCallback(
+    
     debounce((value) => {
+      setOffSet(1);
       setDebouncedSearch(value);
     }, 1000),
     []
@@ -45,6 +47,7 @@ function AllAppointment() {
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
+   
     debouncedSetSearch(e.target.value);
   };
 
@@ -150,9 +153,9 @@ function AllAppointment() {
             <button className="nav-link active custom-text-color" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onClick={() => handleChangeStatus("ALL")}>
               <i className="fas fa-list-ul me-2"></i>All
             </button>
-            <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
+            {role !== ROLE.VETERINARIAN && <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
               <i className="fa-solid fa-hourglass-start "></i> Waiting Confirm
-            </button>
+            </button>}
             <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <i className="fas fa-user-md me-2"></i>Veterinarian Assigned
             </button>

@@ -3,6 +3,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import "./Contact.css"
 import { Card } from 'antd'
 import { createContactAPI } from '../../apis';
+import BannerTop from '../../components/BannerTop/BannerTop';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -22,25 +23,34 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Kiểm tra định dạng email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+        alert("Vui lòng nhập email hợp lệ.");
+        return;
+    }
+
     try {
-      await createContactAPI(formData);
-      // Reset form after successful submission
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      });
-      alert("Message sent successfully!");
+        await createContactAPI(formData);
+        // Reset form after successful submission
+        setFormData({
+            name: "",
+            email: "",
+            subject: "",
+            message: "",
+        });
+        alert("Message sent successfully!");
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Failed to send message. Please try again.");
+        console.error("Error submitting form:", error);
+        alert("Failed to send message. Please try again.");
     }
   };
 
   return (
     <>
-    <Container fluid className="service-detail">
+    <BannerTop title="Contact Us" subTitle="Home / Contact us" />
+    <Container fluid className="service-detail mt-5">
     <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.61001089798!2d106.80501207961838!3d10.84112756175228!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752731176b07b1%3A0xb752b24b379bae5e!2sFPT%20University%20HCMC!5e0!3m2!1sen!2s!4v1729741003391!5m2!1sen!2s" 
             width="100%" 
@@ -126,7 +136,7 @@ function Contact() {
                     <i class="bi bi-telephone contact-icons"></i>
                     <h2>EMERGENCY</h2>
                     <p>(+84) 975-652-978</p>
-                    <p>(+84) 123-456-789</p>
+                    <p>(+84) 5599-136-901</p>
                     </Card>
                 </Col>
 
@@ -134,7 +144,7 @@ function Contact() {
                     <Card className='contact-card'>
                     <i class="bi bi-geo-alt contact-icons"></i>
                     <h2>LOCATION</h2>
-                    <p>FPT University HCMC</p>
+                    <p>FPT University HCM</p>
                     </Card>
                 </Col>
                     </Row>  
@@ -143,7 +153,8 @@ function Contact() {
                     <Card className='contact-card'>
                     <i class="bi bi-envelope contact-icons"></i>
                     <h2>EMAIL</h2>
-                    <p>HaoNSVSE172181@fpt.edu.vn</p>
+                    <p>
+                    koicenter.swp@gmail.com</p>
                     </Card>
                 </Col>
 
@@ -151,8 +162,8 @@ function Contact() {
                 <Card className='contact-card'>
                 <i class="bi bi-clock contact-icons"></i>
                 <h2>WORKING HOURS</h2>
-                <p>Monday-Friday 7:00-11:00 AM</p>
-                <p>Monday-Friday 13:00-16:00 PM</p>
+                <p>7:00-11:00 AM</p>
+                <p>13:00-17:00 PM</p>
                 </Card>
                 </Col>
             </Row>

@@ -28,7 +28,7 @@ const InvoiceDetail = ({ isCheckout }) => {
   const queryParams = new URLSearchParams(location.search);
   const invoiceId = queryParams.get("invoiceId");
   const navigate = useNavigate();
-  const { role } = useSelector(state => state?.user?.role);
+  const role = useSelector(state => state?.user?.role);
   const fetchInvoiceDetail = async () => {
     const response = await fetchInvoiceByInvoiceId(invoiceId);
     console.log(response.data)

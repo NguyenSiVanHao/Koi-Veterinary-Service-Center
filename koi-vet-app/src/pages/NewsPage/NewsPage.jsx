@@ -6,6 +6,10 @@ import ReactQuill from "react-quill";
 import ImgCrop from "antd-img-crop";
 import { toast } from "react-toastify";
 import Modal from "antd/es/modal/Modal";
+import './NewsPage.css';
+import { useSelector } from 'react-redux';
+
+import BannerTop from "../../components/BannerTop/BannerTop";
 function NewsPage() {
   const [newsData, setNewsData] = useState([]);
   const [error, setError] = useState(null);
@@ -14,6 +18,7 @@ function NewsPage() {
   const [img, setImg] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const role = useSelector(state => state.user.role);
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -69,17 +74,25 @@ function NewsPage() {
 
   return (
     <>
+    <BannerTop title="News" subTitle="Home / News" />
     <div className="container mx-auto px-4 py-8" style={{ justifyContent: "center", alignItems: "center"}}>
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold mb-8" style={{margin: "20px 0 0 0", color: "rgb(31, 43, 108)"}}><strong>News</strong></h1>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="container" style={{margin: "100px 0 0 250px"}}>
+
+      <div className="banner-container">
+        <div className="banner-text">
+          Welcome to the Koi & Pond Service News! Have a nice day!
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{marginTop: "50px"}}>
+
+        <div className="container news-container-news-page">
         {newsData.map(newsItem => (
-          <div className="card news-card" style={{width: "800px", borderRadius: "50px"}}>
+          <div className="card news-card-news-page " key={newsItem.newId} style={{width: "500px"}}>
           <div 
-            key={newsItem.newId}
-            className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition hover:scale-105"
+            className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition hover:scale-105 news-card-content"
             onClick={() => handleNewsClick(newsItem.newId)}
           >
             <img 
@@ -90,7 +103,7 @@ function NewsPage() {
               height={300}
             />
             <div className="p-4" style={{backgroundColor: "#ececec"}}>
-              <h3 
+              <h4 
                 className="text-lg font-semibold mt-1"
                 dangerouslySetInnerHTML={{ __html: newsItem.title }}
               />
@@ -99,7 +112,7 @@ function NewsPage() {
           </div> 
         ))}
         </div>
-      </div>
+        </div>
 
         <Modal 
           open={isModalOpen} 
@@ -167,7 +180,9 @@ function NewsPage() {
           </Form>
         </Modal>
     </div>
+    {role === "MANAGER" && (
     <button onClick={handleOpenModal} className="btn btn-primary" style={{margin: "0 0 0 10px"}}>Create News</button>
+    )}
     </>
   );
 }

@@ -72,33 +72,39 @@ function NewsDetailPage() {
 
     return (
         <>
-        
+        <h1 style={{margin: "50px 0 0 50px", color: "rgb(31, 43, 108)"}}><strong>News Detail</strong></h1>
         <div className="container mx-auto px-4 py-8" style={{margin: "100px 0 100px 250px"}}>
             <div className="flex flex-col lg:flex-row gap-8">
                 <Row>
                     <Col lg={8}>
                         {/* Main Content */}
-                        <div className="lg:w-2/3 card news-card" style={{ width: "800px"}}>
+                        <div className="lg:w-2/3 card news-card-detail-page">
                             <img 
                                 src={newsData.img} 
                                 alt={newsData.title} 
                                 className="w-full h-96 object-cover rounded-lg mb-6"
-                                width={800}
                                 height={400}
                             />
                             <h1 
                                 className="text-3xl font-bold mb-4"
                                 dangerouslySetInnerHTML={{ __html: newsData.title }}
                             />
+                            <p><strong>Preview:</strong></p>
+                            <div>
+                            <p dangerouslySetInnerHTML={{ __html: newsData.preview }} />
+                            </div>
+                                <div>
+                            <p><strong>Content:</strong></p>
                             <div className="prose max-w-none">
                                 <p dangerouslySetInnerHTML={{ __html: newsData.content }} />
+                            </div>
                             </div>
                         </div>
                     </Col>
                     <Col lg={4}>
                         {/* Sidebar */}
                         <div className="lg:w-1/3">
-                            <Card>
+                            <Card style={{height: "500px"}}>
                                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                                     <h2 className="text-xl font-bold p-4 bg-gray-50">Recent Posts</h2>
                                     <div className="p-4">
@@ -111,7 +117,7 @@ function NewsDetailPage() {
                                             onChange={(e) => handleSearch(e.target.value)}
                                         />
                                     </div>
-                                    <div className="divide-y max-h-96 overflow-y-auto scrollable-list" style={{margin: "0 0 0 20px"}}>
+                                    <div className="divide-y max-h-96 overflow-y-auto scrollable-list" style={{ margin: "0 0 0 20px"}}>
                                         {filteredNews.map(news => (
                                             <div className="card news-card" style={{width: "300px"}}>
                                             <div 
@@ -130,7 +136,7 @@ function NewsDetailPage() {
                                                     height={40}
                                                 />
                                                 <div className="flex-1">
-                                                    <h3 
+                                                    <h7 
                                                         className="text-sm font-medium line-clamp-2"
                                                         dangerouslySetInnerHTML={{ __html: news.title }}
                                                     />

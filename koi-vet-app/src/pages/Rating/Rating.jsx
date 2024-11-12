@@ -67,9 +67,12 @@ console.log(appointmentId)
               <label htmlFor={`star${star}`} title={`${star} stars`}></label>
             </React.Fragment>
           ))}
+          <div className="rating-lablels">
+            <span style={{fontWeight: "bold", marginRight: "60px"}}>Very Bad</span> 
+            <span style={{fontWeight: "bold", marginLeft: "60px"}}>Very Good</span>
+          </div>
         </div>
         <div className="feedback-section">
-          <p>Additional Feedback</p>
           <textarea
             className="feedback-input"
             placeholder="Your feedback is valuable to us..."

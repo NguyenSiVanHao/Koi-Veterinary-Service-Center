@@ -8,7 +8,7 @@ import pond_default from '../../assets/img/pond_default.jpg'
 import { Modal as AntdModal } from 'antd';
 import Treatment from '../Treatment/Treatment';
 import Modal from '../Modal/Modal';
-import Select from 'react-select';
+
 
 const Pond = ({ title, selectedPonds, onUpdateTreatment, updateTrigger, isBooking, handleAddPondToBooking, isAppointment, appointmentId }) => {
     const navigate = useNavigate();
@@ -100,6 +100,7 @@ const Pond = ({ title, selectedPonds, onUpdateTreatment, updateTrigger, isBookin
                             : treatment
                     )
                 );
+                onUpdateTreatment();
             } catch (error) {
                 toast.error('Failed to update prescription');
             }
@@ -161,24 +162,21 @@ const Pond = ({ title, selectedPonds, onUpdateTreatment, updateTrigger, isBookin
                                                             )}
                                                         </div>
                                                         {isAppointment &&
-                                                            <Select
-                                                                className="basic-single w-120"
-                                                                classNamePrefix="select"
-                                                                isDisabled={role !== "VETERINARIAN"}
-                                                                isSearchable={true} // Kích hoạt tìm kiếm
-                                                                placeholder="Select prescription"
-                                                                value={prescriptions.find(prescription => prescription.id === treatment?.prescription_id) || { value: "None", label: "None" }}
-                                                                onChange={(selectedOption) =>
-                                                                    handleChangePrescription(treatment?.pondTreatmentId, selectedOption.value, treatment?.pond?.pondId)
-                                                                }
-                                                                options={[
-                                                                    { value: "None", label: "None" },
-                                                                    ...prescriptions.map((prescription) => ({
-                                                                        value: prescription?.id,
-                                                                        label: prescription?.name
-                                                                    })),
-                                                                ]}
-                                                            />}
+                                                            <select
+                                                                className="form-select w-120"
+                                                                aria-label="Default select example"
+                                                                onChange={(e) => handleChangePrescription(treatment?.pondTreatmentId, e.target.value, treatment?.pond?.pondId)}
+                                                                value={treatment.prescriptionId || "None"}
+                                                                disabled={role === "CUSTOMER"}
+                                                            >
+                                                                <option value="None">None</option>
+                                                                {prescriptions.map(prescription => (
+                                                                    <option key={prescription.id} value={prescription.id}>
+                                                                        {prescription.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>

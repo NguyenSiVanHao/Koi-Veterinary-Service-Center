@@ -1,0 +1,54 @@
+.news-container-news-page {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Khoảng cách giữa các thẻ */
+    justify-content: space-between;
+  }
+  
+  .news-card-news-page {
+    flex: 1 1 calc(50% - 16px); /* Chiều rộng 50% trừ khoảng cách */
+    max-width: calc(50% - 16px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-card-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-card-content .p-4 {
+    flex-grow: 1;
+    padding: 1rem;
+    margin-bottom: 0;
+  }
+
+  .banner-container {
+    overflow: hidden; /* Ẩn chữ vượt quá khung */
+    white-space: nowrap; /* Giữ chữ trên 1 dòng */
+    width: 100%;
+    background-color: rgb(31, 43, 108);
+    padding: 10px 0;
+    position: relative; 
+    margin-top: 20px;
+  }
+  
+  .banner-text {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    animation: marquee 10s linear infinite;
+  }
+  
+  /* Tạo hiệu ứng chạy ngang */
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  

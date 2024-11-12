@@ -458,7 +458,12 @@ export const fetchCheckoutAPI = async (appointmentId) => {
 
 //Rating
 export const fetchAllRatingByServiceIdAPI = async (serviceId) => {
-    const response = await api.get(`/feedbacks/${serviceId}`);
+    const response = await api.get(`/feedbacks/${serviceId}/feedback/total`);
+    return response.data;
+}
+
+export const fetchAllRatingByServiceIdAPI2 = async (serviceId) => {
+    const response = await api.get(`/feedbacks/${serviceId}/feedback`);
     return response.data;
 }
 
@@ -536,10 +541,18 @@ export const createHomeVisitPriceAPI = async (data) => {
 
 
 //dashboard API
-export const fetchDashboardAPI = async (starTime, endTime, time) => {
-    const response = await api.get(`/invoices/dashboard?starTime=${starTime}&endTime=${endTime}&time=${time}`);
+export const fetchDashboardAPI = async (startTime, endTime, time) => {
+    const response = await api.get(`/invoices/dashboard?starTime=${startTime}&endTime=${endTime}&time=${time}`);
     return response.data;
 }
+
+export const fetchDashboardByServiceAPI = async (startTime, endTime, time) => {
+    const response = await api.get(`/invoices/services/count?starTime=${startTime}&endTime=${endTime}&time=${time}`);
+    return response.data;
+}
+
+
+
 
 //Schedual API
 export const updateSchedualAPI = async (schedualId, data) => {
@@ -600,6 +613,16 @@ export const fetchContactDetailAPI = async (contactId) => {
 //Staff API
 export const createStaffAPI = async (data) => {
     const response = await api.post('/staffs/create', data);
+    return response.data;
+}
+
+
+
+
+
+//contact send email API
+export const createContactReplyAPI = async (data) => {
+    const response = await api.post(`/mail/sendEmail`, data);
     return response.data;
 }
 

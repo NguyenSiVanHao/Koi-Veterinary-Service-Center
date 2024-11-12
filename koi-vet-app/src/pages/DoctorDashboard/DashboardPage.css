@@ -1,48 +1,58 @@
-    .dataCard {
-    border: 1px solid #ccc; /* Card border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 16px; /* Padding inside the card */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    background-color: #fff; /* Card background color */
-  }
-  
-  .headcard {
-    border: 1px solid #ccc; /* Card border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 16px; /* Padding inside the card */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    background-color: #fff; /* Card background color */
-  }
-  
-  .numberCard {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 350px; /* Set a fixed height for the chart card */
-    margin: 20px 1px;
-  }
-  
-  .categoryCard {
-    height: 300px; /* Set a fixed height for the chart card */
-  }
-  
-  .revenueCard {
-    height: 300px; /* Set a fixed height for the chart card */
-  }
-  
-  .appointment-dashboard {
-    margin-top: 20px;
-    border: 1px solid #333;
-    border-radius: 10px;
-  }
+.dataCard {
+  border: 1px solid #ccc; /* Card border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 16px; /* Padding inside the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background-color: #fff; /* Card background color */
+}
 
-  .doughnut-line-chart{
-    margin-bottom: 20px;
-  }
+.headcard {
+  border: 1px solid #ccc; /* Card border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 16px; /* Padding inside the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background-color: #fff; /* Card background color */
+}
 
-  /* .dashboard-card{
-    margin-top: 20px;
-    font-weight: bold;
-    text-align: center;
-  }
-   */
+.numberCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 350px; /* Set a fixed height for the chart card */
+  margin: 20px 1px;
+}
+
+.categoryCard {
+  height: 300px; /* Set a fixed height for the chart card */
+}
+
+.revenueCard {
+  height: 300px; /* Set a fixed height for the chart card */
+}
+
+.appointment-dashboard {
+  margin-top: 20px;
+  border: 1px solid #333;
+  border-radius: 10px;
+}
+
+.doughnut-line-chart{
+  margin-bottom: 20px;
+}
+
+/* .dashboard-card{
+  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+ */
+
+.total-body{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-dashboard{
+  font-size: 0.875rem;
+}

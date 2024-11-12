@@ -74,6 +74,7 @@ public class AppointmentService {
 
         AppointmentResponse response = appointmentMapper.toAppointmentResponse(appointment);
         if (appointment.getVeterinarian() != null) {
+            response.setPhone(appointment.getCustomer().getPhone());
             response.setVetId(appointment.getVeterinarian().getVetId());
             response.setVetName(appointment.getVeterinarian().getUser().getFullName());
         }

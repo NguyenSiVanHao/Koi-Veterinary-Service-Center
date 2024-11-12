@@ -6,10 +6,7 @@ import com.koicenter.koicenterbackend.service.SendEmalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/mail")
@@ -18,7 +15,7 @@ public class EmailController {
     @Autowired
     SendEmalService sendEmalService;
 
-    @GetMapping("/sendEmail")
+    @PostMapping("/sendEmail")
     public ResponseEntity<ResponseObject> sendEmail(@RequestBody EmailRequest emailRequest) {
        boolean isSent =  sendEmalService.sendMailSender(emailRequest.getRecipient(), emailRequest.getBody(), emailRequest.getSubject());
         if (isSent) {

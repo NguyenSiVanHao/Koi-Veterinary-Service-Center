@@ -25,6 +25,7 @@ function AppointmentDetail() {
   const [service, setService] = useState({});
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);  // Rating Modal
+  const [isLoadingVet, setIsLoadingVet] = useState(true);
   const [navigateLink, setNavigateLink] = useState({
     link: null,
     title: null
@@ -72,14 +73,20 @@ function AppointmentDetail() {
   useEffect(() => {
     const fetchVetList = async () => {
 
-      const responseVet = await fetchVetForAssignAPI({
-        type: appointment.type,
+      try {
+        const responseVet = await fetchVetForAssignAPI({
+          type: appointment.type,
         serviceId: appointment.serviceId,
         date: appointment.appointmentDate,
         startTime: appointment.startTime,
         endTime: appointment.endTime
       });
-      setVetList(responseVet.data);
+        setVetList(responseVet.data);
+      } catch (error) {
+        console.error("Error fetching veterinarian list:", error);
+      } finally {
+        setIsLoadingVet(false);
+      }
     }
     if (appointment.type && appointment.serviceId && appointment.appointmentDate && appointment.startTime && appointment.endTime) {
       fetchVetList();
@@ -234,9 +241,9 @@ function AppointmentDetail() {
   // Check if the appointment is more than one day away
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-  if (isLoading) return <PreLoader />
+  if (isLoading && isLoadingVet) return <PreLoader />
 
-  
+
 
   //Rating Modal
   const handleOpenRatingModal = () => {
@@ -262,57 +269,36 @@ function AppointmentDetail() {
             <label htmlFor="appointmentId" className="form-label">
               Appointment Code
             </label>
-            <input
-              type="text"
-              className="form-control"
-              id="appointmentId"
-              value={appointment.code}
-              disabled
-            />
+            <input type="text" className="form-control" id="appointmentId" value={appointment.code} disabled />
           </div>
           <div className="col-md-6">
             <label htmlFor="createDate" className="form-label">
               Created Date
             </label>
-            <input
-              type="text"
-              className="form-control"
-              id="createDate"
-              name="createDate"
-              value={new Date(appointment.createdAt).toLocaleString()}
-              disabled
-            />
+            <input type="text" className="form-control" id="createDate" name="createDate" value={new Date(appointment.createdAt).toLocaleString()} disabled />
           </div>
         </div>
 
 
         <div className="row mb-3">
-          <div className="col-md-6">
+          <div className="col-md-3">
             <label htmlFor="customerId" className="form-label">
-              Customer <i className="fa-solid fa-user" ></i>
+              Customer Name <i className="fa-solid fa-user" ></i>
             </label>
-            <input
-              type="text"
-              className="form-control"
-              id="customerId"
-              name="customerId"
-              value={appointment.customerName}
-              disabled
-            />
+            <input type="text" className="form-control" id="customerId" name="customerId" value={appointment.customerName} disabled />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="customerPhoneNumber" className="form-label">
+              Customer Phone Number <i className="fa-solid fa-phone" ></i>
+            </label>
+            <input type="text" className="form-control" id="customerPhoneNumber" name="customerPhoneNumber" value={appointment.phone} disabled />
           </div>
           <div className="col-md-6">
             <label htmlFor="status" className="form-label">
               Status
             </label>
             <div className="d-flex gap-3">
-              <input
-                type="text"
-                className="form-control"
-                id="status"
-                name="status"
-                value={statusDisplayMap[appointment.status] || appointment.status}
-                disabled={true}
-              />
+              <input type="text" className="form-control" id="status" name="status" value={statusDisplayMap[appointment.status] || appointment.status} disabled={true} />
               {role !== ROLE.CUSTOMER && (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS || appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) ?
                 <button
                   type="button"
@@ -337,14 +323,7 @@ function AppointmentDetail() {
             </label>
 
 
-            <select
-              className="form-select"
-              id="vetId"
-              name="vetId"
-              value={appointment.vetId}
-              onChange={(e) => handleAssignVet(e)}
-              disabled={role === ROLE.VETERINARIAN || !isEditing || (appointment.status !== APPOINTMENT_STATUS.CREATED && appointment.status !== APPOINTMENT_STATUS.BOOKING_COMPLETE)}
-            >
+            <select className="form-select" id="vetId" name="vetId" value={appointment.vetId} onChange={(e) => handleAssignVet(e)} disabled={role === ROLE.VETERINARIAN || !isEditing || (appointment.status !== APPOINTMENT_STATUS.CREATED && appointment.status !== APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <option value={"SKIP"}>Not assigned</option>
               {appointment.vetId && <option value={appointment.vetId}>
                 {appointment.vetName}
@@ -378,14 +357,7 @@ function AppointmentDetail() {
             <label htmlFor="type" className="form-label">
               Appointment Type
             </label>
-            <select
-              className="form-select"
-              id="type"
-              name="type"
-              value={appointment.type}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            >
+            <select className="form-select" id="type" name="type" value={appointment.type} onChange={handleInputChange} disabled={!isEditing}>
               <option value={BOOKING_TYPE.HOME}>Home</option>
               <option value={BOOKING_TYPE.CENTER}>Center</option>
               <option value={BOOKING_TYPE.ONLINE}>Online</option>
@@ -395,17 +367,8 @@ function AppointmentDetail() {
             <label htmlFor="serviceType" className="form-label">
               Service Type
             </label>
-            <input
-              type="text"
-              className="form-control"
-              id="serviceType"
-              name="serviceType"
-              value={service.serviceFor}
-              disabled
-            />
+            <input type="text" className="form-control" id="serviceType" name="serviceType" value={service.serviceFor} disabled />
           </div>
-
-
         </div>
 
         <div className="row mb-3">
@@ -413,83 +376,37 @@ function AppointmentDetail() {
             <label htmlFor="appointmentDate" className="form-label">
               Appointment Date <i className="fa-solid fa-calendar" ></i>
             </label>
-            <input
-              type="date"
-              className="form-control"
-              id="appointmentDate"
-              name="appointmentDate"
-              value={appointment.appointmentDate}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
+            <input type="date" className="form-control" id="appointmentDate" name="appointmentDate" value={appointment.appointmentDate} onChange={handleInputChange} disabled={!isEditing} />
           </div>
           <div className="col-md-3">
             <label htmlFor="startTime" className="form-label">
               Start Time <i className="fa-solid fa-clock" ></i>
             </label>
-            <input
-              type="time"
-              className="form-control"
-              id="startTime"
-              name="startTime"
-              value={appointment.startTime}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
+            <input type="time" className="form-control" id="startTime" name="startTime" value={appointment.startTime} onChange={handleInputChange} disabled={!isEditing} />
           </div>
           <div className="col-md-3">
             <label htmlFor="endTime" className="form-label">
               End Time <i className="fa-solid fa-clock" ></i>
             </label>
-            <input
-              type="time"
-              className="form-control"
-              id="endTime"
-              name="endTime"
-              value={appointment.endTime}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
+            <input type="time" className="form-control" id="endTime" name="endTime" value={appointment.endTime} onChange={handleInputChange} disabled={!isEditing} />
           </div>
           <div className="col-md-3">
             <label htmlFor="distance" className="form-label ">
               Distance (km) <i className="fa-solid fa-ruler" ></i>
             </label>
-            <input
-              type="number"
-              className="form-control"
-              id="distance"
-              name="distance"
-              value={appointment.distance}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
+            <input type="number" className="form-control" id="distance" name="distance" value={appointment.distance} onChange={handleInputChange} disabled={!isEditing} />
           </div>
           <div className="col-md-6 mt-3">
             <label htmlFor="result" className="form-label">
               Result
             </label>
-            <textarea
-              className="form-control"
-              id="result"
-              name="result"
-              value={appointment.result}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            ></textarea>
+            <textarea className="form-control" id="result" name="result" value={appointment.result} onChange={handleInputChange} disabled={!isEditing}></textarea>
           </div>
           <div className="col-md-6 mt-3">
             <label htmlFor="location" className="form-label">
               Location <i className="fa-solid fa-location-dot" ></i>
             </label>
-            <textarea
-              className="form-control"
-              id="location"
-              name="location"
-              value={appointment.location}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
+            <textarea className="form-control" id="location" name="location" value={appointment.location} onChange={handleInputChange} disabled={!isEditing}></textarea>
           </div>
 
         </div>
@@ -509,23 +426,21 @@ function AppointmentDetail() {
 
               )}
               {role === ROLE.CUSTOMER && appointment.status === APPOINTMENT_STATUS.FINISH && (
-
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => navigate(`/rating-feedback/${appointmentId}`)}
-                >
+                <button type="button" className="btn btn-primary" onClick={handleOpenRatingModal}>
                   Rating & Feedback
                 </button>
 
               )}
               {
-                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && !isEditing && (
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={() => handleCancelAppointment()}
-                  >
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && role !== ROLE.CUSTOMER && !isEditing && (
+                  <button type="button" className="btn btn-danger" onClick={() => handleCancelAppointment()}>
+                    Cancel Appointment
+                  </button>
+                )
+              }
+              {
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && role === ROLE.CUSTOMER && isCancelable && !isEditing && (
+                  <button type="button" className="btn btn-danger" onClick={() => handleCancelAppointment()}>
                     Cancel Appointment
                   </button>
                 )
@@ -551,42 +466,23 @@ function AppointmentDetail() {
       </form>
 
       <div className="d-flex justify-content-between align-items-center">
-        <button
-          className="btn btn-secondary"
-          onClick={() => navigate(-1)}
-        >
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
           Back to All Appointments
         </button>
 
         {navigateLink.link && (appointment.status !== "FINISH" || appointment.type !== "ONLINE") ?
-          <button
-            onClick={() => navigate(navigateLink.link)}
-            type="button"
-            className="btn btn-primary"
-          >
+          <button onClick={() => navigate(navigateLink.link)} type="button" className="btn btn-primary">
             {navigateLink.title}
           </button> : null}
 
       </div>
 
 
-      <Modal
-        open={isInvoiceModalOpen}
-        onCancel={() => setIsInvoiceModalOpen(false)}
-        width={670}
-      >
+      <Modal open={isInvoiceModalOpen} onCancel={() => setIsInvoiceModalOpen(false)} width={500}>
         <InvoiceList appointment={appointment} />
       </Modal>
 
-
-
-
-      <button onClick={handleOpenRatingModal}>Rating</button>
-      <Modal
-        open={isRatingModalOpen}
-        onCancel={handleCloseRatingModal}
-        width={670}
-      >
+      <Modal open={isRatingModalOpen} onCancel={handleCloseRatingModal} width={670}>
         {appointmentId ? (
           <Rating appointmentId={appointmentId} />
         ) : (
