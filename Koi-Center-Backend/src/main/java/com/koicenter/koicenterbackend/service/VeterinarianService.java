@@ -130,6 +130,7 @@ public class VeterinarianService {
     public void createVeterinarian(VeterinarianRequest veterinarianRequest) {
         User newVeterinarian = new User();
 
+
         newVeterinarian.setFullName(veterinarianRequest.getUserRequest().getFullname());
         newVeterinarian.setEmail(veterinarianRequest.getUserRequest().getEmail());
         newVeterinarian.setUsername(veterinarianRequest.getUserRequest().getUsername());
