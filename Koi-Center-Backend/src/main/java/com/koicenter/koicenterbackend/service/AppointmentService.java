@@ -431,40 +431,18 @@ public class AppointmentService {
         appointmentResponses = appointmentResponses.subList(start, end);
         return new PageResponse<>(appointmentResponses,totalPages,offSet,totalItems,totalElements);
     }
-
     @Scheduled(fixedRate = 300000)
-    private void checkAppointments() {
-        LocalDate day = LocalDate.now();
+    public void checkAppointments() {
         LocalDateTime currentTime = LocalDateTime.now();
-        List<Appointment> appointmentsList = appointmentRepository.findByAppointmentDate(day);
-        LocalTime endTime = LocalTime.now();
-
-        for (Appointment appointment : appointmentsList){
-            if (endTime.isAfter(appointment.getEndTime()) && appointment.getStatus().equals(AppointmentStatus.BOOKING_COMPLETE ) ) {
+        List<Appointment> appointmentsLists = appointmentRepository.findAll();
+        for (Appointment appointment : appointmentsLists){
+            if (currentTime.isAfter(appointment.getAppointmentDate().atTime(appointment.getEndTime())) &&  appointment.getStatus().equals(AppointmentStatus.BOOKING_COMPLETE) ||appointment.getStatus().equals(AppointmentStatus.CREATED)  ) {
                 appointment.setStatus(AppointmentStatus.CANCEL);
                 appointmentRepository.save(appointment);
             }
         }
+        log.info("Appointment task completed at: " + LocalDateTime.now());
     }
-    @Scheduled(fixedRate = 00)
-    private void checkToken (){
-       LocalDateTime currentTime = LocalDateTime.now();
-       List<LoggedOutToken> tokens = loggedOutTokenRepository.findAll();
-
-       tokens.parallelStream().forEach(loggedOutToken -> {
-           String token = loggedOutToken.getToken();
-           try {
-               LocalDateTime tokenExpirationTime = jwtUtilHelper.getExpFromToken(token);
-               if(tokenExpirationTime.isBefore(currentTime)){
-                   loggedOutTokenRepository.delete(loggedOutToken);
-               }
-           }catch (Exception e){
-               System.out.println("Error decoding token:"+ e.getMessage());
-           }
-       });
-    }
-
-
 }
 
 

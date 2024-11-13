@@ -18,6 +18,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.21.2",
     "antd-img-crop": "^4.23.0",
+    "antd-input-otp": "^2.1.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
