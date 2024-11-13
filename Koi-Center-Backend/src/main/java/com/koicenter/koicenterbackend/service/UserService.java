@@ -323,14 +323,14 @@ public class UserService {
                 veterinarian.setPhone(updateUserRequest.getPhoneNumber());
                 veterinarianRepository.save(veterinarian);
             } else if (user.getRole().equals(Role.STAFF)) {
-                Staff staff = staffRepository.findByUser_UserId(updateUserRequest.getUserId());
-                staff.setPhone(updateUserRequest.getPhoneNumber());
-                staffRepository.save(staff);
+               // Staff staff = staffRepository.findByUser_UserId(updateUserRequest.getUserId());
+//                staff.setPhone(updateUserRequest.getPhoneNumber());
+             //   staffRepository.save(staff);
             }
             userRepository.save(user);
             return true;
         } catch (Exception e) {
-            return false;
+          return false;
         }
     }
 
