@@ -177,13 +177,13 @@ const MyProfile = () => {
           </div>
         </div>
         <div className="card-footer text-center d-flex justify-content-between">
+        <button className="btn btn-primary" onClick={() => navigate("/change-password")}>Change Password</button>
           {isEditing ? (
             <button className="btn btn-primary" onClick={handleSave}>Save Changes</button>
           ) : (
             <button className="btn btn-primary" onClick={handleEdit}>Edit Information</button>
           )}
           <button className="btn btn-primary" onClick={() => navigate("/profile/appointment")}>My Appointments</button>
-          <button className="btn btn-primary" onClick={() => navigate("/profile/forgot-password")}>Forgot Password</button>
           <button className="btn btn-primary" onClick={() => navigate("/profile/pond")}>My Pond</button>
           <button className="btn btn-primary" onClick={() => navigate("/profile/koi")}>My Koi</button>
         </div>

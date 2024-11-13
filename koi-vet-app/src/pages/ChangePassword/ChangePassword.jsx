@@ -5,14 +5,9 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 
 function ChangePassword() {
-  const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [fullname, setFullname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [step, setStep] = useState(1);
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
   const [newPassword, setNewPassword] = useState(""); // New state for repassword
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
@@ -53,19 +48,12 @@ function ChangePassword() {
             </div>
           </div>
           <form action="#!" className="mx-5" onSubmit={handleSubmit}>
-            {step === 1 &&
-              <div className="row gy-2 overflow-hidden">
-                <div className="col-12">
                   <div className="form-floating mb-3">
                         <input type="text" className="form-control" name="username" id="username" placeholder="Username" required onChange={(e) => setUsername(e.target.value)} />
                     <label htmlFor="username" className="form-label">
                       Username
                     </label>
                   </div>
-                </div>
-              </div>
-            }
-
             <div className="row gy-2 overflow-hidden">
               <div className="col-12">
                 <div className="form-floating mb-3">

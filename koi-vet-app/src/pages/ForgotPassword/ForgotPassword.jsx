@@ -1,43 +1,50 @@
 import React, { useState } from "react";
 import register from "../../assets/img/login_side.png";
-import { createUserAPI } from "../../apis";
+import { createUserAPI, forgotPasswordSendEmailAPI, forgotPasswordVerifyOtpAPI } from "../../apis";
 import { toast } from "react-toastify";
+import { InputOTP } from "antd-input-otp";
 import { Link, useNavigate } from "react-router-dom";
-
+import { Form, Button } from "antd";
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [fullname, setFullname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [step, setStep] = useState(1);
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const [step, setStep] = useState(2);
   const [repassword, setRepassword] = useState(""); // New state for repassword
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  // #region The Uncontrolled Logic
+  const [form] = Form.useForm();
+
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    console.log(email, password, username, fullname, phone, address);
-    if (password !== repassword) { // Validate repassword
-      toast.error("Repasswords do not match");
-      setIsLoading(false);
-      return;
-    }
-    try {
-      const response = await createUserAPI(email, password, username, fullname, phone, address);
-      if (response?.data?.status === 201) {
-        toast.success(response?.data?.message);
-        navigate("/login");
+  const handleSendEmail = async (e) => {
+    if (step === 1) {
+      e.preventDefault();
+      setIsLoading(true)
+      try {
+        const response = await forgotPasswordSendEmailAPI(email);
+        if (response.status === 200) {
+          setStep(2);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsLoading(false);
     }
   };
+  const handleVerifyOtp = async (values) => {
+    const { otp } = values;
+    if (!otp || otp.includes(undefined) || otp.includes(""))
+      return form.setFields([
+        {
+          name: "otp",
+          errors: ["OTP is invalid."]
+        }
+      ]);
+
+    console.log(typeof otp);
+  }
 
   return (
     <div className="">
@@ -51,8 +58,9 @@ function ForgotPassword() {
               <h2>Forgot Password</h2>
             </div>
           </div>
-          <form action="#!" className="mx-5" onSubmit={handleSubmit}>
-            {step === 1 &&
+
+          {step === 1 &&
+            <form action="#!" className="mx-5" onSubmit={handleSendEmail}>
               <div className="row gy-2 overflow-hidden">
                 <div className="col-12">
                   <div className="form-floating mb-3">
@@ -63,57 +71,48 @@ function ForgotPassword() {
                   </div>
                 </div>
               </div>
-            }
-
-            <div className="row gy-2 overflow-hidden">
-              <div className="col-12">
-                <div className="form-floating mb-3">
-                  <input
-                    type={showPassword ? "text" : "password"} // Toggle between text and password
-                    className="form-control"
-                    name="password"
-                    id="password"
-                    value={password}
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
-                  <span
-                    onClick={() => setShowPassword(!showPassword)} // Toggle visibility
-                    style={{ cursor: 'pointer', position: 'absolute', right: '15px', top: '17px' }} // Position the icon
-                  >
-                    {showPassword ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>} {/* Show/hide icon */}
-                  </span>
-                </div>
-              </div>
-              <div className="col-12">
-                <div className="form-floating mb-3">
-                  <input type="password" className="form-control" name="repassword" id="repassword" value={repassword} placeholder="Re-enter Password" onChange={(e) => setRepassword(e.target.value)} required />
-                  <label htmlFor="repassword" className="form-label">
-                    Repassword
-                  </label>
-                </div>
-              </div>
               <div className="col-12">
                 <div className="d-grid my-3">
                   <button className="btn-dark btn btn-lg" type="submit" disabled={isLoading}>
-                    {isLoading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : "SIGN UP"}
+                    {isLoading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : "SEND"}
                   </button>
                 </div>
               </div>
-              <div className="col-12">
-                <p className="m-0 text-secondary text-center">
-                  Already have an account?{" "}
-                  <Link to="/login" className="link-dark text-decoration-underline">
-                    Login
-                  </Link>
-                </p>
-              </div>
+            </form>
+          }
+          {
+            step === 2 &&
+            <Form form={form} onFinish={handleVerifyOtp}>
+          <Form.Item
+            name="otp"
+            className="center-error-message"
+            rules={[{ validator: async () => Promise.resolve() }]}
+          >
+            <InputOTP autoFocus inputType="numeric" length={6} />
+          </Form.Item>
+
+          <Form.Item noStyle>
+          <button className="btn-dark btn btn-lg" type="submit" disabled={isLoading}>
+                    {isLoading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : "SEND"}
+                  </button>
+              </Form.Item>
+            </Form>
+          }
+
+
+
+          <div className="row gy-2 overflow-hidden mx-5 ">
+
+            <div className="col-12 my-3">
+              <p className="m-0 text-secondary text-center">
+                Already have an account?{" "}
+                <Link to="/login" className="link-dark text-decoration-underline">
+                  Login
+                </Link>
+              </p>
             </div>
-          </form>
+          </div>
+
         </div>
       </div>
     </div>
