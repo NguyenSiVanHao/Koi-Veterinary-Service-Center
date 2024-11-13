@@ -36,7 +36,7 @@ const AdminHeader = ({ title }) => {
                         <div className="btn-group me-2">
                             <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setIsOpenModal(true)}>
                                 <img
-                                   src={(image ? URL.createObjectURL(image) : user?.image) ||
+                                   src={(image ? URL.createObjectURL(image) :(role === ROLE.VETERINARIAN?user.veterinarian.image: user?.image)) ||
                                     'https://koicenter.azurewebsites.net/images/default-avatar.png'}
                                     alt="User Avatar"
                                     className="rounded-circle me-2"
