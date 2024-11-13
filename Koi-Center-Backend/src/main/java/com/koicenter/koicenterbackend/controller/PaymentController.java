@@ -28,6 +28,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,12 +77,19 @@ public class PaymentController {
     @Value("${app.payment.success-url}")
     private String paymentUrl;
 
-    String successUrl = buildPaymentUrl("/booking/paymentsuccess");
-    String failUrl = buildPaymentUrl("/booking/paymentfailed");
+    private String successUrl;
+    private String failUrl;
+
+    @PostConstruct
+    public void init() {
+        successUrl = buildPaymentUrl("/booking/paymentsuccess");
+        failUrl = buildPaymentUrl("/booking/paymentfailed");
+    }
 
     public String buildPaymentUrl(String endpoint) {
         return paymentUrl + endpoint;
     }
+
 
     @PostMapping("/vn-pay")
     public ResponseEntity<ResponseObject> pay(HttpServletRequest request, @RequestBody TreamentRequest treamentRequest) {
