@@ -132,9 +132,8 @@ const UserManagementPage = () => {
           "password": selectedUser.password,
           "username": selectedUser.username,
           "fullname": selectedUser.fullName,
-          "address": selectedUser.address,
-          "phone": selectedUser.phone,
-          "status": selectedUser.status,
+          "address": selectedUser.customer.address,
+          "phone": selectedUser.customer.phone,
           "image": null
         }, image);
         break;
@@ -186,8 +185,8 @@ const UserManagementPage = () => {
           "userId": selectedUser.user_id,
           "fullName": selectedUser.fullName,
           "email": selectedUser.email,
-          "phoneNumber": selectedUser.phoneNumber,
-          "address": selectedUser.address,
+          "phoneNumber": selectedUser.customer.phone,
+          "address": selectedUser.customer.address,
           "image": image
         }, image);
         break;
@@ -339,7 +338,6 @@ const UserManagementPage = () => {
               <td>{customer.fullName}</td>
               <td>{customer.status ? "Active" : "Inactive"}</td>
               <td>{customer.customer.phone}</td>
-              
               <td>{customer.email}</td>
               <td >{customer.customer.address}</td>
               <td className="d-flex gap-2" >
