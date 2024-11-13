@@ -471,12 +471,12 @@ export const fetchCheckoutAPI = async (appointmentId) => {
 
 //Rating
 export const fetchAllRatingByServiceIdAPI = async (serviceId) => {
-    const response = await api.get(`/feedbacks/${serviceId}/feedback/total`);
+    const response = await api.get(`/feedbacks/${serviceId}/total`);
     return response.data;
 }
 
 export const fetchAllRatingByServiceIdAPI2 = async (serviceId) => {
-    const response = await api.get(`/feedbacks/${serviceId}/feedback`);
+    const response = await api.get(`/feedbacks/${serviceId}`);
     return response.data;
 }
 

@@ -8,5 +8,6 @@ public enum AppointmentStatus {
     READY_FOR_PAYMENT,
     FINISH,//~~  COMPLETED
     CANCEL, // DAT ROI MA KHONG DI
-   REFUND
+    REFUND,
+    REFUNDABLE
 }
