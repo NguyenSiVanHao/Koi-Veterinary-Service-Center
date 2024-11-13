@@ -73,6 +73,14 @@ const HomeVisitPricePage = () => {
         });
     }
 
+    // Sắp xếp dữ liệu theo fromPlace và toPlace
+    const sortedHomeVisitPrice = [...homeVisitPrice].sort((a, b) => {
+        if (a.fromPlace === b.fromPlace) {
+            return a.toPlace - b.toPlace; // Sắp xếp theo toPlace nếu fromPlace bằng nhau
+        }
+        return a.fromPlace - b.fromPlace; // Sắp xếp theo fromPlace
+    });
+
     return (
         <div>
             <AdminHeader title="Home Visit Price" />
@@ -90,7 +98,7 @@ const HomeVisitPricePage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {homeVisitPrice.map((delivery, index) => (
+                                {sortedHomeVisitPrice.map((delivery, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>{delivery.fromPlace}</td>
