@@ -4,6 +4,7 @@ import { Button, Container } from 'react-bootstrap';
 import { createMedicineAPI, deleteMedicineByIdAPI, fetchMedicinesAPI, updateMedicineByIdAPI } from '../../apis';
 import './CreateMedicinePage.css';
 import TextArea from 'antd/es/input/TextArea';
+import AdminHeader from '../../components/AdminHeader/AdminHeader';
 
 function CreateMedicinePage() {
   const [newMedicineData, setNewMedicineData] = useState({
@@ -162,8 +163,8 @@ function CreateMedicinePage() {
 
   return (
     <>
+      <AdminHeader title="Medicine Management" />
       <Container className='mt-4'>
-        <h2 style={{color: 'var(--color-primary)'}}>Medicine List</h2>
         
         {/* Search Input */}
         <Input
@@ -174,6 +175,7 @@ function CreateMedicinePage() {
         />
 
         <Table
+          className="ant-table-medicine"
           dataSource={filteredMedicines} // Use filtered medicines for the table
           columns={columns}
           pagination={{

@@ -100,7 +100,7 @@ function HomePage() {
                     <p className="text-center-custom text-center text-gray-600 mb-4">Our expert team is dedicated to ensuring the health and longevity of your beloved Koi through personalized, state-of-the-art medical services. Trust us to provide the best care, because at KOIMED, we care as much about your Koi as you do.</p>
                     <div className="text-center-custom text-center">
                         {/* <a href="#" className="btn btn-primary">Learn More</a> */}
-                        <Link href="#" className="btn btn-primary">
+                        <Link to="/about-us" className="btn btn-primary">
                             Learn More
                         </Link>
                     </div>

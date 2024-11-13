@@ -89,10 +89,6 @@ function NewsDetailPage() {
                                 className="text-3xl font-bold mb-4"
                                 dangerouslySetInnerHTML={{ __html: newsData.title }}
                             />
-                            <p><strong>Preview:</strong></p>
-                            <div>
-                            <p dangerouslySetInnerHTML={{ __html: newsData.preview }} />
-                            </div>
                                 <div>
                             <p><strong>Content:</strong></p>
                             <div className="prose max-w-none">

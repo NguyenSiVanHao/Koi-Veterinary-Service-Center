@@ -4,6 +4,7 @@ import { Form, Input, Table } from 'antd'
 import { createContactReplyAPI, fetchContactAPI, fetchContactDetailAPI } from '../../apis'    
 import Modal from '../../components/Modal/Modal';
 import AdminHeader from '../../components/AdminHeader/AdminHeader';
+import './ContactManagement.css';
 
 function ContactManagement() {
     const [dataSource, setDataSource] = useState([]);
@@ -11,7 +12,7 @@ function ContactManagement() {
     const [contactDetail, setContactDetail] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
     const [form] = Form.useForm();
-    
+        
     const handleOpenModal = async (id) => {
         setSelectedId(id);
         setIsModalOpen(true);
@@ -83,9 +84,10 @@ function ContactManagement() {
     ]
 
     return (
+        <>
+        <AdminHeader title="Contact Management" />
         <Container>
-            <h2 style={{color: 'var(--color-primary)'}}>Contact Management</h2>
-            <Table dataSource={dataSource} columns={columns1} rowKey="id" pagination={{ pageSize: 7 }}/>
+            <Table dataSource={dataSource} columns={columns1} rowKey="id" pagination={{ pageSize: 7 }} className="ant-table-contact"/>
         
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
                 <h3><strong>Reply Message</strong></h3>
@@ -103,6 +105,7 @@ function ContactManagement() {
                 </Form>
             </Modal>
         </Container>
+        </>
     )
 }
 

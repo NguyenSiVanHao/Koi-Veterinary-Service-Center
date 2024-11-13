@@ -102,11 +102,12 @@ function NewsPage() {
               width={800}
               height={300}
             />
-            <div className="p-4" style={{backgroundColor: "#ececec"}}>
-              <h4 
+            <div className="p-4">
+              <h5 
                 className="text-lg font-semibold mt-1"
                 dangerouslySetInnerHTML={{ __html: newsItem.title }}
               />
+              <div className="card-text text-muted" dangerouslySetInnerHTML={{ __html: newsItem.preview }}></div>
             </div>
           </div>
           </div> 

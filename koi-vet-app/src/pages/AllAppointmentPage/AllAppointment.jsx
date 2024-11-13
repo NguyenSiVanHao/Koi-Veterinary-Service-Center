@@ -163,7 +163,7 @@ function AllAppointment() {
               <i className="fas fa-list-ul me-2"></i>All
             </button>
             {role !== ROLE.VETERINARIAN && <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab"  type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
-              <i className="fa-solid fa-hourglass-start "></i> Waiting Confirm
+              <i className="fa-solid fa-hourglass-start "></i> Waiting
             </button>}
             <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab"  type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <i className="fas fa-user-md me-2"></i>Veterinarian Assigned
@@ -220,7 +220,7 @@ function AllAppointment() {
                       {(() => {
                         switch (appointmentDetail.status) {
                           case APPOINTMENT_STATUS.CREATED:
-                            return <button className="btn btn-sm btn-warning"> <i className="fa-solid fa-hourglass-start me-2"></i>Waiting Confirm</button>;
+                            return <button className="btn btn-sm btn-warning"> <i className="fa-solid fa-hourglass-start me-2"></i>Waiting</button>;
                           case APPOINTMENT_STATUS.BOOKING_COMPLETE:
                             return <button className="btn btn-sm btn-info "> <i className="fas fa-user-md me-2"></i>Veterinarian Assigned</button>;
                           case APPOINTMENT_STATUS.PROCESS:

@@ -5,6 +5,7 @@ import { DatePicker, Space, Tabs } from 'antd';
 import './DashboardPage.css';
 import { fetchDashboardAPI, fetchDashboardByServiceAPI } from '../../apis';
 import { px } from 'framer-motion';
+import AdminHeader from '../../components/AdminHeader/AdminHeader';
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
 
@@ -187,8 +188,8 @@ function DashboardPage() {
 
   return (
     <>
+    <AdminHeader title="Dashboard" />
     <div className='container'>
-    <h1>Dashboard</h1>
     {/* Replace your time buttons with: */}
     <Tabs defaultActiveKey="day" onChange={handleTabChange}>
         <TabPane tab="Day" key="day" />
