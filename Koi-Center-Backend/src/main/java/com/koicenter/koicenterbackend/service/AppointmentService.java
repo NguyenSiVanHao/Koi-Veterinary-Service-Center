@@ -196,31 +196,18 @@ public class AppointmentService {
                         .appointmentType(appointment.getType())
                         .build();
                 List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest, "less");
+                if (appointmentRequest.getVetId() !=  null ){
+                    VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
+                            .vet_id(appointmentRequest.getVetId())
+                            .startTime(appointmentRequest.getStartTime())
+                            .endTime(appointmentRequest.getEndTime())
+                            .date(appointmentRequest.getAppointmentDate())
+                            .appointmentType(appointmentRequest.getType())
+                            .build();
+                    vetScheduleService.slotDateTime(vetScheduleRequest1, "add");
+                }
 
-                VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
-                        .vet_id(appointmentRequest.getVetId())
-                        .startTime(appointmentRequest.getStartTime())
-                        .endTime(appointmentRequest.getEndTime())
-                        .date(appointmentRequest.getAppointmentDate())
-                        .appointmentType(appointmentRequest.getType())
-                        .build();
-                vetScheduleService.slotDateTime(vetScheduleRequest1, "add");
             }
-//            else if (appointmentRequest.getType().equals(AppointmentStatus.CREATED) || !appointment.getAppointmentDate().equals(date) && appointmentRequest.getVetId() != null &&  vetId == null   || !appointment.getStartTime().equals(startTime)  &&  appointmentRequest.getVetId() != null &&  vetId == null|| !appointment.getEndTime().equals(endTime) && appointmentRequest.getVetId() != null &&  vetId == null) {
-//                log.info("If5 ");
-//                if (appointment.getVeterinarian() != null) {
-//                    VetScheduleRequest vetScheduleRequest = VetScheduleRequest.builder()
-//                            .vet_id(appointment.getVeterinarian().getVetId())
-//                            .endTime(appointment.getEndTime())
-//                            .startTime(appointment.getStartTime())
-//                            .date(appointment.getAppointmentDate())
-//                            .appointmentType(appointment.getType())
-//                            .build();
-//                    List<VetScheduleResponse> vetScheduleResponse = vetScheduleService.slotDateTime(vetScheduleRequest, "less");
-//                    appointmentRequest.setStatus(AppointmentStatus.);
-//                }
-//            }
-
             appointment = appointmentMapper.toAppointment(appointmentRequest);
             if (appointmentRequest.getVetId() != null) {
                 appointment.setVeterinarian(veterinarian);
@@ -345,8 +332,11 @@ public class AppointmentService {
                 HttpStatus.NOT_FOUND)));
 
         if (appointment.getAppointmentDate().atStartOfDay().isAfter(oneDayAgo)) {
-            appointment.setStatus(AppointmentStatus.REFUNDABLE);
-            appointmentRepository.save(appointment);
+            log.info("o day ne  ");
+
+
+//            log.info("Appointment GEt veterianarisn " + appointment.getVeterinarian());
+//            log.info("Appointment GEt veterinarian ID: " + appointment.getVeterinarian().getVetId());
 
             Veterinarian veterinarian = veterinarianRepository.findById(appointment.getVeterinarian().getVetId()).orElseThrow((() -> new AppException(
                     ErrorCode.VETSCHEDULE_NOT_FOUND.getCode(),
@@ -354,6 +344,8 @@ public class AppointmentService {
                     HttpStatus.NOT_FOUND
             )));
             if (veterinarian != null) {
+                appointment.setStatus(AppointmentStatus.REFUNDABLE);
+                appointmentRepository.save(appointment);
                 VetScheduleRequest vetScheduleRequest1 = VetScheduleRequest.builder()
                         .vet_id(appointment.getVeterinarian().getVetId())
                         .startTime(appointment.getStartTime())
@@ -362,8 +354,13 @@ public class AppointmentService {
                         .appointmentType(appointment.getType())
                         .build();
                 vetScheduleService.slotDateTime(vetScheduleRequest1, "less"); // tra lại gio
+            }else {
+                appointment.setStatus(AppointmentStatus.REFUNDABLE);
+                appointmentRepository.save(appointment);
             }
         }else {//qua gio
+            log.info("o day ne 1 ");
+
             appointment.setStatus(AppointmentStatus.CANCEL);
             appointmentRepository.save(appointment);
         }

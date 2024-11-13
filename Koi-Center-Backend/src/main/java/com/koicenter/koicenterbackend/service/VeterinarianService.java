@@ -206,7 +206,7 @@ public class VeterinarianService {
                 ErrorCode.VETERINARIAN_ID_NOT_EXITS.getMessage(),
                 HttpStatus.NOT_FOUND));
         User userName = userRepository.findByUsername(request.getUser().getUsername());
-        if (userName != null ){
+        if (userName != null && request.getUser().getUsername().equals(userName.getUsername()) && !veterinarian.getUser().getUserId().equals(userName.getUserId())){
             throw new AppException(
                     ErrorCode.USER_NAME_EXISTED.getCode(),
                     ErrorCode.USER_NAME_EXISTED.getMessage(),
