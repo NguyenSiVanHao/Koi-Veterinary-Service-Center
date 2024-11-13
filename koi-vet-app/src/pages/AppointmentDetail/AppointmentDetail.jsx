@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, forceCancelAppointmentAPI, updateAppointmentAPI } from "../../apis";
+import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchHomeVisitPriceAPI, fetchVetForAssignAPI, forceCancelAppointmentAPI, updateAppointmentAPI } from "../../apis";
 import "./AppointmentDetail.css";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import { APPOINTMENT_STATUS, BOOKING_TYPE, ROLE, SERVICE_FOR } from "../../utils/constants";
@@ -10,6 +10,7 @@ import PreLoader from "../../components/Preloader/Preloader";
 import InvoiceList from "../../components/InvoiceList/InvoiceList";
 import Rating from "../Rating/Rating";
 import Loading from "../../components/Loading/Loading";
+import { toast } from "react-toastify";
 const updateAppointment = async (appointmentData, appointmentId) => {
   try {
     await updateAppointmentAPI(appointmentData, appointmentId);
@@ -20,6 +21,7 @@ const updateAppointment = async (appointmentData, appointmentId) => {
 function AppointmentDetail() {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
+  const [maxDistance, setMaxDistance] = useState(0);
   const [vetList, setVetList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [assignVetTrigger, setAssignVetTrigger] = useState(0);
@@ -65,9 +67,22 @@ function AppointmentDetail() {
   };
   useEffect(() => {
     fetchAppointmentDetail(appointmentId);
+    const fetchDeliveryPrice = async () => {
+      const response = await fetchHomeVisitPriceAPI();
+       setMaxDistance(response.data[response.data.length - 1].toPlace);
+    }
+    fetchDeliveryPrice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appointmentId]);
   const handleInputChange = (e) => {
+    console.log(maxDistance);
+    if(e.target.name==="distance"){
+      if(e.target.value > maxDistance){
+        toast.error(`Distance is too long. It must be less than ${maxDistance} km`);
+        setAppointment({ ...appointment, distance: 0 });
+        return;
+      }
+    }
     const { name, value } = e.target;
     setAppointment({ ...appointment, [name]: value });
   }

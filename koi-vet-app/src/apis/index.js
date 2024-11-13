@@ -1,6 +1,7 @@
 //file này để call API tâp trung
 import api from "../utils/authorizedAxious"
 import axios from "axios";
+import { API_ROOT } from "../utils/constants";
 
 /* Authentication API*/
 export const fetchLoginAPI = async (username, password) => {
@@ -18,6 +19,25 @@ export const fetchLogoutAPI = async () => {
 
 
 /* User API */
+export const changePasswordAPI = async (username, oldPassword, newPassword) => {
+    const loginResponse = await fetchLoginAPI(username, oldPassword);
+    console.log(loginResponse);
+    let userInfo;
+    if(loginResponse.status === 200){
+      userInfo = await axios.post(`${API_ROOT}/users/myInfo`, null, {
+            headers: {
+                'Authorization': `Bearer ${loginResponse.data}`
+            }
+        });
+    }
+    console.log(userInfo);
+    const response = await api.put(`/users/updatePassword`, {
+        userId: userInfo.data.data.user_id,
+        currentPassword: oldPassword,
+        newPassword: newPassword
+    });
+    return response.data;
+}
 export const createUserAPI = async (email, password, username, fullname, phone, address) => {
 
     const response = await api.post('/users/register', {
