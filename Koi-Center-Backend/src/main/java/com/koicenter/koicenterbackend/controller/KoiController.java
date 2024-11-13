@@ -67,7 +67,6 @@ public class    KoiController {
     @PostMapping()
     public ResponseEntity<ResponseObject> createKoi (@RequestBody KoiRequest koiRequest){
         if(koiRequest != null ){
-
             return ResponseObject.APIRepsonse(200, "KOI create successfully!", HttpStatus.CREATED,  koiService.createKoi(koiRequest));
         }else{
             return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST,"");
