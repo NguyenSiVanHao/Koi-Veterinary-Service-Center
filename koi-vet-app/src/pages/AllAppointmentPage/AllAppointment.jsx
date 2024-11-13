@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [status, setStatus] = useState("ALL");
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
@@ -180,9 +180,13 @@ function AllAppointment() {
             <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CANCEL)}>
               <i className="fas fa-ban me-2 text-danger"></i>Cancel
             </button>
-            <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.REFUND)}>
-              <img className="me-2 text-warning" style={{ width: '20px', height: '20px' }} src={refund} alt="Refund Icon" /> Refund
+            <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.REFUNDABLE)}>
+              <img className="me-2 text-warning" style={{ width: '20px', height: '20px' }} src={refund} alt="Refund Icon" /> Need to refund
             </button>
+            <button className="nav-link custom-text-color" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.REFUND)}>
+              <img className="me-2 text-warning" style={{ width: '20px', height: '20px' }} src={refund} alt="Refund Icon" /> Refunded
+            </button>
+            
           </div>
         </nav>
 
@@ -229,6 +233,8 @@ function AllAppointment() {
                             return <button className="btn btn-sm btn-danger"> <i className="fas fa-ban me-2"></i>Cancel</button>;
                           case APPOINTMENT_STATUS.REFUND:
                             return <button className="btn btn-sm btn-info">Refunded</button>;
+                          case APPOINTMENT_STATUS.REFUNDABLE:
+                            return <button className="btn btn-sm btn-warning">Need to refund</button>;
                           default:
                             return <button className="btn btn-sm btn-secondary">Unknown Status</button>;
                         }
