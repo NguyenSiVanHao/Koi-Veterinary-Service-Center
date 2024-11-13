@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
@@ -108,7 +110,16 @@ public class JWTUtilHelper {
                 .getBody();
         return claims.get("role", String.class);
     }
-
+    public LocalDateTime getExpFromToken(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKey));
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Long expTimestamp = claims.get("exp", Long.class);
+        return  LocalDateTime.ofInstant(Instant.ofEpochSecond(expTimestamp), ZoneId.systemDefault());
+    }
     public String getUsernameFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKey));
         Claims claims = Jwts.parser()
