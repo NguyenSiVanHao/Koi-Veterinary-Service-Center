@@ -9,6 +9,7 @@ import { Modal } from "antd";
 import PreLoader from "../../components/Preloader/Preloader";
 import InvoiceList from "../../components/InvoiceList/InvoiceList";
 import Rating from "../Rating/Rating";
+import Loading from "../../components/Loading/Loading";
 const updateAppointment = async (appointmentData, appointmentId) => {
   try {
     await updateAppointmentAPI(appointmentData, appointmentId);
@@ -249,7 +250,7 @@ function AppointmentDetail() {
   // Check if the appointment is more than one day away
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-  if (isLoading || isLoadingVet) return <PreLoader />
+  if (isLoading) return <PreLoader />
 
 
 
@@ -336,11 +337,12 @@ function AppointmentDetail() {
               {appointment.vetId && !vetList.find((vet) => vet.vetId === appointment.vetId) && <option value={appointment.vetId}>
                 {appointment.vetName}
               </option>}
-              {vetList.map((vet) => (
+              {isLoadingVet ? <Loading/> : vetList.map((vet) => (
                 <option key={vet.vetId} value={vet.vetId}>
                   {vet.user.fullName}
                 </option>
               ))}
+              
             </select>
 
           </div>
