@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagementPage.css"
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
-import { createStaffAPI, createVetAPI, deleteUserAPI, fecthAllServicesAPI, fetchAllUsersAPI, updateUserInfoAPI, updateVetByIdAPI } from "../../apis";
+import { createCustomerAPI, createStaffAPI, createVetAPI, deleteUserAPI, fecthAllServicesAPI, fetchAllUsersAPI, updateUserInfoAPI, updateVetByIdAPI } from "../../apis";
 import avatar_default from "../../assets/img/profile_default.png"
 import { Modal } from "antd";
 import StaffForm from "../../components/StaffForm/StaffForm";
@@ -9,6 +9,7 @@ import VeterinarianForm from "../../components/VeterinarianForm";
 import { useSelector } from "react-redux";
 import { ROLE } from "../../utils/constants";
 import { toast } from "react-toastify";
+import CustomerForm from "../../components/CustomerForm/CustomerForm";
 
 const UserManagementPage = () => {
   const [tab, setTab] = useState("VETERINARIAN");
@@ -126,7 +127,15 @@ const UserManagementPage = () => {
           , image);
         break;
       case "CUSTOMER":
-        // await createCustomerAPI(selectedUser, image);
+        response = await createCustomerAPI({
+          "email": selectedUser.email,
+          "password": selectedUser.password,
+          "username": selectedUser.username,
+          "fullname": selectedUser.fullName,
+          "address": selectedUser.customer.address,
+          "phone": selectedUser.customer.phone,
+          "image": null
+        }, image);
         break;
       default:
         break;
@@ -170,6 +179,16 @@ const UserManagementPage = () => {
 
           }
           , image);
+        break;
+      case "CUSTOMER":
+        response = await updateUserInfoAPI({
+          "userId": selectedUser.user_id,
+          "fullName": selectedUser.fullName,
+          "email": selectedUser.email,
+          "phoneNumber": selectedUser.customer.phone,
+          "address": selectedUser.customer.address,
+          "image": image
+        }, image);
         break;
       default:
         break;
@@ -296,7 +315,9 @@ const UserManagementPage = () => {
           </Modal>}
         </>
       }
-      {tab === "CUSTOMER" && <table className="table table-bordered">
+      {tab === "CUSTOMER" && 
+      <>
+      <table className="table table-bordered">
         <thead>
           <tr>
             <th>Avatar</th>
@@ -305,6 +326,7 @@ const UserManagementPage = () => {
             <th>Status</th>
             <th>Phone</th>
             <th>Email</th>
+            <th>Address</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -316,11 +338,10 @@ const UserManagementPage = () => {
               <td>{customer.fullName}</td>
               <td>{customer.status ? "Active" : "Inactive"}</td>
               <td>{customer.customer.phone}</td>
-
               <td>{customer.email}</td>
               <td >{customer.customer.address}</td>
               <td className="d-flex gap-2" >
-                <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(customer)}>Edit</button>
+                <button className="btn btn-primary" onClick={() => handleOpenModalEditUser(customer, true)}>Edit</button>
                 {customer.status ? <button className="btn btn-danger" onClick={() => handleChangeUserStatus(customer)}>Deactive</button>
                   : <button className="btn btn-success" onClick={() => handleChangeUserStatus(customer)}>Active</button>
                 }
@@ -328,7 +349,11 @@ const UserManagementPage = () => {
             </tr>
           ))}
         </tbody>
-      </table>}
+      </table>
+      <Modal open={isModalCustomerPopup} onCancel={() => handleCloseModal()} onOk={isEditUser ? handleSubmitUpdateUser : handleSubmitCreateUser}>
+            <CustomerForm selectedUser={selectedUser} setSelectedUser={setSelectedUser} handleImageChange={handleImageChange} image={image} isEditUser={isEditUser} />
+        </Modal>
+      </>}
     </div>
   );
 };

@@ -78,7 +78,9 @@ const Pond = ({ title, selectedPonds, onUpdateTreatment, updateTrigger, isBookin
             setPrescriptions(response.data)
         }
         fetchPonds();
-        fetchPrescriptions();
+        if(isAppointment) {
+            fetchPrescriptions();
+        }
     }, [customerId, isAppointment, appointmentId, updateTrigger, deleteTrigger]);
 
     // lưu lại đơn thuốc

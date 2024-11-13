@@ -33,7 +33,11 @@ const Register = () => {
         navigate("/login");
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      if (error?.response?.data?.code === 409) {
+        toast.error("Username or email already exists");
+      } else {
+        toast.error(error?.response?.data?.message);
+      }
     } finally {
       setIsLoading(false);
     }
