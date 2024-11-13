@@ -428,6 +428,19 @@ export const updateUserInfoAPI = async (userData, image) => {
     const response = await api.put(`/users/update`, { ...userData, image: imageURL });
     return response.data;
 }
+
+
+export const createCustomerAPI = async (userData, image) => {
+    let imageURL = userData.image;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.post('/users/register', { ...userData, image: imageURL });
+    return response.data;
+};
+
+
+
 // Invoice API
 export const updateInvoiceAPI = async (invoiceId, data) => {
     const response = await api.put(`/invoices/update/${invoiceId}`, data);
