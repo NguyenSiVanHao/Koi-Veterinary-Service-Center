@@ -73,6 +73,16 @@ public class PaymentController {
     @Autowired
     SendEmalService sendEmalService;
 
+    @Value("${app.payment.success-url}")
+    private String paymentUrl;
+
+    String successUrl = buildPaymentUrl("/booking/paymentsuccess");
+    String failUrl = buildPaymentUrl("/booking/paymentfailed");
+
+    public String buildPaymentUrl(String endpoint) {
+        return paymentUrl + endpoint;
+    }
+
     @PostMapping("/vn-pay")
     public ResponseEntity<ResponseObject> pay(HttpServletRequest request, @RequestBody TreamentRequest treamentRequest) {
         try {
@@ -136,9 +146,9 @@ public class PaymentController {
                         sendEmalService.sendMailSender(user.getEmail(), emailContent, "🧑‍⚕️💉❤️ Confirmation of Your Koi Service Appointment");
                     }
                 }
-                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/booking/paymentsuccess")).build();
+                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(successUrl)).build();
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create("http://localhost:3000/booking/paymentfailed")).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create(failUrl)).build();
             }
             } catch (Exception e) {
             return ResponseObject.APIRepsonse(500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
@@ -284,10 +294,10 @@ public class PaymentController {
                         sendEmalService.sendMailSender(user.getEmail(), emailContent, "🧑‍⚕️💉❤️ Confirmation of Your Koi Service Appointment");
                     }
                 }
-                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/booking/paymentsuccess")).build();
+                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(successUrl)).build();
             } else {
                 System.out.println("Thanh toán thất bại: " + message);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create("http://localhost:3000/booking/paymentfailed")).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create(failUrl)).build();
             }
         } catch (Exception e) {
             e.printStackTrace();

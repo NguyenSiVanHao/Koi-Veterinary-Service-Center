@@ -183,6 +183,10 @@ export const cancelAppointmentAPI = async (appointmentId) => {
     const response = await api.put(`/appointments/cancel/${appointmentId}`);
     return response.data;
 }
+export const forceCancelAppointmentAPI = async (appointmentId) => {
+    const response = await api.put(`/appointments/completed-refundable/${appointmentId}`);
+    return response.data;
+}
 export const refundAppointmentAPI = async (appointmentId) => {
     const response = await api.put(`/appointments/refund/${appointmentId}`);
     return response.data;

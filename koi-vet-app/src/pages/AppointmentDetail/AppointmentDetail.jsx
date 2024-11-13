@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, updateAppointmentAPI } from "../../apis";
+import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, forceCancelAppointmentAPI, updateAppointmentAPI } from "../../apis";
 import "./AppointmentDetail.css";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import { APPOINTMENT_STATUS, BOOKING_TYPE, ROLE, SERVICE_FOR } from "../../utils/constants";
@@ -210,9 +210,16 @@ function AppointmentDetail() {
         </div>
       ),
       onOk: async () => {
-        const response = await cancelAppointmentAPI(appointmentId);
-        if (response.status === 200) {
-          fetchAppointmentDetail(appointmentId);
+        if(isCancelable){
+          const response = await cancelAppointmentAPI(appointmentId);
+          if (response.status === 200) {
+            fetchAppointmentDetail(appointmentId);
+          }
+        }else{
+          const response = await forceCancelAppointmentAPI(appointmentId);
+          if (response.status === 200) {
+            fetchAppointmentDetail(appointmentId);
+          }
         }
       }
     })

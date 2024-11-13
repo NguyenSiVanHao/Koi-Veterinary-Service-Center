@@ -55,6 +55,19 @@ public class KoiService {
                 -> new AppException(ErrorCode.KOI_NOT_EXITS.getCode(),
                 ErrorCode.KOI_NOT_EXITS.getMessage(), HttpStatus.NOT_FOUND));
 
+        if (request.getBreed() == null || request.getBreed().isEmpty()) {
+            throw new AppException(404,"Please select a breed", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getAge()<=0){
+            throw new AppException(404,"Please enter a valid age", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getLength()<=0){
+            throw new AppException(404,"Please enter a valid length", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getWeight()<=0){
+            throw new AppException(404,"Please enter a valid weight", HttpStatus.BAD_REQUEST);
+        }
+
         koi.setBreed(request.getBreed());
         koi.setAge(request.getAge());
         koi.setLength(request.getLength());
@@ -79,6 +92,21 @@ public class KoiService {
 
     }
         public KoiResponse createKoi (KoiRequest koiRequest){
+
+            if (koiRequest.getBreed() == null || koiRequest.getBreed().isEmpty()) {
+                throw new AppException(404,"Please select a breed", HttpStatus.BAD_REQUEST);
+            }
+            if(koiRequest.getAge()<=0){
+                throw new AppException(404,"Please enter a valid age", HttpStatus.BAD_REQUEST);
+            }
+            if(koiRequest.getLength()<=0){
+                throw new AppException(404,"Please enter a valid length", HttpStatus.BAD_REQUEST);
+            }
+            if(koiRequest.getWeight()<=0){
+                throw new AppException(404,"Please enter a valid weight", HttpStatus.BAD_REQUEST);
+            }
+
+
             Koi koi = new Koi();
             koi.setBreed(koiRequest.getBreed());
             koi.setAge(koiRequest.getAge());

@@ -32,6 +32,7 @@ public class PrescriptionService {
     @Transactional
     public PrescriptionResponse createPrescription(PrescriptionRequest prescriptionRequest) {
 
+
         Prescription prescription = Prescription.builder()
                 .name(prescriptionRequest.getName())
                 .createdDate(prescriptionRequest.getCreatedDate())
