@@ -7,6 +7,7 @@ import { fetchPrescriptionByAppointmentIdAPI } from '../../apis';
 import MedicineListPage from '../MedicineListPage/MedicineListPage';
 import PrescriptionDetail from '../PrescriptionDetail/PrescriptionDetail'; // Import PrescriptionDetail
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 
 const KoiTreatmentPage = () => {
@@ -42,8 +43,15 @@ const KoiTreatmentPage = () => {
   };
   useEffect(() => {
     const fetchPrescription = async () => {
-      const response = await fetchPrescriptionByAppointmentIdAPI(appointmentId)
-      setPrescriptions(response.data)
+      try {
+        const response = await fetchPrescriptionByAppointmentIdAPI(appointmentId)
+        setPrescriptions(response.data);
+      } catch (error) {
+        if(error.response.status !== 404) {
+          setPrescriptions([]);
+          toast.error(error.response.data.message);
+        }
+      }
     }
     fetchPrescription()
   }, [appointmentId, koiUpdateTrigger])
@@ -119,6 +127,11 @@ const KoiTreatmentPage = () => {
             </thead>
 
             <tbody>
+              {prescriptions.length === 0 ?
+                <tr>
+                  <td colSpan="3" className="text-center">No prescription yet</td>
+                </tr>
+                : null}
               {/* Chạy vòng for ở đây */}
               {prescriptions.map(prescription => (
                 <tr key={prescription.id}>

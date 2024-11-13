@@ -183,6 +183,10 @@ export const cancelAppointmentAPI = async (appointmentId) => {
     const response = await api.put(`/appointments/cancel/${appointmentId}`);
     return response.data;
 }
+export const forceCancelAppointmentAPI = async (appointmentId) => {
+    const response = await api.put(`/appointments/completed-refundable/${appointmentId}`);
+    return response.data;
+}
 export const refundAppointmentAPI = async (appointmentId) => {
     const response = await api.put(`/appointments/refund/${appointmentId}`);
     return response.data;
@@ -428,6 +432,19 @@ export const updateUserInfoAPI = async (userData, image) => {
     const response = await api.put(`/users/update`, { ...userData, image: imageURL });
     return response.data;
 }
+
+
+export const createCustomerAPI = async (userData, image) => {
+    let imageURL = userData.image;
+    if (image) {
+        imageURL = await fetchUpLoadImageAPI(image);
+    }
+    const response = await api.post('/users/register', { ...userData, image: imageURL });
+    return response.data;
+};
+
+
+
 // Invoice API
 export const updateInvoiceAPI = async (invoiceId, data) => {
     const response = await api.put(`/invoices/update/${invoiceId}`, data);
@@ -458,12 +475,12 @@ export const fetchCheckoutAPI = async (appointmentId) => {
 
 //Rating
 export const fetchAllRatingByServiceIdAPI = async (serviceId) => {
-    const response = await api.get(`/feedbacks/${serviceId}/feedback/total`);
+    const response = await api.get(`/feedbacks/${serviceId}/total`);
     return response.data;
 }
 
 export const fetchAllRatingByServiceIdAPI2 = async (serviceId) => {
-    const response = await api.get(`/feedbacks/${serviceId}/feedback`);
+    const response = await api.get(`/feedbacks/${serviceId}`);
     return response.data;
 }
 

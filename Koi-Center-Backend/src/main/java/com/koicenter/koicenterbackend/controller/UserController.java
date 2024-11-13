@@ -32,6 +32,8 @@ public class UserController {
         try {
             if (userService.getUserByUsername(newUser.getUsername()) || userService.getUserByEmail(newUser.getEmail())) {
                 return ResponseObject.APIRepsonse(409, "Username or email already exists", HttpStatus.CONFLICT, "");
+            }else {
+                userService.createCustomer(newUser);
             }
             userService.createCustomer(newUser);
             return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");

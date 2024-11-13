@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, updateAppointmentAPI } from "../../apis";
+import { cancelAppointmentAPI, fecthServiceByServiceIdAPI, fetchAppointmentByIdAPI, fetchVetForAssignAPI, forceCancelAppointmentAPI, updateAppointmentAPI } from "../../apis";
 import "./AppointmentDetail.css";
 import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import { APPOINTMENT_STATUS, BOOKING_TYPE, ROLE, SERVICE_FOR } from "../../utils/constants";
@@ -9,6 +9,7 @@ import { Modal } from "antd";
 import PreLoader from "../../components/Preloader/Preloader";
 import InvoiceList from "../../components/InvoiceList/InvoiceList";
 import Rating from "../Rating/Rating";
+import Loading from "../../components/Loading/Loading";
 const updateAppointment = async (appointmentData, appointmentId) => {
   try {
     await updateAppointmentAPI(appointmentData, appointmentId);
@@ -209,9 +210,16 @@ function AppointmentDetail() {
         </div>
       ),
       onOk: async () => {
-        const response = await cancelAppointmentAPI(appointmentId);
-        if (response.status === 200) {
-          fetchAppointmentDetail(appointmentId);
+        if(isCancelable){
+          const response = await cancelAppointmentAPI(appointmentId);
+          if (response.status === 200) {
+            fetchAppointmentDetail(appointmentId);
+          }
+        }else{
+          const response = await forceCancelAppointmentAPI(appointmentId);
+          if (response.status === 200) {
+            fetchAppointmentDetail(appointmentId);
+          }
         }
       }
     })
@@ -249,7 +257,7 @@ function AppointmentDetail() {
   // Check if the appointment is more than one day away
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-  if (isLoading || isLoadingVet) return <PreLoader />
+  if (isLoading) return <PreLoader />
 
 
 
@@ -336,11 +344,12 @@ function AppointmentDetail() {
               {appointment.vetId && !vetList.find((vet) => vet.vetId === appointment.vetId) && <option value={appointment.vetId}>
                 {appointment.vetName}
               </option>}
-              {vetList.map((vet) => (
+              {isLoadingVet ? <Loading/> : vetList.map((vet) => (
                 <option key={vet.vetId} value={vet.vetId}>
                   {vet.user.fullName}
                 </option>
               ))}
+              
             </select>
 
           </div>
