@@ -183,6 +183,7 @@ const MyProfile = () => {
             <button className="btn btn-primary" onClick={handleEdit}>Edit Information</button>
           )}
           <button className="btn btn-primary" onClick={() => navigate("/profile/appointment")}>My Appointments</button>
+          <button className="btn btn-primary" onClick={() => navigate("/profile/forgot-password")}>Forgot Password</button>
           <button className="btn btn-primary" onClick={() => navigate("/profile/pond")}>My Pond</button>
           <button className="btn btn-primary" onClick={() => navigate("/profile/koi")}>My Koi</button>
         </div>

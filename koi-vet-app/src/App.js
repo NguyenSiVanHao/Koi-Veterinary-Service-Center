@@ -60,6 +60,7 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import NewsManagement from './pages/NewsManagement/NewsManagement';
 import NewsPage from './pages/NewsPage/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage/NewsDetailPage';
+import ChangePassword from './pages/ChangePassword/ChangePassword';
 
 function App() {
   const isAuthorized = useSelector(state => state?.user?.isAuthorized)
@@ -92,6 +93,8 @@ function App() {
     <PersistGate loading={null} persistor={persistor}>
       <Router>
         <Routes>
+          <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/medpage" element={<MedicineListPage />} />
           <Route path="/image" element={<ImageUpload />} />
           <Route path="/ggm" element={<GGM />} />
@@ -125,6 +128,7 @@ function App() {
                     <ProfileLayout>
                       <Routes>
                         <Route path="/" element={<MyProfile />} />
+                        
                         <Route path='/koi' element={<Koi isAppointment={false} title="All My Koi" />} />
                         <Route path='/pond' element={<Pond isAppointment={false} title="All My Pond" />} />
                         <Route path='/koi/:koiId' element={
