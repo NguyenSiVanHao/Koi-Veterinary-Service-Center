@@ -13,14 +13,13 @@ function ServicePageDetail() {
   const [serviceDetail, setServiceDetail] = useState(null);
   const [ratings, setRatings] = useState([]);
   const [ratings2, setRatings2] = useState([]);
-  console.log(ratings);
 
 
   useEffect(() => {
     const fetchRating = async () => {
       try {
         const response = await fetchAllRatingByServiceIdAPI(serviceId);
-        console.log(response.data);
+        console.log("average Star :", response.data);
         setRatings(response.data);
       } catch (error) {
         console.error("Error fetching ratings:", error);
@@ -34,6 +33,7 @@ function ServicePageDetail() {
     const fetchRating2 = async () => {
       const response = await fetchAllRatingByServiceIdAPI2(serviceId);
       setRatings2(response.data);
+      console.log("rating", response.data)
     }
     fetchRating2();
   }, [serviceId]);
@@ -123,7 +123,7 @@ function ServicePageDetail() {
               <strong>Service Type:</strong>{" "}
               <span><strong>{serviceDetail.serviceFor}</strong></span>
             </p>
-            <p>Rating: {ratings.averageStar ? `${ratings.averageStar.toFixed(1)} ★` : "0★"}</p>
+            <p>Rating: {ratings.averageStar ? `${ratings.averageStar.toFixed(1)} ★` : "0 ★"}</p>
             <p>Number of feedback: {ratings.number ? ratings.number : 0}</p>
             <Table 
               columns={columns} 

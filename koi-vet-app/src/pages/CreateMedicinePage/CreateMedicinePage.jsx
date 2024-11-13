@@ -163,7 +163,7 @@ function CreateMedicinePage() {
   return (
     <>
       <Container className='mt-4'>
-        <h1>Medicine List</h1>
+        <h2 style={{color: 'var(--color-primary)'}}>Medicine List</h2>
         
         {/* Search Input */}
         <Input

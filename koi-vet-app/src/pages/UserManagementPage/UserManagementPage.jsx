@@ -290,6 +290,7 @@ const UserManagementPage = () => {
             <th>Status</th>
             <th>Phone</th>
             <th>Email</th>
+            <th>Address</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -301,7 +302,7 @@ const UserManagementPage = () => {
               <td>{customer.fullName}</td>
               <td>{customer.status ? "Active" : "Inactive"}</td>
               <td>{customer.customer.phone}</td>
-
+              
               <td>{customer.email}</td>
               <td >{customer.customer.address}</td>
               <td className="d-flex gap-2" >
