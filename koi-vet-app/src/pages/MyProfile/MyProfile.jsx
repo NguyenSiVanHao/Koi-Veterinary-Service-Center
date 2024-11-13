@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchMyInfoAPI, updateCustomerAPI } from "../../apis";
-import { fetchUserProfile, setCustomer, setUser, setVeterinarian, updateUserInfo } from "../../store/userSlice"; // Assuming you have this action in your userSlice
+import { setCustomer, setUser, setVeterinarian } from "../../store/userSlice";
 import "./MyProfile.css";
-import default_profile from "../../assets/img/profile_default.png"
+import default_profile from "../../assets/img/profile_default.png";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Preloader from "../../components/Preloader/Preloader";
+
 const MyProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedInfo, setEditedInfo] = useState({});
@@ -16,45 +17,50 @@ const MyProfile = () => {
   const myInfo = useSelector(state => state?.user);
   const customer = useSelector(state => state?.user?.customer);
   const navigate = useNavigate();
+
   const handleUploadImage = (event) => {
     setImage(event.target.files[0]);
-  }
+  };
+
   const handleEdit = () => { 
-    setEditedInfo(
-      {
-        "userId": myInfo?.user_id,
-        "fullName": myInfo?.fullName,
-        "email": myInfo?.email,
-        "phoneNumber": customer?.phone,
-        "address": customer?.address,
-        "image": myInfo?.image
-      }
-    );
+    setEditedInfo({
+      userId: myInfo?.user_id,
+      fullName: myInfo?.fullName,
+      email: myInfo?.email,
+      phoneNumber: customer?.phone,
+      address: customer?.address,
+      image: myInfo?.image
+    });
     setIsEditing(true);
   };
-  const handleAllAppointment = () => {
-    navigate("/profile/appointment");
-  };
-  const handleMyPond = () => {
-    navigate("/profile/pond");
-  };
-  const handleMyKoi = () => {
-    navigate("/profile/koi");
-  };
+
   const handleSave = async () => {
+    // Phone number validation
+    const phonePattern = /^\d{10}$/;
+    if (!phonePattern.test(editedInfo.phoneNumber)) {
+      toast.error("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(editedInfo.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     setIsEditing(false);
     try {
       setIsLoading(true);
-      const response = await updateCustomerAPI(editedInfo,image);
+      const response = await updateCustomerAPI(editedInfo, image);
       if(response.status === 200){
         const fetchMyInfo = async () => {
           const response = await fetchMyInfoAPI();
           setIsLoading(false);
-          console.log(response);
           if (response.status === 200) {
-            dispatch(setUser(response.data))
-            dispatch(setCustomer(response.data.customer))
-            dispatch(setVeterinarian(response.data.veterinarian))
+            dispatch(setUser(response.data));
+            dispatch(setCustomer(response.data.customer));
+            dispatch(setVeterinarian(response.data.veterinarian));
           }
         }
         fetchMyInfo();
@@ -69,38 +75,36 @@ const MyProfile = () => {
   };
 
   if(isLoading){
-    return <Preloader />
+    return <Preloader />;
   }
+
   return (
     <div className="container my-profile-container my-5">
-      <div className="card shadow ">
-        <div className="card-header  my-profile-card-header text-white">
-          <h3 className="mb-0  my-profile-card-header">My Information</h3>
+      <div className="card shadow">
+        <div className="card-header my-profile-card-header text-white">
+          <h3 className="mb-0 my-profile-card-header">My Information</h3>
         </div>
         <div className="card-body">
           <div className="row">
             <div className="col-md-4 text-center mb-4">
-           
               <img
                 src={image ? URL.createObjectURL(image) : myInfo?.image || default_profile}
                 alt="default_profile"
                 className="img-fluid rounded-circle mb-3"
                 style={{ width: "150px", height: "150px" }}
               />
-               {(isEditing) && ( // Only show the upload input if isEditing is true
-              <div className="form-group mt-3 text-center">
-                <label className="custom-file-upload">
-                  <input
-                    type="file"
-                    onChange={handleUploadImage}
-                    disabled={!isEditing} // cho phép upload khi trong chế độ create hoặc edit
-                  />
-                  Upload Image <i className="fa-solid fa-image"></i>
-                </label>
-              </div>
-            )}
-              {/* <h4>{myInfo.fullName}</h4>
-              <p className="text-muted">{myInfo.email}</p> */}
+              {isEditing && (
+                <div className="form-group mt-3 text-center">
+                  <label className="custom-file-upload">
+                    <input
+                      type="file"
+                      onChange={handleUploadImage}
+                      disabled={!isEditing}
+                    />
+                    Upload Image <i className="fa-solid fa-image"></i>
+                  </label>
+                </div>
+              )}
             </div>
             <div className="col-md-8">
               <form>
@@ -132,7 +136,7 @@ const MyProfile = () => {
                         onChange={handleChange}
                       />
                     ) : (
-                      <p classN ame="form-control-plaintext">{myInfo.email}</p>
+                      <p className="form-control-plaintext">{myInfo.email}</p>
                     )}
                   </div>
                 </div>
@@ -174,14 +178,13 @@ const MyProfile = () => {
         </div>
         <div className="card-footer text-center d-flex justify-content-between">
           {isEditing ? (
-            <button className="btn btn-primary" onClick={() => handleSave()}>Save Changes</button>
+            <button className="btn btn-primary" onClick={handleSave}>Save Changes</button>
           ) : (
-            <button className="btn btn-primary" onClick={() => handleEdit()}>Edit Information</button>
+            <button className="btn btn-primary" onClick={handleEdit}>Edit Information</button>
           )}
-           <button className="btn btn-primary" onClick={() => handleAllAppointment()}>My Appointments</button>
-          
-          <button className="btn btn-primary" onClick={() => handleMyPond()}>My Pond</button>
-          <button className="btn btn-primary" onClick={() => handleMyKoi()}>My Koi</button>
+          <button className="btn btn-primary" onClick={() => navigate("/profile/appointment")}>My Appointments</button>
+          <button className="btn btn-primary" onClick={() => navigate("/profile/pond")}>My Pond</button>
+          <button className="btn btn-primary" onClick={() => navigate("/profile/koi")}>My Koi</button>
         </div>
       </div>
     </div>

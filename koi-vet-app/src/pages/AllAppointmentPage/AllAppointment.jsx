@@ -13,6 +13,7 @@ import AdminHeader from "../../components/AdminHeader/AdminHeader";
 import { Pagination, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import PreLoader from "../../components/Preloader/Preloader";
 import refund from "../../assets/img/refund logo.svg"
+import { toast } from "react-toastify";
 
 function AllAppointment() {
   const [appointments, setAppointments] = useState([]);
@@ -21,7 +22,7 @@ function AllAppointment() {
   const [totalPage, setTotalPage] = useState(0);
   const customerId = useSelector((state) => state?.user?.customer?.customerId);
   const [title, setTitle] = useState("All Appointments");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const vetId = useSelector((state) => state?.user?.veterinarian?.vetId);
   const role = useSelector((state) => state.user.role);
@@ -29,15 +30,15 @@ function AllAppointment() {
   const [offSet, setOffSet] = useState(1);
   const handleChangePage = async (event, value) => {
     await setAppointments([]);
-    await setSearch("");
+    await setSearch(null);
     await setTotalPage(0);
     setOffSet(value);
   };
 
   // Create a debounced function
   const debouncedSetSearch = useCallback(
-    
     debounce((value) => {
+      setAppointments([]);
       setOffSet(1);
       setDebouncedSearch(value);
     }, 1000),
@@ -47,7 +48,7 @@ function AllAppointment() {
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-   
+    
     debouncedSetSearch(e.target.value);
   };
 
@@ -61,7 +62,9 @@ function AllAppointment() {
         setIsLoading(false);
         console.log(response?.data)
       } catch (error) {
-        console.log(error);
+       if(search){
+          toast.error("Not found any appointment with this search");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -74,7 +77,9 @@ function AllAppointment() {
         setTotalPage(response?.data?.totalPages);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        if(search){
+          toast.error("Not found any appointment with this search");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -88,7 +93,9 @@ function AllAppointment() {
         setIsLoading(false);
         setTitle("My Appointments");
       } catch (error) {
-        console.log(error);
+        if(search){
+          toast.error("Not found any appointment with this search");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -96,7 +103,7 @@ function AllAppointment() {
     if (role === ROLE.VETERINARIAN) {
       fetchAppointmentForVet(vetId, status, pageSize, debouncedSearch, offSet);
       setTitle("All My Appointments");
-    } else if (role === ROLE.STAFF) {
+    } else if (role === ROLE.STAFF || role === ROLE.MANAGER) {
       fetchAppointmentForStaff(debouncedSearch);
       setTitle("All Veterinarian Appointments");
     } else if (role === ROLE.CUSTOMER) {
@@ -106,11 +113,13 @@ function AllAppointment() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, customerId, status, pageSize, offSet, debouncedSearch]);
 
-  const handleChangeStatus = (status) => {
-    setStatus(status);
-    setAppointments([]);
-    setSearch("");
+  const handleChangeStatus = (newStatus) => {
+    if(newStatus !== status){
+      setAppointments([]);
+      setStatus(newStatus);
+    }
     setOffSet(1);
+    setSearch(null);
     console.log("status", status)
   };
 
@@ -153,10 +162,10 @@ function AllAppointment() {
             <button className="nav-link active custom-text-color" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onClick={() => handleChangeStatus("ALL")}>
               <i className="fas fa-list-ul me-2"></i>All
             </button>
-            {role !== ROLE.VETERINARIAN && <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
+            {role !== ROLE.VETERINARIAN && <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab"  type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.CREATED)}>
               <i className="fa-solid fa-hourglass-start "></i> Waiting Confirm
             </button>}
-            <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
+            <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab"  type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <i className="fas fa-user-md me-2"></i>Veterinarian Assigned
             </button>
             <button className="nav-link custom-text-color" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" onClick={() => handleChangeStatus(APPOINTMENT_STATUS.PROCESS)}>
@@ -180,7 +189,7 @@ function AllAppointment() {
 
       </div>
       <div className="table-responsive">
-        <table className="table table-striped table-sm tableleft">
+        <table className="table table-striped table-md tableleft">
           <thead>
             <tr>
               <th>Code</th> <th>Customer</th> <th>Service</th><th>Create Date</th> <th>Type</th> <th>Time</th><th>Date</th><th>Status</th><th>Action</th>
