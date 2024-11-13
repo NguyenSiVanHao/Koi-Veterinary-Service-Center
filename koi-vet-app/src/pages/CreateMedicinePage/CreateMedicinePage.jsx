@@ -5,6 +5,7 @@ import { createMedicineAPI, deleteMedicineByIdAPI, fetchMedicinesAPI, updateMedi
 import './CreateMedicinePage.css';
 import TextArea from 'antd/es/input/TextArea';
 import AdminHeader from '../../components/AdminHeader/AdminHeader';
+import PreLoader from '../../components/Preloader/Preloader';
 
 function CreateMedicinePage() {
   const [newMedicineData, setNewMedicineData] = useState({
@@ -16,6 +17,7 @@ function CreateMedicinePage() {
   const [editingMedicine, setEditingMedicine] = useState(null); // State for the medicine being edited
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); // State for create modal
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch medicines on component mount
   useEffect(() => {
@@ -25,6 +27,8 @@ function CreateMedicinePage() {
         setAvailableMedicines(response.data || []);
       } catch (error) {
         message.error("Failed to fetch medicines.");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchMedicines();
@@ -160,6 +164,8 @@ function CreateMedicinePage() {
       ),
     },
   ];
+
+  if (isLoading) return <PreLoader />;
 
   return (
     <>

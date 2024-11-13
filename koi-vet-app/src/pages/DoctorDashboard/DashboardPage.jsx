@@ -6,6 +6,7 @@ import './DashboardPage.css';
 import { fetchDashboardAPI, fetchDashboardByServiceAPI } from '../../apis';
 import { px } from 'framer-motion';
 import AdminHeader from '../../components/AdminHeader/AdminHeader';
+import PreLoader from '../../components/Preloader/Preloader';
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
 
@@ -22,6 +23,7 @@ function DashboardPage() {
   const { TabPane } = Tabs;
   const { RangePicker } = DatePicker;
   const [dataSource, setDataSource] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
 
   useEffect(() => {
@@ -71,6 +73,8 @@ function DashboardPage() {
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
         setDataSource([]);
+      } finally {
+        setIsLoading(false);
       }
     };
     if(startTime.length > 0 && endTime.length > 0 && time.length > 0) {
@@ -186,6 +190,7 @@ function DashboardPage() {
     return popularServices.map(service => service.serviceName).join(', ');
   }
 
+  if (isLoading) return <PreLoader />;
   return (
     <>
     <AdminHeader title="Dashboard" />

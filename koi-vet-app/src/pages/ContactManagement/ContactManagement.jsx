@@ -5,6 +5,7 @@ import { createContactReplyAPI, fetchContactAPI, fetchContactDetailAPI } from '.
 import Modal from '../../components/Modal/Modal';
 import AdminHeader from '../../components/AdminHeader/AdminHeader';
 import './ContactManagement.css';
+import PreLoader from '../../components/Preloader/Preloader';
 
 function ContactManagement() {
     const [dataSource, setDataSource] = useState([]);
@@ -12,6 +13,7 @@ function ContactManagement() {
     const [contactDetail, setContactDetail] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
     const [form] = Form.useForm();
+    const [isLoading, setIsLoading] = useState(true);
         
     const handleOpenModal = async (id) => {
         setSelectedId(id);
@@ -44,6 +46,7 @@ function ContactManagement() {
         const fetchContact = async () => {
             const response = await fetchContactAPI();
             setDataSource(response.data);
+            setIsLoading(false);
         }
         fetchContact();
     }, []);
@@ -82,6 +85,8 @@ function ContactManagement() {
             )
         }
     ]
+
+    if (isLoading) return <PreLoader />;
 
     return (
         <>

@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./VetProfile.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchVetByVetIdAPI, updateDescriptionByVetIdAPI } from "../../apis";
+import { fetchVetByVetIdAPI } from "../../apis";
 import Loading from "../../components/Loading/Loading";
 import { useSelector } from 'react-redux';
-import Modal from "antd/es/modal/Modal";
-import { Form } from "antd";
-import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css';
 
 function VetProfile() {
   const { vetId } = useParams();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
-  const [description, setDescription] = useState("");
   const [vets, setVets] = useState(null);
   const role = useSelector(state => state.user.role);
 
@@ -23,24 +16,6 @@ function VetProfile() {
     const response = await fetchVetByVetIdAPI(vetId);
     setVets(response?.data);
   };
-
-  const handleSubmit = async () => {
-    await updateDescriptionByVetIdAPI(vetId, {description});
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  }
-
-  const handleCancel = () => {
-    setOpen(false);
-    form.resetFields();
-  }
-
-  const handleOk = () => {
-    handleSubmit();
-  }
 
   useEffect(() => {
     fectchVetProfile();
@@ -76,9 +51,6 @@ function VetProfile() {
           >
             Previous Step
           </button>
-          {role !== "CUSTOMER" && (
-          <button className="vet-profile-edit mt-5" onClick={handleOpen}>Edit</button>
-          )}
         </div>
 
         <div className="col-md-6">
@@ -92,28 +64,6 @@ function VetProfile() {
         </div>
       </div>
     </div>
-    
-    <Modal open={open} onCancel={handleCancel} onOk={handleOk}>
-      <p>Information Veterinarian</p>
-      <Form form={form} onFinish={handleSubmit}>
-      <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter a description",
-                },
-              ]}
-            >
-              <ReactQuill
-                theme="snow"
-                value={description} 
-                onChange={setDescription}
-              />
-            </Form.Item>
-      </Form>
-    </Modal>
     </>
   );
 }

@@ -9,10 +9,12 @@ import {
 } from "../../apis";
 import "./PrescriptionDetail.css";
 import { message } from "antd";
+import { useSelector } from 'react-redux';
 
 function PrescriptionDetail(props) {
   const [prescriptionData, setPrescriptionData] = useState([]);
   const [editingMedicines, setEditingMedicines] = useState({});
+  const role = useSelector(state => state.user.role);
 
   useEffect(() => {
     const handlefetchPrescriptionId = async () => {
@@ -134,7 +136,8 @@ function PrescriptionDetail(props) {
         );
       },
     },
-    {
+    
+    role !== "CUSTOMER" && {
       title: "Delete",
       key: "delete",
       render: (text, record) => (
@@ -151,7 +154,7 @@ function PrescriptionDetail(props) {
         </Button>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const handleDeletePrescriptionMedicine = async (
     prescriptionId,

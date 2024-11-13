@@ -7,11 +7,11 @@ const StaffForm = ({ selectedUser, setSelectedUser, handleImageChange, image, is
     console.log("selectedUser fss", selectedUser);
     return (
         <div className="d-flex flex-column gap-2">
-
+            {!isEditUser && 
             <div className="d-flex flex-column">
                 <label>Username</label>
                 <input type="text" value={selectedUser?.username || ""} onChange={(e) => setSelectedUser({ ...selectedUser, username: e.target.value })} />
-            </div>
+            </div>}
             {!isEditUser && <div className="d-flex flex-column">
                 <label>Password</label>
                 <input type="text" value={selectedUser?.password || ""} onChange={(e) => setSelectedUser({ ...selectedUser, password: e.target.value })} />
