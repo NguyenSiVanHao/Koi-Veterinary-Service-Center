@@ -31,7 +31,7 @@ export const changePasswordAPI = async (username, oldPassword, newPassword) => {
         });
     }
     console.log(userInfo);
-    const response = await api.post(`/users/updatePassword`, {
+    const response = await api.put(`/users/updatePassword`, {
         userId: userInfo.data.data.user_id,
         currentPassword: oldPassword,
         newPassword: newPassword

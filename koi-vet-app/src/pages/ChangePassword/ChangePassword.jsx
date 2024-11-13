@@ -14,18 +14,23 @@ function ChangePassword() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [newPassword, setNewPassword] = useState(""); // New state for repassword
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log(username, oldPassword, newPassword);
-    
+    console.log(username, oldPassword, newPassword, confirmPassword);
+    if(newPassword !== confirmPassword){
+      toast.error("New password and confirm password do not match");
+      setIsLoading(false);
+      return;
+    }
     try {
       const response = await changePasswordAPI(username, oldPassword, newPassword);
-      if (response?.data?.status === 201) {
-        toast.success(response?.data?.message);
+      if (response?.status === 200) {
+        toast.success("Change password successfully");
         navigate("/login");
       }
     } catch (error) {
@@ -92,11 +97,17 @@ function ChangePassword() {
                     New Password
                   </label>
                 </div>
+                <div className="form-floating mb-3">
+                    <input type="password" className="form-control" name="confirmPassword" id="confirmPassword" value={confirmPassword} placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} required />
+                    <label htmlFor="confirmPassword" className="form-label">
+                        Confirm Password
+                    </label>
+                </div>
               </div>
               <div className="col-12">
                 <div className="d-grid my-3">
                   <button className="btn-dark btn btn-lg" type="submit" disabled={isLoading}>
-                    {isLoading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : "SIGN UP"}
+                    {isLoading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : "CHANGE PASSWORD"}
                   </button>
                 </div>
               </div>
