@@ -28,6 +28,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +73,23 @@ public class PaymentController {
     private CustomerRepository customerRepository;
     @Autowired
     SendEmalService sendEmalService;
+
+    @Value("${app.payment.success-url}")
+    private String paymentUrl;
+
+    private String successUrl;
+    private String failUrl;
+
+    @PostConstruct
+    public void init() {
+        successUrl = buildPaymentUrl("/booking/paymentsuccess");
+        failUrl = buildPaymentUrl("/booking/paymentfailed");
+    }
+
+    public String buildPaymentUrl(String endpoint) {
+        return paymentUrl + endpoint;
+    }
+
 
     @PostMapping("/vn-pay")
     public ResponseEntity<ResponseObject> pay(HttpServletRequest request, @RequestBody TreamentRequest treamentRequest) {
@@ -136,9 +154,9 @@ public class PaymentController {
                         sendEmalService.sendMailSender(user.getEmail(), emailContent, "🧑‍⚕️💉❤️ Confirmation of Your Koi Service Appointment");
                     }
                 }
-                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/booking/paymentsuccess")).build();
+                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(successUrl)).build();
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create("http://localhost:3000/booking/paymentfailed")).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create(failUrl)).build();
             }
             } catch (Exception e) {
             return ResponseObject.APIRepsonse(500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
@@ -284,10 +302,10 @@ public class PaymentController {
                         sendEmalService.sendMailSender(user.getEmail(), emailContent, "🧑‍⚕️💉❤️ Confirmation of Your Koi Service Appointment");
                     }
                 }
-                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/booking/paymentsuccess")).build();
+                return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(successUrl)).build();
             } else {
                 System.out.println("Thanh toán thất bại: " + message);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create("http://localhost:3000/booking/paymentfailed")).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).location(URI.create(failUrl)).build();
             }
         } catch (Exception e) {
             e.printStackTrace();

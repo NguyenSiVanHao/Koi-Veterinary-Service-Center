@@ -79,7 +79,7 @@ const HomeVisitPricePage = () => {
             <div className='container'>
                 <div className='row'>
                     <div className='col-md-12'>
-                        <table className="delivery-pricing-table-content">
+                        <table className="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>No</th>

@@ -19,6 +19,7 @@ export const APPOINTMENT_STATUS = {
   FINISH: "FINISH",
   CANCEL: "CANCEL",
   REFUND: "REFUND",
+  REFUNDABLE: "REFUNDABLE",
 };
 
 export const SERVICE_FOR = {

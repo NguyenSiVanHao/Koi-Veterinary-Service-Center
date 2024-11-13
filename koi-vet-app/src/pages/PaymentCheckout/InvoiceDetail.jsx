@@ -217,7 +217,7 @@ const InvoiceDetail = ({ isCheckout }) => {
                     <img src={paid} alt="paid" width={100} height={100} style={{ transform: "rotate(20deg)" }} />
                   </div>
                 }
-                {role !== ROLE.CUSTOMER && appointmentDetail?.status === APPOINTMENT_STATUS.CANCEL &&
+                {role !== ROLE.CUSTOMER && appointmentDetail?.status === APPOINTMENT_STATUS.REFUNDABLE &&
                   <div className="text-end d-flex justify-content-end">
                     <button className='btn btn-primary' onClick={() => handleRefund()}>Confirm Refund <i className="fas fa-undo-alt"></i></button>
                   </div>

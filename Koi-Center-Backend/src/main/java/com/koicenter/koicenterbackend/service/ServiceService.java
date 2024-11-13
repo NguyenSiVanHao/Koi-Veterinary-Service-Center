@@ -139,6 +139,19 @@ public class ServiceService {
     }
 
     public boolean createService(ServiceRequest serviceRequest) {
+        if(serviceRequest.getServiceName().isEmpty() || serviceRequest.getDescription().isEmpty()) {
+            throw new AppException(ErrorCode.SERVICE_NAME_DO_NOT_NULL.getCode(), ErrorCode.SERVICE_NAME_DO_NOT_NULL.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        if(serviceRequest.getDescription().isEmpty() || serviceRequest.getDescription() == null) {
+            throw new AppException(404,"Please enter description",HttpStatus.BAD_REQUEST);
+        }
+        if (serviceRequest.getKoiPrice() < 0 || serviceRequest.getPondPrice() < 0) {
+            throw new AppException(404,"Please enter price greater than 0",HttpStatus.BAD_REQUEST);
+        }
+        if(serviceRequest.getBasePrice() < 0){
+            throw new AppException(404,"Please enter price greater than 0",HttpStatus.BAD_REQUEST);
+        }
+
         try {
             if (servicesRepository.findByserviceName(serviceRequest.getServiceName()).isPresent()) {
                 return false;
@@ -161,6 +174,18 @@ public class ServiceService {
     }
 
     public boolean updateService(ServiceRequest serviceRequest, String serviceId) {
+        if(serviceRequest.getServiceName().isEmpty() || serviceRequest.getDescription().isEmpty()) {
+            throw new AppException(404,"Please enter service name",HttpStatus.BAD_REQUEST);
+        }
+        if(serviceRequest.getDescription().isEmpty() || serviceRequest.getDescription() == null) {
+            throw new AppException(404,"Please enter description",HttpStatus.BAD_REQUEST);
+        }
+        if (serviceRequest.getKoiPrice() < 0 || serviceRequest.getPondPrice() < 0) {
+            throw new AppException(404,"Please enter price",HttpStatus.BAD_REQUEST);
+        }
+        if(serviceRequest.getBasePrice() < 0){
+            throw new AppException(404,"Please enter price greater than 0",HttpStatus.BAD_REQUEST);
+        }
         try {
             com.koicenter.koicenterbackend.model.entity.Service existingService = servicesRepository.findByServiceId(serviceId);
             if (existingService == null) {

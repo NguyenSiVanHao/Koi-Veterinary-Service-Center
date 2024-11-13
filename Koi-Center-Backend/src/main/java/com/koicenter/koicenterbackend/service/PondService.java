@@ -67,6 +67,18 @@ public class PondService {
         Pond pond = pondRepository.findById(pondId).orElseThrow(()
                 -> new AppException(ErrorCode.POND_NOT_EXITS.getCode(),
                 ErrorCode.POND_NOT_EXITS.getMessage(), HttpStatus.NOT_FOUND));
+        if(request.getPerimeter() <= 0){
+            throw new AppException(404,"Please enter a valid perimeter that greater then 0", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getDepth() <= 0){
+            throw new AppException(404,"Please enter a valid depth that greater then 0", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getFilterSystem() == null){
+            throw new AppException(404,"Please enter a filter system.", HttpStatus.BAD_REQUEST);
+        }
+        if(request.getWaterQuality() == null){
+            throw new AppException(404,"Please enter a water quality.", HttpStatus.BAD_REQUEST);
+        }
         pond.setStatus(request.isStatus());
         pond.setDepth(request.getDepth());
         pond.setPerimeter(request.getPerimeter());
@@ -81,6 +93,20 @@ public class PondService {
 
 
     public PondResponse createPond (PondRequest pondRequest){
+
+        if(pondRequest.getPerimeter() <= 0){
+            throw new AppException(404,"Please enter a valid perimeter that greater then 0", HttpStatus.BAD_REQUEST);
+        }
+        if(pondRequest.getDepth() <= 0){
+            throw new AppException(404,"Please enter a valid depth that greater then 0", HttpStatus.BAD_REQUEST);
+        }
+        if(pondRequest.getFilterSystem() == null){
+            throw new AppException(404,"Please enter a filter system.", HttpStatus.BAD_REQUEST);
+        }
+        if(pondRequest.getWaterQuality() == null){
+            throw new AppException(404,"Please enter a water quality.", HttpStatus.BAD_REQUEST);
+        }
+
         Pond pond = new Pond();
         pond.setStatus(true); //tao pond moi de true lun
         pond.setDepth(pondRequest.getDepth());

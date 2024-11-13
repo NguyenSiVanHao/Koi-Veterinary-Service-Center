@@ -28,7 +28,9 @@ function DashboardPage() {
       const data = await fetchDashboardByServiceAPI(startTime, endTime, time);
       setServiceData(data.data);
     };
-    fetchServiceData();
+    if(startTime.length > 0 && endTime.length > 0 && time.length > 0) {
+      fetchServiceData()
+    };
   }, [startTime, endTime, time]);
 
   console.log(serviceData);
@@ -70,7 +72,9 @@ function DashboardPage() {
         setDataSource([]);
       }
     };
-    fetchDashboardData(startTime, endTime, time);
+    if(startTime.length > 0 && endTime.length > 0 && time.length > 0) {
+      fetchDashboardData(startTime, endTime, time);
+    }
   }, [startTime, endTime, time]);
 
   const totalAppointmentcard = dataSource?.reduce((sum, item) => sum + (item.totalAppointment || 0), 0) || 0;

@@ -84,7 +84,7 @@ function ContactManagement() {
 
     return (
         <Container>
-            <AdminHeader title="Contact Management" />
+            <h2 style={{color: 'var(--color-primary)'}}>Contact Management</h2>
             <Table dataSource={dataSource} columns={columns1} rowKey="id" pagination={{ pageSize: 7 }}/>
         
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>

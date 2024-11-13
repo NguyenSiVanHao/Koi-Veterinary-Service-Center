@@ -112,8 +112,8 @@ public class AppointmentController {
         }
     }
     @PutMapping("/cancel/{appointmentId}")
-    public ResponseEntity<ResponseObject> updateAppointmentBecomeCancel(@PathVariable String appointmentId) {
-        AppointmentResponse appointmentResponse = appointmentService.updateAppointmentBecomeCannel(appointmentId);
+    public ResponseEntity<ResponseObject> updateAppointmentBecomeRefundable(@PathVariable String appointmentId) {
+        AppointmentResponse appointmentResponse = appointmentService.updateAppointmentBecomeRefundable(appointmentId); // kiem tra gio được tra tien hoạc không
         if (appointmentResponse != null) {
             return ResponseObject.APIRepsonse(200, "UPDATE APPOINTMENT SUCCESSFULLY", HttpStatus.OK, appointmentResponse);
         } else {
@@ -121,8 +121,17 @@ public class AppointmentController {
         }
     }
     @PutMapping("/refund/{appointmentId}")
-    public ResponseEntity<ResponseObject> updateAppointmentBecomeRefund(@PathVariable String appointmentId) {
-        AppointmentResponse appointmentResponse = appointmentService.updateAppointmentBecomeRefund(appointmentId);
+    public ResponseEntity<ResponseObject> updateAppointmentFromRefundableBecomeRefund(@PathVariable String appointmentId) {
+        AppointmentResponse appointmentResponse = appointmentService.updateAppointmentFromRefundableBecomeRefund(appointmentId); // tra tiien thanh cong
+        if (appointmentResponse != null) {
+            return ResponseObject.APIRepsonse(200, "REFUND APPOINTMENT SUCCESSFULLY", HttpStatus.OK, appointmentResponse);
+        } else {
+            return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, "");
+        }
+    }
+    @PutMapping("/completed-refundable/{appointmentId}")
+    public ResponseEntity<ResponseObject> updateAppointmentCompletedWithRefund(@PathVariable String appointmentId) { // dun gio nhung benh vien vẫn trả tiền
+        AppointmentResponse appointmentResponse = appointmentService.updateAppointmentCompletedWithRefund(appointmentId);
         if (appointmentResponse != null) {
             return ResponseObject.APIRepsonse(200, "REFUND APPOINTMENT SUCCESSFULLY", HttpStatus.OK, appointmentResponse);
         } else {

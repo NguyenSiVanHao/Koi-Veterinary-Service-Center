@@ -60,6 +60,16 @@ public class MedicineService {
     //c thuoc
     public MedicineResponse createMedicine(MedicineRequest medicineRequest) {
 
+        if(medicineRequest.getName() == null || medicineRequest.getName().isEmpty()){
+            throw new AppException(404, "Please enter medicine name", HttpStatus.BAD_REQUEST);
+        }
+        if(medicineRequest.getDescription() == null || medicineRequest.getDescription().isEmpty()){
+            throw new AppException(404, "Please enter medicine description", HttpStatus.BAD_REQUEST);
+        }
+        if(medicineRequest.getMedUnit() == null){
+            throw new AppException(404, "Please choose medicine medUnit", HttpStatus.BAD_REQUEST);
+        }
+
         Medicine med = medicineRepository.findByName(medicineRequest.getName());
         if(med != null){
             throw new AppException(ErrorCode.MEDICINE_EXITED.getCode(), ErrorCode.MEDICINE_EXITED.getMessage(), HttpStatus.CONFLICT);
@@ -77,7 +87,15 @@ public class MedicineService {
         Medicine medicine = medicineRepository.findById(id).orElseThrow(() ->
                 new AppException(ErrorCode.MEDICINE_NOT_EXITS.getCode(),
                         ErrorCode.MEDICINE_NOT_EXITS.getMessage(), HttpStatus.NOT_FOUND));
-
+        if(medicineRequest.getName() == null || medicineRequest.getName().isEmpty()){
+            throw new AppException(404, "Please enter medicine name", HttpStatus.BAD_REQUEST);
+        }
+        if(medicineRequest.getDescription() == null || medicineRequest.getDescription().isEmpty()){
+            throw new AppException(404, "Please enter medicine description", HttpStatus.BAD_REQUEST);
+        }
+        if(medicineRequest.getMedUnit() == null){
+            throw new AppException(404, "Please choose medicine medUnit", HttpStatus.BAD_REQUEST);
+        }
         medicine.setName(medicineRequest.getName());
         medicine.setDescription(medicineRequest.getDescription());
         medicine.setMedUnit(medicineRequest.getMedUnit());

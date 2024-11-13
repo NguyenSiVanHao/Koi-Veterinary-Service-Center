@@ -44,7 +44,10 @@ public enum ErrorCode {
     YEAR_NOT_EXCEED(400,"The Year Time range not exceed 3 year "),
     DAY_NOT_EXCEED(400,"The Day Time range not exceed 30 days "),
     USER_NAME_EXISTED(401,"User name already existed"),
-        MEDICINE_EXITED(401,"Medicine not exits")
+        MEDICINE_EXITED(401,"Medicine not exits"),
+    INVALID_TIME(400, "Invalid appointment time"),
+    INVALID_APPOINTMENT_STATUS_FOR_REFUND(400, "Invalid appointment status for refund. Don't must status 'REFUNDABLE' "),
+    SERVICE_NAME_DO_NOT_NULL(400, "Service name cannot be null"),
 
     ;
     private int code;

@@ -18,6 +18,12 @@ public class FaqService {
     private FaqRepository faqRepository;
 
     public Faq createFaq(FaqRequest faqRequest) {
+        if(faqRequest.getAnswer().isEmpty() || faqRequest.getAnswer() == null) {
+            throw new AppException(404,"Please enter answer",HttpStatus.BAD_REQUEST);
+        }
+        if(faqRequest.getQuestion().isEmpty() || faqRequest.getQuestion() == null) {
+            throw new AppException(400,"Please enter question",HttpStatus.BAD_REQUEST);
+        }
         Faq faq = new Faq();
         faq.setQuestion(faqRequest.getQuestion());
         faq.setAnswer(faqRequest.getAnswer());
@@ -35,6 +41,12 @@ public class FaqService {
     }
 
     public Faq updateFaq(String faqId, FaqRequest faqRequest) {
+        if(faqRequest.getAnswer().isEmpty() || faqRequest.getAnswer() == null) {
+            throw new AppException(404,"Please enter answer",HttpStatus.BAD_REQUEST);
+        }
+        if(faqRequest.getQuestion().isEmpty() || faqRequest.getQuestion() == null) {
+            throw new AppException(400,"Please enter question",HttpStatus.BAD_REQUEST);
+        }
         Faq faq = faqRepository.findById(faqId)
                 .orElseThrow(() -> new AppException(ErrorCode.FAQ_ID_NOT_FOUND.getCode(),
                         ErrorCode.FAQ_ID_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
