@@ -7,7 +7,6 @@ import Register from './pages/Register/Register';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HomePage from './pages/HomePage/HomePage';
-import Medicine from './pages/Medicine/Medicine';
 import VeterinarianPage from './pages/VeterinarianPage/VeterinarianPage';
 import UnauthorizedPage from './pages/UnauthorizedPage/UnauthorizedPage';
 import MyProfile from './pages/MyProfile/MyProfile';

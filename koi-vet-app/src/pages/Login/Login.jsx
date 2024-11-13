@@ -1,20 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.css";
 import logo from "../../assets/img/logo.png";
 import logim_side from "../../assets/img/login_side.png";
 import { toast } from "react-toastify";
-import { fetchLoginAPI, fetchLoginWithGoogleAPI } from "../../apis";
+import { fetchLoginAPI, fetchLogoutAPI } from "../../apis";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setIsAuthorized } from "../../store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser, setIsAuthorized } from "../../store/userSlice";
 import axios from "axios";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { API_ROOT } from "../../utils/constants";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const isAuthorized = useSelector(state => state?.user?.isAuthorized)
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  useEffect(() => {
+    const handleLogout = async () => {
+      try {
+        const response = await fetchLogoutAPI();
+        toast.success(response.data.message);
+      } catch (error) {
+        console.log("error", error)
+      } finally {
+        localStorage.removeItem("accessToken");
+        await localStorage.removeItem("accessToken");
+        await dispatch(clearUser());
+        await dispatch(setIsAuthorized(false));
+      }
+    };
+    if (isAuthorized) {
+      handleLogout();
+    }
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault(); // chặn hành động mặc định của form như refresh lại trang
 
@@ -34,7 +55,7 @@ const Login = () => {
 
   const handleLoginSuccess = async (response) => {
     try {
-      const res = await axios.post('http://localhost:8080/api/v1/auth/login-success', {
+      const res = await axios.post(`${API_ROOT}/auth/login-success`, {
         token: response.credential,
       });
 

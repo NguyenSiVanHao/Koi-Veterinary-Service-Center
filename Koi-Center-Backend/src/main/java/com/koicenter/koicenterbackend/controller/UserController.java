@@ -32,6 +32,8 @@ public class UserController {
         try {
             if (userService.getUserByUsername(newUser.getUsername()) || userService.getUserByEmail(newUser.getEmail())) {
                 return ResponseObject.APIRepsonse(409, "Username or email already exists", HttpStatus.CONFLICT, "");
+            }else {
+                userService.createCustomer(newUser);
             }
             userService.createCustomer(newUser);
             return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
@@ -79,14 +81,14 @@ public class UserController {
             return ResponseObject.APIRepsonse(404, "Your current password is incorrect", HttpStatus.BAD_REQUEST, "");
         }
     }
-    @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
+    @PreAuthorize("hasAnyRole('MANAGER','STAFF', 'CUSTOMER')")
     @PutMapping("/update")
     public ResponseEntity<ResponseObject> update(@RequestBody UpdateUserRequest updateUserRequest){
         boolean isUpdated = userService.updateUser(updateUserRequest);
         if(isUpdated){
             return ResponseObject.APIRepsonse(200, "User updated successfully!", HttpStatus.OK, null);
         }else {
-            return ResponseObject.APIRepsonse(404, "User does not exist!", HttpStatus.NOT_FOUND, null);
+            return ResponseObject.APIRepsonse(500, "Update fail!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
 }

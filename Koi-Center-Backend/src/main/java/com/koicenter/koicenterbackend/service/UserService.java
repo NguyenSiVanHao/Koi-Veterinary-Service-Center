@@ -75,13 +75,13 @@ public class UserService {
     public void createCustomer(RegisterRequest newUser) {
         String phone = newUser.getPhone();
 
-        String phoneRegex = "^09\\d{8}$";
-        Pattern pattern = Pattern.compile(phoneRegex);
-        Matcher matcher = pattern.matcher(phone);
-
-        if (!matcher.matches()) {
-            throw new AppException(400, "Phone number is not correct", HttpStatus.BAD_REQUEST);
-        }
+//        String phoneRegex = "^09\\d{8}$";
+//        Pattern pattern = Pattern.compile(phoneRegex);
+//        Matcher matcher = pattern.matcher(phone);
+//
+//        if (!matcher.matches()) {
+//            throw new AppException(400, "Phone number is not correct", HttpStatus.BAD_REQUEST);
+//        }
         User user = new User();
         user.setUsername(newUser.getUsername());
         user.setPassword(encoder.encode(newUser.getPassword()));
@@ -205,7 +205,7 @@ public class UserService {
         List<UserResponse> userResponseList = new ArrayList<>();
 
         for (User user : userList) {
-            if (user.getRole() == Role.CUSTOMER && user.isStatus()) {
+            if (user.getRole() == Role.CUSTOMER ) {
                 UserResponse userResponse = UserResponse.builder()
                         .user_id(user.getUserId())
                         .username(user.getUsername())
@@ -228,7 +228,7 @@ public class UserService {
                     userResponse.setCustomer(customerDTO);
                     userResponseList.add(userResponse);
                 }
-            } else if (user.getRole() == Role.VETERINARIAN && user.isStatus() && user.getVeterinarian() != null) {
+            } else if (user.getRole() == Role.VETERINARIAN  && user.getVeterinarian() != null) {
                 UserResponse userResponse = UserResponse.builder()
                         .user_id(user.getUserId())
                         .username(user.getUsername())
@@ -264,7 +264,7 @@ public class UserService {
                 veterinarianResponse.setListOfServices(serviceNames);
                 userResponse.setVeterinarian(veterinarianResponse);
                 userResponseList.add(userResponse);
-            } else if (user.getRole() == Role.STAFF && user.isStatus()) {
+            } else if (user.getRole() == Role.STAFF ) {
                 UserResponse userResponse = UserResponse.builder()
                         .user_id(user.getUserId())
                         .username(user.getUsername())
@@ -323,14 +323,14 @@ public class UserService {
                 veterinarian.setPhone(updateUserRequest.getPhoneNumber());
                 veterinarianRepository.save(veterinarian);
             } else if (user.getRole().equals(Role.STAFF)) {
-                Staff staff = staffRepository.findByUser_UserId(updateUserRequest.getUserId());
-                staff.setPhone(updateUserRequest.getPhoneNumber());
-                staffRepository.save(staff);
+               // Staff staff = staffRepository.findByUser_UserId(updateUserRequest.getUserId());
+//                staff.setPhone(updateUserRequest.getPhoneNumber());
+             //   staffRepository.save(staff);
             }
             userRepository.save(user);
             return true;
         } catch (Exception e) {
-            return false;
+          return false;
         }
     }
 

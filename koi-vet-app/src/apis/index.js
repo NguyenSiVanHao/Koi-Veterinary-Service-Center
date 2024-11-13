@@ -23,8 +23,8 @@ export const changePasswordAPI = async (username, oldPassword, newPassword) => {
     const loginResponse = await fetchLoginAPI(username, oldPassword);
     console.log(loginResponse);
     let userInfo;
-    if(loginResponse.status === 200){
-      userInfo = await axios.post(`${API_ROOT}/users/myInfo`, null, {
+    if (loginResponse.status === 200) {
+        userInfo = await axios.post(`${API_ROOT}/users/myInfo`, null, {
             headers: {
                 'Authorization': `Bearer ${loginResponse.data}`
             }
@@ -161,7 +161,7 @@ export const createAppointmentAPI = async (appointmentCreateRequest) => {
     return response.data;
 }
 
-export const fetchAllAppointmentAPI = async (status, offSet, pageSize,search) => {
+export const fetchAllAppointmentAPI = async (status, offSet, pageSize, search) => {
     const response = await api.get(`appointments?status=${status}&offSet=${offSet}&pageSize=${pageSize}&search=${search}`);
     return response.data;
 }
@@ -428,12 +428,29 @@ export const fetchUpLoadImageAPI = async (image) => { // api upload image lên S
     return imageURL;
 }
 
-
+//Forgot Password API
+export const forgotPasswordSendEmailAPI = async (email) => {
+    const response = await api.post(`/forgotPassword/sendMail?email=${email}`);
+    return response.data;
+}
+export const forgotPasswordVerifyOtpAPI = async (email, otp) => {
+    const response = await api.post(`/forgotPassword/verifyOtp?email=${email}&otp=${otp}`);
+    return response.data;
+}
+export const forgotPasswordResetPasswordAPI = async (token, email, password) => {
+    const response = await api.post(`/forgotPassword/reset-password?token=${token}`,
+        {
+            email: email,
+            newPassword: password
+        });
+    return response.data;
+}
 // User API
 export const fetchAllUsersAPI = async (role) => {
     const response = await api.get(`/users/get?role=${role}`);
     return response.data;
 }
+
 
 // Customer API
 export const updateCustomerAPI = async (customerData, image) => {
