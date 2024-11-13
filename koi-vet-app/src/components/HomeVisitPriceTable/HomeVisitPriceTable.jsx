@@ -13,6 +13,16 @@ const HomeVisitPriceTable = () => {
     };
     fetchHomeVisitPrice();
   }, []);
+
+  // Sắp xếp dữ liệu theo fromPlace và toPlace
+  const sortedHomeVisitPrice = [...homeVisitPrice].sort((a, b) => {
+    if (a.fromPlace < b.fromPlace) return -1;
+    if (a.fromPlace > b.fromPlace) return 1;
+    if (a.toPlace < b.toPlace) return -1;
+    if (a.toPlace > b.toPlace) return 1;
+    return 0;
+  });
+
   return (
     <div className="delivery-pricing-table">
       <h3 className="delivery-pricing-title booking-title fw-bold">Home Visit Pricing Table</h3>
@@ -26,9 +36,9 @@ const HomeVisitPriceTable = () => {
           </tr>
         </thead>
         <tbody>
-          {homeVisitPrice.map((delivery, index) => (
+          {sortedHomeVisitPrice.map((delivery, index) => (
             <tr key={index}>
-              <td>{index +1}</td>
+              <td>{index + 1}</td>
               <td>{delivery.fromPlace}</td>
               <td>{delivery.toPlace}</td>
               <td>{delivery.price.toLocaleString()}</td>
