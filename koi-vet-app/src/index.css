@@ -11,19 +11,42 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 :root {
   --color-primary: #1F2B6C;
   --color-accent: #DFEAFF;
   --color-secondary: rgba(21, 158, 236, 0.5);
 }
+
 .container-fluid {
- padding: 0 !important;
+  padding: 0 !important;
 }
-html, body {
+
+html,
+body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Tắt tràn ngang */
-  width: 100%; /* Đảm bảo body chiếm toàn bộ chiều rộng */
+  overflow-x: hidden;
+  /* Tắt tràn ngang */
+  width: 100%;
+  /* Đảm bảo body chiếm toàn bộ chiều rộng */
 }
+
+/* css for antd modal */
+.ant-modal-confirm-btns .ant-btn-primary {
+  background-color:var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+.ant-btn-variant-solid ,.ant-switch-checked{
+  background-color:var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+.Mui-completed {
+  color: var(--color-primary) !important;
+}
+
+
 @import url('https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css');
 @import url('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css');

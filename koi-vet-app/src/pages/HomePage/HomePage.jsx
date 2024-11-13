@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import "../HomePage/HomePage.css"
 import banner_home from "../../assets/img/banner_home.jpg";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { nextStep, resetBoking, setBookingData } from '../../store/bookingSlice';
-import { BOOKING_TYPE } from '../../utils/constants';
+import { BOOKING_TYPE, ROLE } from '../../utils/constants';
 import { fecthAllServicesAPI, fetchAllNewsAPI } from '../../apis';
 import { Carousel } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 function HomePage() {
     const dispatch = useDispatch();
+    const role = useSelector((state) => state.user.role);
     const navigate = useNavigate();
     const [serviceList, setServiceList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0); // Khởi đầu từ slide thứ hai
@@ -24,9 +26,13 @@ function HomePage() {
     }
 
     const handleBooking = (type) => {
-        dispatch(setBookingData({ type: type }))
-        dispatch(nextStep())
-        navigate('/booking')
+        if(role === ROLE.CUSTOMER){
+            dispatch(setBookingData({ type: type }))
+            dispatch(nextStep())
+            navigate('/booking')
+        }else{
+            toast.error("You are not allowed to book appointment with role: " + role)
+        }
     }
     //reset booking data
     useEffect(() => {

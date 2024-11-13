@@ -80,7 +80,7 @@ const Register = () => {
 
               <div className="col-12">
                 <div className="form-floating mb-3">
-                  <input type="text" className="form-control" name="phone" id="phone" value={phone} placeholder="Phone" onChange={(e) => setPhone(e.target.value)} required />
+                  <input type="text" className="form-control" pattern="\d{10}" maxLength="10" name="phone" title="Phone number should be exactly 10 digits." id="phone" value={phone} placeholder="Phone" onChange={(e) => setPhone(e.target.value)} required />
                   <label htmlFor="password" className="form-label">
                     Phone
                   </label>
@@ -126,26 +126,7 @@ const Register = () => {
                 </div>
               </div>
               <div className="col-12">
-                {/* <div className="d-flex gap-2 justify-content-between">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      name="rememberMe"
-                      id="rememberMe"
-                    />
-                    <label
-                      className="form-check-label text-secondary"
-                      htmlFor="rememberMe"
-                    >
-                      Keep me logged in
-                    </label>
-                  </div>
-                  <a href="#!" className="link-primary text-decoration-none">
-                    Forgot password?
-                  </a>
-                </div> */}
+               
               </div>
               <div className="col-12">
                 <div className="d-grid my-3">

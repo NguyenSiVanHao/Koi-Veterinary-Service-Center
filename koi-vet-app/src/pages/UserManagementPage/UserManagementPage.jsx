@@ -6,11 +6,15 @@ import avatar_default from "../../assets/img/profile_default.png"
 import { Modal } from "antd";
 import StaffForm from "../../components/StaffForm/StaffForm";
 import VeterinarianForm from "../../components/VeterinarianForm";
+import { useSelector } from "react-redux";
+import { ROLE } from "../../utils/constants";
+import { toast } from "react-toastify";
 
 const UserManagementPage = () => {
-  const [tab, setTab] = useState("STAFF");
+  const [tab, setTab] = useState("VETERINARIAN");
   const [staffs, setStaffs] = useState([]);
   const [veterinarians, setVeterinarians] = useState([]);
+  const role = useSelector(state => state.user.role)
   const [customers, setCustomers] = useState([]);
   const [serviceList, setServiceList] = useState([]);
   const [isAddUser, setIsAddUser] = useState(false);
@@ -65,14 +69,20 @@ const UserManagementPage = () => {
     setIsEditUser(false);
   }
   const fetchUserData = async () => {
-    const res = await fetchAllUsersAPI(tab);
-    if (tab === "STAFF") {
-      setStaffs(res.data);
-    } else if (tab === "VETERINARIAN") {
-      setVeterinarians(res.data);
-    } else if (tab === "CUSTOMER") {
-      setCustomers(res.data);
+    try {
+      const res = await fetchAllUsersAPI(tab);
+      if (tab === "STAFF") {
+        setStaffs(res.data);
+      } else if (tab === "VETERINARIAN") {
+        setVeterinarians(res.data);
+      } else if (tab === "CUSTOMER") {
+        setCustomers(res.data);
+      }
     }
+    catch (e) {
+      toast.error(e.message);
+    }
+
   }
   const handleSubmitCreateUser = async () => {
     let response;
@@ -174,6 +184,11 @@ const UserManagementPage = () => {
     setServiceList(res.data);
   }
   useEffect(() => {
+    if (role === ROLE.ADMIN) {
+      setTab("STAFF");
+    }
+  }, [role])
+  useEffect(() => {
     fetchUserData();
     if (tab === "VETERINARIAN") {
       fetchServiceList();
@@ -192,12 +207,12 @@ const UserManagementPage = () => {
       <div className="row mb-3 justify-content-center">
         <nav className="w-100">
           <div className="nav nav-tabs " id="nav-tab" role="tablist">
-            <button className="nav-link active custom-text-color" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onClick={() => setTab("STAFF")} >
-              <i className="fas fa-user-tie me-2"></i> Staff
-            </button>
             <button className="nav-link custom-text-color" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onClick={() => setTab("VETERINARIAN")} >
               <i className="fas fa-user-md me-2"></i>Veterinarian
             </button>
+            {role === ROLE.MANAGER && <button className="nav-link active custom-text-color" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onClick={() => setTab("STAFF")} >
+              <i className="fas fa-user-tie me-2"></i> Staff
+            </button>}
             <button className="nav-link custom-text-color" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false" onClick={() => setTab("CUSTOMER")} >
               <i className="fas fa-user me-2"></i>Customer
             </button>

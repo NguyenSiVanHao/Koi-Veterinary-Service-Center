@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap'
 import { Form, Input, Table } from 'antd'
 import { createContactReplyAPI, fetchContactAPI, fetchContactDetailAPI } from '../../apis'    
 import Modal from '../../components/Modal/Modal';
+import AdminHeader from '../../components/AdminHeader/AdminHeader';
 
 function ContactManagement() {
     const [dataSource, setDataSource] = useState([]);

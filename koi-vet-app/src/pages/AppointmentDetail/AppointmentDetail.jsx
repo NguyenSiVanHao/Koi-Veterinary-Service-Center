@@ -25,6 +25,7 @@ function AppointmentDetail() {
   const [service, setService] = useState({});
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);  // Rating Modal
+  const [isLoadingVet, setIsLoadingVet] = useState(true);
   const [navigateLink, setNavigateLink] = useState({
     link: null,
     title: null
@@ -72,14 +73,20 @@ function AppointmentDetail() {
   useEffect(() => {
     const fetchVetList = async () => {
 
-      const responseVet = await fetchVetForAssignAPI({
-        type: appointment.type,
+      try {
+        const responseVet = await fetchVetForAssignAPI({
+          type: appointment.type,
         serviceId: appointment.serviceId,
         date: appointment.appointmentDate,
         startTime: appointment.startTime,
         endTime: appointment.endTime
       });
-      setVetList(responseVet.data);
+        setVetList(responseVet.data);
+      } catch (error) {
+        console.error("Error fetching veterinarian list:", error);
+      } finally {
+        setIsLoadingVet(false);
+      }
     }
     if (appointment.type && appointment.serviceId && appointment.appointmentDate && appointment.startTime && appointment.endTime) {
       fetchVetList();
@@ -91,9 +98,10 @@ function AppointmentDetail() {
   appointment.endTime]);
   useEffect(() => {
     const fetchService = async () => {
+      if (appointment.serviceId) {
       const responseService = await fecthServiceByServiceIdAPI(appointment.serviceId);
-      setService(responseService.data);
-
+        setService(responseService.data);
+      }
     }
     fetchService();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,7 +161,7 @@ function AppointmentDetail() {
     }
     console.log(appointment);
   };
-  const handleStartFinish = () => {
+  const handleMoveToNextStatus = () => {
 
     if (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) {
       Modal.confirm({
@@ -177,8 +185,14 @@ function AppointmentDetail() {
           </div>
         ),
         onOk: () => {
-          setAppointment({ ...appointment, status: APPOINTMENT_STATUS.READY_FOR_PAYMENT });
-          updateAppointment({ ...appointment, status: APPOINTMENT_STATUS.READY_FOR_PAYMENT }, appointmentId);
+          if(appointment.type === BOOKING_TYPE.ONLINE){
+            setAppointment({ ...appointment, status: APPOINTMENT_STATUS.FINISH });
+            updateAppointment({ ...appointment, status: APPOINTMENT_STATUS.FINISH }, appointmentId);
+          }else{
+            setAppointment({ ...appointment, status: APPOINTMENT_STATUS.READY_FOR_PAYMENT });
+            updateAppointment({ ...appointment, status: APPOINTMENT_STATUS.READY_FOR_PAYMENT }, appointmentId);
+          }
+         
         }
       });
     } else if (appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) {
@@ -222,7 +236,8 @@ function AppointmentDetail() {
     [APPOINTMENT_STATUS.PROCESS]: "Process",
     [APPOINTMENT_STATUS.READY_FOR_PAYMENT]: "Ready For Payment",
     [APPOINTMENT_STATUS.FINISH]: "Completed",
-    [APPOINTMENT_STATUS.CANCEL]: "Cancelled"
+    [APPOINTMENT_STATUS.CANCEL]: "Cancelled",
+    [APPOINTMENT_STATUS.REFUND]: "Refunded"
   };
 
   const currentDate = new Date();
@@ -234,7 +249,7 @@ function AppointmentDetail() {
   // Check if the appointment is more than one day away
   const isCancelable = appointmentDate > new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-  if (isLoading) return <PreLoader />
+  if (isLoading || isLoadingVet) return <PreLoader />
 
 
 
@@ -292,11 +307,11 @@ function AppointmentDetail() {
             </label>
             <div className="d-flex gap-3">
               <input type="text" className="form-control" id="status" name="status" value={statusDisplayMap[appointment.status] || appointment.status} disabled={true} />
-              {role !== ROLE.CUSTOMER && (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS || appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) ?
+              {role !== ROLE.CUSTOMER && !isEditing &&  (appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE || appointment.status === APPOINTMENT_STATUS.PROCESS || appointment.status === APPOINTMENT_STATUS.READY_FOR_PAYMENT) ?
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={() => handleStartFinish()}
+                  onClick={() => handleMoveToNextStatus()}
                 >
                   {appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE ? "Start" : null}
                   {appointment.status === APPOINTMENT_STATUS.PROCESS ? "Finish" : null}
@@ -318,7 +333,7 @@ function AppointmentDetail() {
 
             <select className="form-select" id="vetId" name="vetId" value={appointment.vetId} onChange={(e) => handleAssignVet(e)} disabled={role === ROLE.VETERINARIAN || !isEditing || (appointment.status !== APPOINTMENT_STATUS.CREATED && appointment.status !== APPOINTMENT_STATUS.BOOKING_COMPLETE)}>
               <option value={"SKIP"}>Not assigned</option>
-              {appointment.vetId && <option value={appointment.vetId}>
+              {appointment.vetId && !vetList.find((vet) => vet.vetId === appointment.vetId) && <option value={appointment.vetId}>
                 {appointment.vetName}
               </option>}
               {vetList.map((vet) => (
@@ -369,7 +384,7 @@ function AppointmentDetail() {
             <label htmlFor="appointmentDate" className="form-label">
               Appointment Date <i className="fa-solid fa-calendar" ></i>
             </label>
-            <input type="date" className="form-control" id="appointmentDate" name="appointmentDate" value={appointment.appointmentDate} onChange={handleInputChange} disabled={!isEditing} />
+            <input type="date" className="form-control" id="appointmentDate" name="appointmentDate" value={appointment.appointmentDate} min={new Date().toISOString().split("T")[0]} onChange={handleInputChange} disabled={!isEditing} />
           </div>
           <div className="col-md-3">
             <label htmlFor="startTime" className="form-label">
@@ -425,7 +440,14 @@ function AppointmentDetail() {
 
               )}
               {
-                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && !isEditing && (
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && role !== ROLE.CUSTOMER && !isEditing && (
+                  <button type="button" className="btn btn-danger" onClick={() => handleCancelAppointment()}>
+                    Cancel Appointment
+                  </button>
+                )
+              }
+              {
+                (appointment.status === APPOINTMENT_STATUS.CREATED || appointment.status === APPOINTMENT_STATUS.BOOKING_COMPLETE) && role === ROLE.CUSTOMER && isCancelable && !isEditing && (
                   <button type="button" className="btn btn-danger" onClick={() => handleCancelAppointment()}>
                     Cancel Appointment
                   </button>
@@ -464,7 +486,7 @@ function AppointmentDetail() {
       </div>
 
 
-      <Modal open={isInvoiceModalOpen} onCancel={() => setIsInvoiceModalOpen(false)} width={500}>
+      <Modal open={isInvoiceModalOpen} onCancel={() => setIsInvoiceModalOpen(false)} width={600} >
         <InvoiceList appointment={appointment} />
       </Modal>
 

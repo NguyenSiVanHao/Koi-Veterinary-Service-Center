@@ -82,7 +82,9 @@ const Schedual = () => {
         setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
     };
     useEffect(() => {
-        fetchSchedual()
+        if (selectedVetId) {
+            fetchSchedual()
+        }
     }, [selectedVetId, selectDateTrigger])
     const getVeterinarian = async () => {
         const response = await fetchVetsAPI()
@@ -207,7 +209,7 @@ const Schedual = () => {
                         <div className="days-grid">
                             {renderDate()}
                         </div>
-                        <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
+                        {isEditMode && <button className='btn btn-primary' onClick={handleSubmit} disabled={selectedDate.length === 0}>Add Selected Schedule</button>}
                     </div>
                 </div>
                 <div className='d-flex flex-column gap-5 mt-5 calendar-container'>
