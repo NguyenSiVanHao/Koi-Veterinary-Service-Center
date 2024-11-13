@@ -50,7 +50,7 @@ public class DeliveryController {
             DeliveryResponse deli = deliveryService.getDeliveryById(deliveryId);
             return ResponseObject.APIRepsonse(200, "Found delivery successfully", HttpStatus.OK, deli);
         } catch (AppException e) {
-            return ResponseObject.APIRepsonse(404, "Delivery do not exist", HttpStatus.NOT_FOUND, null);
+            return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, null);
         }
     }
     @PreAuthorize("hasAnyRole('MANAGER','STAFF')")

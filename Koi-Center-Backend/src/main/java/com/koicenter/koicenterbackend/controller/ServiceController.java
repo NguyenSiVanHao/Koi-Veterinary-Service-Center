@@ -32,7 +32,7 @@ public class ServiceController {
             ServiceResponse service = serviceService.getServiceById(serviceId);
             return ResponseObject.APIRepsonse(200, "Get service success", HttpStatus.OK, service);
         } catch (AppException e) {
-            return ResponseObject.APIRepsonse(404, e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return ResponseObject.APIRepsonse(404, e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
     }
 
@@ -42,7 +42,7 @@ public class ServiceController {
         if (serviceFor.toLowerCase().equals("CENTER".toLowerCase()) || serviceFor.toLowerCase().equals("HOME".toLowerCase()) || serviceFor.toLowerCase().equals("ONLINE".toLowerCase())) {
             return ResponseObject.APIRepsonse(200, "GET Appointment_Type Successfully", HttpStatus.OK, serviceService.getServiceFor(serviceFor));
         } else {
-            return ResponseObject.APIRepsonse(404, "Appointment_Type Not Found ", HttpStatus.NOT_FOUND, "");
+            return ResponseObject.APIRepsonse(403, "Appointment_Type Not Found ", HttpStatus.NOT_FOUND, "");
 
         }
     }

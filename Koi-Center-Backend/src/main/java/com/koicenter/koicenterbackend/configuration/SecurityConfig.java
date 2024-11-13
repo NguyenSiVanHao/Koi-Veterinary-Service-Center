@@ -150,6 +150,7 @@ public class SecurityConfig {
 
                             .requestMatchers(HttpMethod.POST, "/api/v1/feedbacks/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/feedbacks/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/feedbacks/{serviceId}/total").permitAll()
 
 
                             .requestMatchers(HttpMethod.GET, "api/v1/mail/sendEmail").permitAll()
