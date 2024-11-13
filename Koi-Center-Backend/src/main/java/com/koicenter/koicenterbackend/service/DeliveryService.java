@@ -19,9 +19,21 @@ public class DeliveryService {
     private DeliveryRepository deliveryRepository;
 
     public DeliveryResponse updateDelivery(String id, DeliveryRequest deliveryRequest) {
+        
+
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(()->
         new AppException(ErrorCode.DELIVERY_ID_NOT_EXITS.getCode(),
                 ErrorCode.DELIVERY_ID_NOT_EXITS.getMessage(), HttpStatus.NOT_FOUND));
+
+        if(deliveryRequest.getPrice() <= 0){
+            throw new AppException(404, "Please enter price greater than 0", HttpStatus.BAD_REQUEST);
+        }
+        if(deliveryRequest.getToPlace() <= 0){
+            throw new AppException(404, "Please enter place greater than 0", HttpStatus.BAD_REQUEST);
+        }
+        if(deliveryRequest.getFromPlace() < 0){
+            throw new AppException(404, "Please enter place greater than 0", HttpStatus.BAD_REQUEST);
+        }
 
         delivery.setPrice(deliveryRequest.getPrice());
         delivery.setFromPlace(deliveryRequest.getFromPlace());
@@ -62,6 +74,17 @@ public class DeliveryService {
     }
 
     public DeliveryResponse createDelivery(DeliveryRequest deliveryRequest) {
+
+        if(deliveryRequest.getPrice() <= 0){
+            throw new AppException(404, "Please enter price greater than 0", HttpStatus.BAD_REQUEST);
+        }
+        if(deliveryRequest.getToPlace() <= 0){
+            throw new AppException(404, "Please enter place greater than 0", HttpStatus.BAD_REQUEST);
+        }
+        if(deliveryRequest.getFromPlace() < 0){
+            throw new AppException(404, "Please enter place greater than 0", HttpStatus.BAD_REQUEST);
+        }
+
         Delivery deli = new Delivery();
         deli.setFromPlace(deliveryRequest.getFromPlace());
         deli.setToPlace(deliveryRequest.getToPlace());

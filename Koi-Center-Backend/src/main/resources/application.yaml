@@ -22,3 +22,7 @@ openapi:
 springdoc:
   swagger-ui:
     enabled: true
+
+app:
+  payment:
+    success-url: http://localhost:3000

@@ -22,7 +22,7 @@ import java.util.List;
 public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','STAFF')")
     @PutMapping("/{deliveryId}")
     public ResponseEntity<ResponseObject> updateDelivery(@PathVariable("deliveryId") String deliveryId, @RequestBody DeliveryRequest deliveryRequest) {
         try {
@@ -50,10 +50,10 @@ public class DeliveryController {
             DeliveryResponse deli = deliveryService.getDeliveryById(deliveryId);
             return ResponseObject.APIRepsonse(200, "Found delivery successfully", HttpStatus.OK, deli);
         } catch (AppException e) {
-            return ResponseObject.APIRepsonse(404, "Delivery do not exist", HttpStatus.NOT_FOUND, null);
+            return ResponseObject.APIRepsonse(404, "Bad Request: Invalid data", HttpStatus.BAD_REQUEST, null);
         }
     }
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','STAFF')")
     @PostMapping()
     public ResponseEntity<ResponseObject> createDelivery (@RequestBody DeliveryRequest deliveryRequest){
         if(deliveryRequest != null ){
@@ -64,7 +64,7 @@ public class DeliveryController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','STAFF')")
     @DeleteMapping("/{deliveryId}")
     public ResponseEntity<ResponseObject> deleteDelivery(@PathVariable("deliveryId") String deliveryId) {
         try {

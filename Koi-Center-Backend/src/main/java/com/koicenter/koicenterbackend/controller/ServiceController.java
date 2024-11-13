@@ -32,7 +32,7 @@ public class ServiceController {
             ServiceResponse service = serviceService.getServiceById(serviceId);
             return ResponseObject.APIRepsonse(200, "Get service success", HttpStatus.OK, service);
         } catch (AppException e) {
-            return ResponseObject.APIRepsonse(404, e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return ResponseObject.APIRepsonse(404, e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
     }
 
@@ -42,7 +42,7 @@ public class ServiceController {
         if (serviceFor.toLowerCase().equals("CENTER".toLowerCase()) || serviceFor.toLowerCase().equals("HOME".toLowerCase()) || serviceFor.toLowerCase().equals("ONLINE".toLowerCase())) {
             return ResponseObject.APIRepsonse(200, "GET Appointment_Type Successfully", HttpStatus.OK, serviceService.getServiceFor(serviceFor));
         } else {
-            return ResponseObject.APIRepsonse(404, "Appointment_Type Not Found ", HttpStatus.NOT_FOUND, "");
+            return ResponseObject.APIRepsonse(403, "Appointment_Type Not Found ", HttpStatus.NOT_FOUND, "");
 
         }
     }
@@ -50,7 +50,7 @@ public class ServiceController {
     /**
      * create new service by staff
      */
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createService(@RequestBody ServiceRequest serviceRequest) {
         boolean isCreated = serviceService.createService(serviceRequest);
@@ -60,7 +60,7 @@ public class ServiceController {
             return ResponseObject.APIRepsonse(409, "Service name already exists", HttpStatus.CONFLICT, null);
         }
     }
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'STAFF')")
     @PutMapping("/{serviceId}")
     public ResponseEntity<ResponseObject> updateService(@RequestBody ServiceRequest serviceRequest, @PathVariable("serviceId") String serviceId) {
         boolean isUpdated = serviceService.updateService(serviceRequest, serviceId);
@@ -70,7 +70,7 @@ public class ServiceController {
             return ResponseObject.APIRepsonse(400, "Failed to update service", HttpStatus.BAD_REQUEST, null);
         }
     }
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','STAFF')")
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseObject> deleteService(@RequestParam String serviceId) {
         boolean isDeleted = serviceService.deleteService(serviceId);
