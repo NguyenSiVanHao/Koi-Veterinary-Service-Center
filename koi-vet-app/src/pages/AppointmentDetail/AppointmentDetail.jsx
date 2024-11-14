@@ -69,7 +69,11 @@ function AppointmentDetail() {
     fetchAppointmentDetail(appointmentId);
     const fetchDeliveryPrice = async () => {
       const response = await fetchHomeVisitPriceAPI();
-       setMaxDistance(response.data[response.data.length - 1].toPlace);
+      for (let index = 1; index < response.data.length-1; index++) {
+        if(response.data[index].toPlace > response.data[index-1].toPlace){
+          setMaxDistance(response.data[index].toPlace);
+        }
+      }
     }
     fetchDeliveryPrice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
