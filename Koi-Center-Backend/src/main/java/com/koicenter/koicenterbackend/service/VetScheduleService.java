@@ -140,8 +140,8 @@ public class VetScheduleService {
         int slotMorning = 0;
         int slotAfternoon = 0;
         for (VetScheduleResponse vetScheduleResponse : vetScheduleResponses) { // lich cua tat ca cac bac si co service ID ddo
-            if (vetScheduleRequest.getAppointmentType().toString().equals("CENTER") || vetScheduleRequest.getAppointmentType().toString().equals("ONLINE")) {
-                if (vetScheduleRequest.getStartTime().equals(vetScheduleResponse.getStart_time()) && vetScheduleRequest.getEndTime().equals(vetScheduleResponse.getEnd_time()) && vetScheduleRequest.getDate().equals(vetScheduleResponse.getDate()) && vetScheduleResponse.getCustomerBookingCount() < 2) {
+            if (vetScheduleRequest.getAppointmentType().toString().equals("CENTER")&& vetScheduleResponse.getCustomerBookingCount() <= 2 && vetScheduleResponse.getCustomerBookingCount() > 0  || vetScheduleRequest.getAppointmentType().toString().equals("ONLINE") && vetScheduleResponse.getCustomerBookingCount() <= 2 && vetScheduleResponse.getCustomerBookingCount() > 0 ) {
+                if (vetScheduleRequest.getStartTime().equals(vetScheduleResponse.getStart_time()) && vetScheduleRequest.getEndTime().equals(vetScheduleResponse.getEnd_time()) && vetScheduleRequest.getDate().equals(vetScheduleResponse.getDate()) && vetScheduleResponse.getCustomerBookingCount() <= 2 && vetScheduleResponse.getCustomerBookingCount() > 0 ) {
                     Veterinarian veterinarian = veterinarianRepository.findById(vetScheduleResponse.getVet_Id()).orElseThrow(() -> new AppException(
                             ErrorCode.VETERINARIAN_ID_NOT_EXITS.getCode(),
                             ErrorCode.VETERINARIAN_ID_NOT_EXITS.getMessage(),
