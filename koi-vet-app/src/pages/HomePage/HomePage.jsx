@@ -13,6 +13,7 @@ function HomePage() {
     const dispatch = useDispatch();
     const role = useSelector((state) => state.user.role);
     const navigate = useNavigate();
+    const isAuthorized = useSelector((state) => state.user.isAuthorized);
     const [serviceList, setServiceList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0); // Khởi đầu từ slide thứ hai
     const [newsList, setNewsList] = useState([]);
@@ -26,6 +27,11 @@ function HomePage() {
     }
 
     const handleBooking = (type) => {
+        if(!isAuthorized){
+            toast.error("You must login to book appointment")
+            navigate('/login')
+            return;
+        }
         if(role === ROLE.CUSTOMER){
             dispatch(setBookingData({ type: type }))
             dispatch(nextStep())
