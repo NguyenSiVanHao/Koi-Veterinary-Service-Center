@@ -71,11 +71,11 @@ function PrescriptionDetail(props) {
   };
 
   const columns = [
-    {
-      title: "Medicine ID",
-      dataIndex: "medicineId",
-      key: "medicineId",
-    },
+    // {
+    //   title: "Medicine ID",
+    //   dataIndex: "medicineId",
+    //   key: "medicineId",
+    // },
     {
       title: "Medicine Name",
       dataIndex: "medicineName",
@@ -124,7 +124,7 @@ function PrescriptionDetail(props) {
       dataIndex: "medUnit",
       key: "medUnit",
     },
-    {
+    role !== "CUSTOMER" && {
       title: "Actions",
       key: "actions",
       render: (text, record) => {
