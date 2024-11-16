@@ -64,7 +64,12 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/Koi-Center-Backend/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-
+          
+    - name: Replace success-url with domain
+      working-directory: Koi-Center-Backend/src/main/resources
+      run: |
+        sed -i 's|http://localhost:3000|https://koimed.anhtudev.works|g' application.yaml
+        
     - name: Create .env file
       working-directory: Koi-Center-Backend
       run: |
