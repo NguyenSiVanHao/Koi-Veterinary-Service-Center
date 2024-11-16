@@ -1,4 +1,4 @@
-export const API_ROOT = "http://koimed.anhtudev.works:8080/api/v1";
+export const API_ROOT = "https://koimed.anhtudev.works/backend/api/v1";
 export const ROLE = {
   MANAGER: "MANAGER",
   CUSTOMER: "CUSTOMER",
