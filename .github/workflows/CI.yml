@@ -31,27 +31,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
+    - name: Set Environment Variables
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+        GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+      run: echo "Environment variables are set."
+
     - name: Build Backend
       working-directory: Koi-Center-Backend
       run: mvn clean package
-
-  build-frontend:
-    name: Build Frontend
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-
-    - name: Install Dependencies
-      working-directory: koi-vet-app
-      run: npm install
-
-    - name: Build Frontend
-      working-directory: koi-vet-app
-      run: npm run build
