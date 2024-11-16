@@ -1,1 +1,1 @@
-[![CI/CD - Build and Deploy Frontend and Backend](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/actions/workflows/CI-%3ECD.yml/badge.svg)](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/actions/workflows/CI-%3ECD.yml)
+
