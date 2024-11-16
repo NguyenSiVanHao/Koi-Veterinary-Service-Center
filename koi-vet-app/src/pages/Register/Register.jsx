@@ -28,8 +28,9 @@ const Register = () => {
     }
     try {
       const response = await createUserAPI(email, password, username, fullname, phone, address);
-      if (response?.data?.status === 201) {
-        toast.success(response?.data?.message);
+      console.log(response);
+      if (response?.status === 201) {
+        toast.success(response?.message);
         navigate("/login");
       }
     } catch (error) {
@@ -130,7 +131,7 @@ const Register = () => {
                 </div>
               </div>
               <div className="col-12">
-               
+
               </div>
               <div className="col-12">
                 <div className="d-grid my-3">
