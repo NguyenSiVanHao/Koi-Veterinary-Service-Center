@@ -85,7 +85,13 @@ function ServicePageDetail() {
       title: "Rating",
       dataIndex: "star",
       key: "star",
-      render: (star) => `${star} ★`,
+      render: (star) => {
+        const starIcons = [];
+        for (let i = 0; i < star; i++) {
+          starIcons.push(<i key={i} className="fa-solid fa-star"></i>);
+        }
+        return <div>{starIcons}</div>;
+      },
     },
     {
       title: "Feedback",
@@ -98,7 +104,7 @@ function ServicePageDetail() {
     <Container fluid className="service-detail">
       <Row className="align-items-center service-row">
         {/* Left Side - Image */}
-        <Col md={6} className="p-0">
+        <Col md={5} className="p-0">
           <Card className="border-0" style={{height: "1000px"}}>
             <Card.Img
               src={serviceDetail.image}
@@ -109,7 +115,7 @@ function ServicePageDetail() {
         </Col>
 
         {/* Right Side - Details */}
-        <Col md={6} className="service-info" style={{backgroundColor: "#f8f9fa"}}>
+        <Col md={7} className="service-info" style={{backgroundColor: "#f8f9fa"}}>
           <div className="p-4">
             <h1 className="service-title mb-4">{serviceDetail.serviceName}</h1>
             <h4>Service Description</h4>
