@@ -34,9 +34,10 @@ public class UserController {
                 return ResponseObject.APIRepsonse(409, "Username or email already exists", HttpStatus.CONFLICT, "");
             }else {
                 userService.createCustomer(newUser);
+                return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
             }
-            userService.createCustomer(newUser);
-            return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
+//            userService.createCustomer(newUser);
+
         } catch (Exception e) {
             return ResponseObject.APIRepsonse(500, "An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "");
         }
