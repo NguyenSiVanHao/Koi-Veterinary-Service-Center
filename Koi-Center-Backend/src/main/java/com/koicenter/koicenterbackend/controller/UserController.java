@@ -34,7 +34,7 @@ public class UserController {
                 return ResponseObject.APIRepsonse(409, "Username or email already exists", HttpStatus.CONFLICT, "");
             }else {
                 userService.createCustomer(newUser);
-                return ResponseObject.APIRepsonse(200, "Register successfully!", HttpStatus.CREATED, "");
+                return ResponseObject.APIRepsonse(201, "Register successfully!", HttpStatus.CREATED, "");
             }
 //            userService.createCustomer(newUser);
 
