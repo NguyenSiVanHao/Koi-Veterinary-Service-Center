@@ -25,4 +25,4 @@ springdoc:
 
 app:
   payment:
-    success-url: koimed.anhtudev.works
+    success-url: https://koimed.anhtudev.works
