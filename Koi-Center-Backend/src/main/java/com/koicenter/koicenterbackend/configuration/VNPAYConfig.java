@@ -16,7 +16,7 @@ public class VNPAYConfig {
     private final String vnp_Version="2.1.0";
     private final String vnp_Command="pay";
     private final String orderType="other";
-    private final String vnp_ReturnUrl="https://koimed.anhtudev.works/backend/api/v1/payment/vn-pay-callback";
+    private final String vnp_ReturnUrl="http://178.128.86.47:8080/api/v1/payment/vn-pay-callback";
 
     public Map<String, String> getVNPayConfig() {
         Map<String, String> vnpParamsMap = new HashMap<>();
