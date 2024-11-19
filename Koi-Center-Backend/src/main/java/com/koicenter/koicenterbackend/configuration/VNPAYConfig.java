@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 @Getter
 @Configuration
@@ -29,13 +32,20 @@ public class VNPAYConfig {
         vnpParamsMap.put("vnp_OrderType", this.orderType);
         vnpParamsMap.put("vnp_Locale", "vn");
         vnpParamsMap.put("vnp_ReturnUrl", this.vnp_ReturnUrl);
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnpCreateDate = formatter.format(calendar.getTime());
+        // Sử dụng ZonedDateTime
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        String vnpCreateDate = now.format(formatter);
+        String vnpExpireDate = now.plusMinutes(15).format(formatter);
+        //SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        //String vnpCreateDate = formatter.format(calendar.getTime());
         vnpParamsMap.put("vnp_CreateDate", vnpCreateDate);
         calendar.add(Calendar.MINUTE, 15);
-        String vnp_ExpireDate = formatter.format(calendar.getTime());
-        vnpParamsMap.put("vnp_ExpireDate", vnp_ExpireDate);
+        //String vnp_ExpireDate = formatter.format(calendar.getTime());
+        vnpParamsMap.put("vnp_ExpireDate", vnpExpireDate);
+
+        //vnpParamsMap.put("vnp_ExpireDate", vnp_ExpireDate);
         return vnpParamsMap;
     }
 }
