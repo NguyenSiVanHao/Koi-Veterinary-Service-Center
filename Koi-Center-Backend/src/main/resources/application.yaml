@@ -25,4 +25,4 @@ springdoc:
 
 app:
   payment:
-    success-url: http://localhost:3000
+    success-url: koimed.anhtudev.works
