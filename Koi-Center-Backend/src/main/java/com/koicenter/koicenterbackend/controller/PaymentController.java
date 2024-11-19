@@ -224,8 +224,8 @@ public class PaymentController {
             String orderId = "order-" + System.currentTimeMillis();
             String requestId = "request-" + System.currentTimeMillis();
             String orderInfo = "Pay for MoMo orders for orders";
-            String redirectUrl  = "http://localhost:3000/booking/paymentsuccess";
-            String ipnUrl  = "https://96b9-118-69-182-144.ngrok-free.app/api/v1/payment/momo-pay-callback"; //off ngrok thì phải đổi link mới!!!
+            String redirectUrl  = "https://koimed.anhtudev.works/booking/paymentsuccess";
+            String ipnUrl  = "https://koimed.anhtudev.works/backend/api/v1/payment/momo-pay-callback"; //off ngrok thì phải đổi link mới!!!
             String extraData = "";
 
             PaymentResponse response = CreateOrderMoMo.process(customEnviroment,
