@@ -107,31 +107,31 @@ The GUI (Graphical User Interface) for the Koi Veterinary Service Center system 
   
 ### Veterinarian Pages 👤
 - **vetappointment.png:** Page for veterinarians to manage their scheduled appointments. 📅
-![Vet Appointment]()
+![Vet Appointment](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/vetappointment.png)
   
 ### Staff Pages 👤
 - **contactmanagement.png:** Page for customers to manage their contact information. 📝
-![Contact management]()
+![Contact management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/contactmanagement.png)
 - **faqmanagement.png:** Page for managing the FAQ section. 💬
-![FAQ management]()
+![FAQ management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/faqmanagement.png)
 - **homevisitmanagement.png:** Page for managing home visit appointments. 🏠
-![Home Visit managament]()
+![Home Visit managament](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/homevisitpricemanagement.png)
 - **medicinemanagement.png:** Page for managing the inventory of Koi medications. 💊
-![Medicine management]()
+![Medicine management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/medicinemanagement.png)
 - **newsmanagement.png:** Page for managing news and updates. 📰
-![News management]()
+![News management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/newsmanagement.png)
 - **schedualmanagement.png:** Page for managing the schedules of veterinarians. 📆
-![Schedual management]()
+![Schedual management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/schedualmanagement.png)
 - **servicemanagement.png:** Page for managing the services offered by the Koi Veterinary Service Center. 🏥
-![Service management]()
+![Service management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/servicemanagement.png)
 - **vetappointmentmanagement.png:** Page for managing veterinarian appointments. 📆
-![Vet Appointment management]()
+![Vet Appointment management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/vetappointmentmanagement.png)
   
 ### Manager Pages 👤
 - **dashboard.png:** Dashboard for customers to view their appointment history and Koi/pond information. 📊
-![Dashboard]()
+![Dashboard](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/dashboard.png)
 - **usermanagemant.png:** Page for customers to manage their account information. 👤
-![User management]()
+![User management](https://github.com/anhtu2808/Koi-Veterinary-Service-Center/blob/main/images/usermanagement.png)
 
 
 *A serene Koi pond, the centerpiece of the Koi Veterinary Service Center*
