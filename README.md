@@ -87,31 +87,51 @@ The GUI (Graphical User Interface) for the Koi Veterinary Service Center system 
 
 ### Customer Pages 👤
 - **login.png:** Page for customers to log in to their account. 🔑
-- **changepass.png:** Page for customers to change their account password. 🔑
+![Login](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/login.png)
+- **changepassword.png:** Page for customers to change their account password. 🔑
+![Change Password](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/changepassword.png)
 - **information.png:** Page to view general information about the Koi Veterinary Service Center. 📋
+![Information](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/information.png)
 - **contact.png:** Page to contact the Koi Veterinary Service Center. 📞
+![Contact](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/contact.png)
 - **faq.png:** Frequently Asked Questions page. 💬
+![FAQ](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/faq.png)
 - **news.png:** Page to view news and updates from the Koi Veterinary Service Center. 📰
+![News](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/news.png)
 - **payment.png:** Page to make payments for scheduled appointments. 💳
+![Payment](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/payment.png)
 - **servicedetail.png:** Page to view details of the services offered by the Koi Veterinary Service Center. 🏥
+![Service Detail](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/servicedetail.png)
 - **vetprofile.png:** Page to view the profiles of veterinarians. 👨‍⚕️
+![Vet Profile](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/vetprofile.png)
   
 ### Veterinarian Pages 👤
 - **vetappointment.png:** Page for veterinarians to manage their scheduled appointments. 📅
+![Vet Appointment]()
   
 ### Staff Pages 👤
 - **contactmanagement.png:** Page for customers to manage their contact information. 📝
+![Contact management]()
 - **faqmanagement.png:** Page for managing the FAQ section. 💬
+![FAQ management]()
 - **homevisitmanagement.png:** Page for managing home visit appointments. 🏠
+![Home Visit managament]()
 - **medicinemanagement.png:** Page for managing the inventory of Koi medications. 💊
+![Medicine management]()
 - **newsmanagement.png:** Page for managing news and updates. 📰
+![News management]()
 - **schedualmanagement.png:** Page for managing the schedules of veterinarians. 📆
+![Schedual management]()
 - **servicemanagement.png:** Page for managing the services offered by the Koi Veterinary Service Center. 🏥
+![Service management]()
 - **vetappointmentmanagement.png:** Page for managing veterinarian appointments. 📆
+![Vet Appointment management]()
   
 ### Manager Pages 👤
 - **dashboard.png:** Dashboard for customers to view their appointment history and Koi/pond information. 📊
+![Dashboard]()
 - **usermanagemant.png:** Page for customers to manage their account information. 👤
+![User management]()
 
 
 *A serene Koi pond, the centerpiece of the Koi Veterinary Service Center*
