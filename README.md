@@ -77,53 +77,43 @@ Group02_Koi Med
 The GUI (Graphical User Interface) for the Koi Veterinary Service Center system will include the following pages and functionality:
 
 
-### Customer Pages 👤
-- **aboutus.png:** Information about the Koi Veterinary Service Center. 📋
-- **addkoi.png:** Page for customers to add information about their Koi fish and pond. 🐟🌊
-- **addpond.png:** Page for customers to add information about their Koi pond. 🌊
-- **appointmentdetail.png:** Page to view details of scheduled appointments. 📅
-- **changepas.png:** Page for customers to change their account password. 🔑
-- **confirmappointment.png:** Page to confirm scheduled appointments. 📅
-- **contact.png:** Page to contact the Koi Veterinary Service Center. 📞
-- **contactmanagement.png:** Page for customers to manage their contact information. 📝
-- **dashboard.png:** Dashboard for customers to view their appointment history and Koi/pond information. 📊
-- **database.png:** Page to manage the database of Koi fish and pond information. 🐟🌊
-- **enterpaym.png:** Page to enter payment information for scheduled appointments. 💳
-- **faq.png:** Frequently Asked Questions page. 💬
-- **faqmanagement.png:** Page for managing the FAQ section. 💬
-- **googlemeeting.png:** Page for joining online consultations with veterinarians. 💻
+### Guest Pages 👤
 - **homepage.png:** The main landing page of the Koi Veterinary Service Center website. 🏠
-- **homevisitmanagement.png:** Page for managing home visit appointments. 🏠
-- **information.png:** Page to view general information about the Koi Veterinary Service Center. 📋
-- **invoice.png:** Page to view invoices for completed appointments. 💰
-- **koidetail.png:** Page to view detailed information about a customer's Koi fish. 🐟
-- **login.png:** Page for customers to log in to their account. 🔑
-- **medicinemanagement.png:** Page for managing the inventory of Koi medications. 💊
-- **myappointment.png:** Page for customers to view and manage their scheduled appointments. 📅
-- **mykoi.png:** Page for customers to manage information about their Koi fish. 🐟
-- **mypond.png:** Page for customers to manage information about their Koi pond. 🌊
-- **news.png:** Page to view news and updates from the Koi Veterinary Service Center. 📰
-- **newsmanagement.png:** Page for managing news and updates. 📰
-- **payment.png:** Page to make payments for scheduled appointments. 💳
-- **ponddetail.png:** Page to view detailed information about a customer's Koi pond. 🌊
+![Home Page](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/homepage.png)
 - **register.png:** Page for guests to register an account. 📝
-- **schedualmanagement.png:** Page for managing the schedules of veterinarians. 📆
-- **selectdateenter.png:** Page to select a date for a scheduled appointment. 📅
-- **selectdatecome.png:** Page to select a date for a customer to visit the Koi Veterinary Service Center. 📅
-- **selectkoi.png:** Page to select a Koi fish for a scheduled appointment. 🐟
-- **selectservice.png:** Page to select a service offered by the Koi Veterinary Service Center. 🏥
-- **selectveterian.png:** Page to select a veterinarian for a scheduled appointment. 👨‍⚕️
+![Register](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/register.png)
+- **aboutus.png:** Information about the Koi Veterinary Service Center. 📋
+![About Us](https://github.com/NguyenSiVanHao/Koi-Veterinary-Service-Center/blob/main/images/aboutus.png)
+
+### Customer Pages 👤
+- **login.png:** Page for customers to log in to their account. 🔑
+- **changepass.png:** Page for customers to change their account password. 🔑
+- **information.png:** Page to view general information about the Koi Veterinary Service Center. 📋
+- **contact.png:** Page to contact the Koi Veterinary Service Center. 📞
+- **faq.png:** Frequently Asked Questions page. 💬
+- **news.png:** Page to view news and updates from the Koi Veterinary Service Center. 📰
+- **payment.png:** Page to make payments for scheduled appointments. 💳
 - **servicedetail.png:** Page to view details of the services offered by the Koi Veterinary Service Center. 🏥
-- **serviceman.png:** Page for managing the services offered by the Koi Veterinary Service Center. 🏥
-- **success.png:** Page to confirm the successful completion of an appointment or service. ✅
-- **usermanag.png:** Page for customers to manage their account information. 👤
-- **vetappointment.png:** Page for veterinarians to manage their scheduled appointments. 📅
-- **vetappointmentmanagement.png:** Page for managing veterinarian appointments. 📆
 - **vetprofile.png:** Page to view the profiles of veterinarians. 👨‍⚕️
-- **vetschedual.png:** Page to view the schedules of veterinarians. 📆
+  
+### Veterinarian Pages 👤
+- **vetappointment.png:** Page for veterinarians to manage their scheduled appointments. 📅
+  
+### Staff Pages 👤
+- **contactmanagement.png:** Page for customers to manage their contact information. 📝
+- **faqmanagement.png:** Page for managing the FAQ section. 💬
+- **homevisitmanagement.png:** Page for managing home visit appointments. 🏠
+- **medicinemanagement.png:** Page for managing the inventory of Koi medications. 💊
+- **newsmanagement.png:** Page for managing news and updates. 📰
+- **schedualmanagement.png:** Page for managing the schedules of veterinarians. 📆
+- **servicemanagement.png:** Page for managing the services offered by the Koi Veterinary Service Center. 🏥
+- **vetappointmentmanagement.png:** Page for managing veterinarian appointments. 📆
+  
+### Manager Pages 👤
+- **dashboard.png:** Dashboard for customers to view their appointment history and Koi/pond information. 📊
+- **usermanagemant.png:** Page for customers to manage their account information. 👤
 
 
-![Koi Pond](koi_pond.png) 🌊
 *A serene Koi pond, the centerpiece of the Koi Veterinary Service Center*
 
 
@@ -180,7 +170,6 @@ The Koi Veterinary Service Center system will be designed using a modular archit
 - Multi-language support for broader accessibility.
 
 
-![Ocean Wave](ocean_wave.png) 🌊
 *A calming ocean wave, representing the fluid and graceful nature of the Koi Veterinary Service Center's operations*
 
 
