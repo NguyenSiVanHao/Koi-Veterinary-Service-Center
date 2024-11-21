@@ -166,7 +166,6 @@ The Koi Veterinary Service Center system will be designed using a modular archit
 8. **Security and Access Control:** Robust security measures and access control mechanisms will ensure the protection of sensitive data and prevent unauthorized access. 🔒
 
 
-![Autumn Leaves](autumn_leaves.png) 🍁
 *Autumn leaves drifting in the wind, symbolizing the changing seasons and the need for adaptability in the Koi Veterinary Service Center's operations*
 
 
