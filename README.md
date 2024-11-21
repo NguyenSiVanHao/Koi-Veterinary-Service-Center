@@ -6,12 +6,12 @@ The Koi Veterinary Service Center is designed to provide professional veterinary
 
 
 Group02_Koi Med
-Members:
-- Đặng Mai Anh Tú (SE18) 👨‍💻
+5 Members:
+- Đặng Mai Anh Tú (SE182951) 👨‍💻
 - Trần Phú Khang (SE171361) 👨‍💻
 - Nguyễn Sĩ Vạn Hào (SE172181) 👨‍💻
 - Trịnh Thị Thuỳ Nhân (SE180345) 👩‍💻
-- Lê Huy Vũ (SE18) 👨‍💻
+- Lê Huy Vũ (SE182602) 👨‍💻
 
 
 ## 1. Requirements 📋
@@ -93,60 +93,6 @@ The GUI (Graphical User Interface) for the Koi Veterinary Service Center system 
 - **faqmanagement.png:** Page for managing the FAQ section. 💬
 - **googlemeeting.png:** Page for joining online consultations with veterinarians. 💻
 - **homepage.png:** The main landing page of the Koi Veterinary Service Center website. 🏠
-
-
-<div style="display: flex; justify-content: center;">
-  <div style="position: relative; width: 100%; max-width: 800px;">
-    <img src="homepage.png" alt="Homepage" style="width: 100%;">
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;">
-      <div class="leaf-container">
-        <div class="leaf"></div>
-        <div class="leaf"></div>
-        <div class="leaf"></div>
-        <div class="leaf"></div>
-        <div class="leaf"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<style>
-  .leaf-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-
-  .leaf {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background-image: url('leaf.png');
-    background-size: contain;
-    animation: leaf-fall 10s linear infinite;
-  }
-
-
-  @keyframes leaf-fall {
-    0% {
-      top: -10%;
-      left: random(100%);
-      transform: rotate(0deg);
-    }
-    100% {
-      top: 110%;
-      left: random(100%);
-      transform: rotate(360deg);
-    }
-  }
-</style>
-
-
 - **homevisitmanagement.png:** Page for managing home visit appointments. 🏠
 - **information.png:** Page to view general information about the Koi Veterinary Service Center. 📋
 - **invoice.png:** Page to view invoices for completed appointments. 💰
@@ -177,69 +123,8 @@ The GUI (Graphical User Interface) for the Koi Veterinary Service Center system 
 - **vetschedual.png:** Page to view the schedules of veterinarians. 📆
 
 
-<div style="display: flex; justify-content: center;">
-  <div style="position: relative; width: 100%; max-width: 800px;">
-    <img src="ocean.png" alt="Ocean" style="width: 100%;">
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;">
-      <div class="wave-container">
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<style>
-  .wave-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-
-  .wave {
-    position: absolute;
-    width: 100%;
-    height: 100px;
-    background-image: url('wave.png');
-    background-size: contain;
-    background-repeat: repeat-x;
-    animation: wave-motion 10s linear infinite;
-  }
-
-
-  .wave:nth-child(1) {
-    bottom: 0;
-    animation-delay: 0s;
-  }
-
-
-  .wave:nth-child(2) {
-    bottom: 50px;
-    animation-delay: 2s;
-  }
-
-
-  .wave:nth-child(3) {
-    bottom: 100px;
-    animation-delay: 4s;
-  }
-
-
-  @keyframes wave-motion {
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 100% 0;
-    }
-  }
-</style>
+![Koi Pond](koi_pond.png) 🌊
+*A serene Koi pond, the centerpiece of the Koi Veterinary Service Center*
 
 
 ## 3. Database 🗄️
@@ -271,6 +156,32 @@ The Koi Veterinary Service Center system will be designed using a modular archit
 8. **Security and Access Control:** Robust security measures and access control mechanisms will ensure the protection of sensitive data and prevent unauthorized access. 🔒
 
 
-## 5. Conclusion & Discussion 💭
-**
+![Autumn Leaves](autumn_leaves.png) 🍁
+*Autumn leaves drifting in the wind, symbolizing the changing seasons and the need for adaptability in the Koi Veterinary Service Center's operations*
 
+
+## 5. Conclusion & Discussion 💭
+**Pros:** ✨
+- Efficient service management.
+- User-friendly interface.
+
+
+**Cons:** 🛑
+- Limited scalability for larger centers.
+
+
+**What We Learned:** 🤓
+- Importance of modular system design.
+- Handling diverse customer requirements.
+
+
+**Improvements:** 🚀
+- Enhanced UI/UX.
+- Multi-language support for broader accessibility.
+
+
+![Ocean Wave](ocean_wave.png) 🌊
+*A calming ocean wave, representing the fluid and graceful nature of the Koi Veterinary Service Center's operations*
+
+
+✨ **Thank you for exploring the Koi Veterinary Service Center project!** ✨
